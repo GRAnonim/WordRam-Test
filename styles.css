@@ -255,14 +255,17 @@ html, body {
 /* Grid */
 .grid-container {
   width: 100%;
-  max-width: 400px;
+  max-width: 380px;
   aspect-ratio: 1 / 1;
-  padding: 6px;
+  padding: 0;
   display: flex;
   justify-content: center;
   align-items: center;
   position: relative;
   touch-action: none;
+  background: transparent;
+  border: none;
+  box-shadow: none;
 }
 
 .drag-svg-overlay {
@@ -2000,32 +2003,32 @@ html, body {
   margin: 2px 0;
 }
 
-/* Tactile 3D Framed Game Board */
+/* Clean Seamless Game Board (Без фона и рамок - фишки прямо на фоне игры) */
 .grid-container {
   width: 100% !important;
   max-width: min(88vw, 360px) !important;
   height: auto !important;
   aspect-ratio: 1 / 1 !important;
-  background: #241822 !important;
-  border: 2.5px solid #543f4e !important;
-  border-radius: 22px !important;
-  padding: 8px !important;
-  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.45), 0 10px 24px rgba(0, 0, 0, 0.35) !important;
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
+  box-shadow: none !important;
   display: flex !important;
   justify-content: center !important;
   align-items: center !important;
   position: relative !important;
   touch-action: none !important;
-  margin: 4px auto 10px auto !important;
+  margin: 6px auto 12px auto !important;
   box-sizing: border-box !important;
 }
 
 .drag-svg-overlay {
   position: absolute;
-  top: 8px;
-  left: 8px;
-  width: calc(100% - 16px);
-  height: calc(100% - 16px);
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
   pointer-events: none;
   z-index: 5;
 }
