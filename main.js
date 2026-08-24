@@ -1080,9 +1080,16 @@ document.addEventListener("DOMContentLoaded", () => {
   const btnWinShare = document.getElementById("btn-win-share");
 
   function shareWordRamGame() {
+    const count = storage.getCollectedWordsCount();
+    let wordWord = "слов";
+    const mod10 = count % 10;
+    const mod100 = count % 100;
+    if (mod10 === 1 && mod100 !== 11) wordWord = "слово";
+    else if (mod10 >= 2 && mod10 <= 4 && (mod100 < 10 || mod100 >= 20)) wordWord = "слова";
+
     const shareData = {
       title: "WordRam — Английские филворды",
-      text: "Я изучаю английский в WordRam! Мой ранг: " + storage.getEnglishLevel() + " (выучено " + storage.getCollectedWordsCount() + " слов). Попробуй обогнать меня!",
+      text: "Я изучаю английский в WordRam! 🇬🇧 Мой уровень: " + storage.getEnglishLevel() + " (выучено: " + count + " " + wordWord + "). Попробуй сыграть со мной: https://granonim.github.io/WordRam/",
       url: "https://granonim.github.io/WordRam/"
     };
 
@@ -1105,6 +1112,64 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (btnShareGame) btnShareGame.addEventListener("click", shareWordRamGame);
   if (btnWinShare) btnWinShare.addEventListener("click", shareWordRamGame);
+
+  
+  // ----------------------------------------------------
+  // Резервное копирование прогресса (v34)
+  // ----------------------------------------------------
+  const btnExportBackup = document.getElementById("btn-export-backup");
+  const btnImportBackup = document.getElementById("btn-import-backup");
+
+  if (btnExportBackup) {
+    btnExportBackup.addEventListener("click", () => {
+      const code = storage.exportSaveCode();
+      if (code) {
+        if (navigator.clipboard) {
+          navigator.clipboard.writeText(code).then(() => {
+            showCustomInfoDialog(
+              "💾",
+              "Прогресс скопирован!",
+              "<p>Код резервной копии скопирован в буфер обмена!</p><p class='mt-2'>Сохраните его в заметках или отправьте себе в Telegram. Чтобы восстановить прогресс на новом телефоне, нажмите «📥 Восстановить» и вставьте этот код.</p>"
+            );
+          });
+        } else {
+          showCustomInfoDialog(
+            "💾",
+            "Ваш код прогресса",
+            "<p>Скопируйте этот текст:</p><textarea readonly style='width:100%; height:80px; font-size:0.75rem; background:#221721; color:#fde047; border:1px solid #5c4756; border-radius:8px; padding:6px; margin-top:8px;'>" + code + "</textarea>"
+          );
+        }
+      }
+    });
+  }
+
+  if (btnImportBackup) {
+    btnImportBackup.addEventListener("click", () => {
+      const inputCode = prompt("Вставьте скопированный код резервной копии:");
+      if (inputCode && inputCode.trim()) {
+        const success = storage.importSaveCode(inputCode.trim());
+        if (success) {
+          game.updateCoinsDisplay();
+          updateProfileUI();
+          renderDailyScreen();
+          renderVocabScreen();
+          const cur = storage.getSetting("currentLevel") || 1;
+          game.startLevel(cur, false);
+          showCustomInfoDialog(
+            "✅",
+            "Прогресс восстановлен!",
+            "<p>Все ваши выученные слова, уровень, звезды и монеты успешно загружены!</p>"
+          );
+        } else {
+          showCustomInfoDialog(
+            "❌",
+            "Ошибка восстановления",
+            "<p>Введен неверный или поврежденный код резервной копии. Проверьте правильность скопированного текста.</p>"
+          );
+        }
+      }
+    });
+  }
 
   // ----------------------------------------------------
   // Запуск при старте

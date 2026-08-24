@@ -1,23 +1,22 @@
 /**
- * WordRam - Service Worker (v33)
- * Завершающие штрихи: аккуратные точки, крупный бейдж темы,
- * галочки выполненных квестов, кнопки поддержки и шеринга,
- * Open Graph превью 1200x630 и векторный логотип, PWA и оффлайн.
+ * WordRam - Service Worker (v34)
+ * Адаптивное игровое поле без скролла, брендовый Open Graph баннер 1200x630,
+ * перенос прогресса между устройствами, 1 500 слов CEFR, Яндекс Метрика, PWA и оффлайн.
  */
 
-const CACHE_NAME = "wordram-v33";
+const CACHE_NAME = "wordram-v34";
 const ASSETS_TO_CACHE = [
   "./",
   "./index.html",
-  "./styles.css?v=33",
-  "./data.js?v=33",
-  "./storage.js?v=33",
-  "./generator.js?v=33",
-  "./game.js?v=33",
-  "./main.js?v=33",
-  "./manifest.webmanifest?v=33",
+  "./styles.css?v=34",
+  "./data.js?v=34",
+  "./storage.js?v=34",
+  "./generator.js?v=34",
+  "./game.js?v=34",
+  "./main.js?v=34",
+  "./manifest.webmanifest?v=34",
   "./logo.svg",
-  "./favicon.svg?v=33",
+  "./favicon.svg?v=34",
   "./icon-192.png",
   "./icon-512.png",
   "./og-image.png"
@@ -50,7 +49,6 @@ self.addEventListener("activate", (event) => {
 self.addEventListener("fetch", (event) => {
   if (event.request.method !== "GET") return;
 
-  // Не кэшировать запросы к Метрике Яндекса
   if (event.request.url.includes("mc.yandex.ru") || event.request.url.includes("yandex.ru")) {
     return;
   }

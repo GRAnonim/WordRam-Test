@@ -43,10 +43,10 @@
   <meta name="twitter:image" content="https://granonim.github.io/WordRam/og-image.png">
 
   <!-- Icons -->
-  <link rel="manifest" href="manifest.webmanifest?v=33">
-  <link rel="icon" type="image/svg+xml" href="favicon.svg?v=33">
-  <link rel="apple-touch-icon" href="icon-192.png?v=33">
-  <link rel="stylesheet" href="styles.css?v=33">
+  <link rel="manifest" href="manifest.webmanifest?v=34">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg?v=34">
+  <link rel="apple-touch-icon" href="icon-192.png?v=34">
+  <link rel="stylesheet" href="styles.css?v=34">
 </head>
 <body>
   <div id="app">
@@ -320,7 +320,23 @@
           </div>
         </div>
 
-        <div class="settings-danger">
+        <!-- Резервное копирование прогресса (Перенос на другое устройство) -->
+        <div class="settings-group mt-3">
+          <h3>Сохранение и перенос прогресса</h3>
+          <p class="subtitle" style="text-align:left; margin-bottom:10px; font-size:0.8rem;">
+            Вы можете скопировать код своего прогресса и перенести его на другой телефон или браузер.
+          </p>
+          <div style="display:flex; gap:8px;">
+            <button id="btn-export-backup" class="secondary-btn full-width" style="font-size:0.85rem;">
+              💾 Скопировать код
+            </button>
+            <button id="btn-import-backup" class="secondary-btn full-width" style="font-size:0.85rem;">
+              📥 Восстановить
+            </button>
+          </div>
+        </div>
+
+        <div class="settings-danger mt-3">
           <button id="btn-reset-data" class="danger-btn">Сбросить весь прогресс</button>
         </div>
       </section>
@@ -487,10 +503,10 @@
     </div>
 
   <!-- Подключение скриптов с версионированием -->
-  <script src="data.js?v=21"></script>
-  <script src="storage.js?v=21"></script>
-  <script src="generator.js?v=21"></script>
-  <script src="game.js?v=21"></script>
-  <script src="main.js?v=21"></script>
+  <script src="data.js?v=34"></script>
+  <script src="storage.js?v=34"></script>
+  <script src="generator.js?v=34"></script>
+  <script src="game.js?v=34"></script>
+  <script src="main.js?v=34"></script>
 </body>
 </html>
