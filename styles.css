@@ -1900,85 +1900,204 @@ html, body {
   border-radius: 12px;
 }
 
-/* Responsive No-Scroll Game Layout (v34) */
+
+/* ======================================================
+   Main Game Screen & Board Layout (v36)
+   ====================================================== */
 #screen-game {
-  height: calc(100dvh - 64px - env(safe-area-inset-bottom) - 56px);
-  max-height: calc(100dvh - 64px - env(safe-area-inset-bottom) - 56px);
-  padding: 2px 8px 6px 8px;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
   align-items: center;
-  overflow: hidden !important;
+  justify-content: flex-start;
+  width: 100%;
+  max-width: 440px;
+  margin: 0 auto;
+  padding: 4px 12px 10px 12px;
+  box-sizing: border-box;
 }
 
 .game-top-bar {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2px;
-  margin-bottom: 2px;
+  gap: 4px;
   width: 100%;
+  margin-bottom: 4px;
 }
 
+.progress-label {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: #f1e6ef;
+  letter-spacing: 0.2px;
+}
+
+.theme-pill-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(168, 85, 247, 0.28);
+  border: 1.5px solid rgba(192, 132, 252, 0.55);
+  color: #ffffff;
+  padding: 4px 14px;
+  border-radius: 18px;
+  font-size: 0.88rem;
+  font-weight: 900;
+  letter-spacing: 0.3px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+  margin-bottom: 2px;
+}
+
+.word-slots {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+  max-width: 380px;
+}
+
+.word-slot {
+  background: var(--surface-color);
+  border: 1px dashed var(--surface-border);
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  color: var(--text-color);
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.word-slot.found {
+  transform: scale(1.04);
+  font-weight: 900;
+  cursor: pointer;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.slot-dots {
+  font-size: 0.52rem;
+  letter-spacing: 2px;
+  vertical-align: middle;
+  opacity: 0.7;
+}
+
+.slot-length {
+  font-size: 0.72rem;
+  font-weight: 700;
+  opacity: 0.75;
+  margin-left: 2px;
+}
+
+.preview-wrapper {
+  min-height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 2px 0;
+}
+
+/* Tactile 3D Framed Game Board */
 .grid-container {
-  width: auto !important;
+  width: 100% !important;
+  max-width: min(88vw, 360px) !important;
   height: auto !important;
-  max-height: min(43dvh, 320px) !important;
-  max-width: min(86vw, 320px) !important;
   aspect-ratio: 1 / 1 !important;
-  background: #231821 !important;
-  border: 2px solid #543f4e !important;
-  border-radius: 20px !important;
-  padding: 6px !important;
-  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.4), 0 8px 20px rgba(0, 0, 0, 0.35) !important;
+  background: #241822 !important;
+  border: 2.5px solid #543f4e !important;
+  border-radius: 22px !important;
+  padding: 8px !important;
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.45), 0 10px 24px rgba(0, 0, 0, 0.35) !important;
   display: flex !important;
   justify-content: center !important;
   align-items: center !important;
   position: relative !important;
   touch-action: none !important;
-  margin: 2px auto 4px auto !important;
+  margin: 4px auto 10px auto !important;
+  box-sizing: border-box !important;
 }
+
+.drag-svg-overlay {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  width: calc(100% - 16px);
+  height: calc(100% - 16px);
+  pointer-events: none;
+  z-index: 5;
+}
+
+.drag-svg-glow {
+  fill: none;
+  stroke: rgba(192, 132, 252, 0.45);
+  stroke-width: 18px;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.drag-svg-core {
+  fill: none;
+  stroke: #c084fc;
+  stroke-width: 7px;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.letter-grid {
+  display: grid;
+  width: 100%;
+  height: 100%;
+  touch-action: none;
+}
+
+.grid-cell {
+  background: var(--cell-bg);
+  border: 2px solid var(--cell-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 900;
+  color: var(--cell-text);
+  box-shadow: var(--cell-shadow);
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  position: relative;
+  transition: transform 0.12s ease, background-color 0.15s ease;
+}
+
+.grid-cell .hint-badge {
+  position: absolute;
+  top: 2px;
+  right: 4px;
+  font-size: 0.65rem;
+  font-weight: 800;
+  color: #7c2d12;
+}
+
+.letter-grid[data-size="4"] { gap: 10px; }
+.letter-grid[data-size="4"] .grid-cell { font-size: 1.75rem; border-radius: 16px; }
+
+.letter-grid[data-size="5"] { gap: 8px; }
+.letter-grid[data-size="5"] .grid-cell { font-size: 1.5rem; border-radius: 14px; }
+
+.letter-grid[data-size="6"] { gap: 6px; }
+.letter-grid[data-size="6"] .grid-cell { font-size: 1.25rem; border-radius: 11px; }
+
+.letter-grid[data-size="7"] { gap: 5px; }
+.letter-grid[data-size="7"] .grid-cell { font-size: 1.05rem; border-radius: 9px; }
+
+.letter-grid[data-size="8"] { gap: 4px; }
+.letter-grid[data-size="8"] .grid-cell { font-size: 0.9rem; border-radius: 7px; }
+
+.letter-grid[data-size="9"] { gap: 3px; }
+.letter-grid[data-size="9"] .grid-cell { font-size: 0.78rem; border-radius: 6px; }
 
 .game-controls {
   width: 100%;
-  max-width: 320px;
+  max-width: min(88vw, 360px);
   margin-top: 2px;
-}
-
-.hint-btn {
-  padding: 10px 16px !important;
-  font-size: 0.95rem !important;
-}
-
-.share-highlight-btn {
-  background: linear-gradient(135deg, #9333ea 0%, #7e22ce 100%) !important;
-  border: 2px solid #c084fc !important;
-  color: #ffffff !important;
-  padding: 10px 14px !important;
-  border-radius: 16px !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: space-between !important;
-  gap: 8px !important;
-  cursor: pointer !important;
-  box-shadow: 0 4px 12px rgba(147, 51, 234, 0.35) !important;
-  width: 100% !important;
-}
-
-.btn-main-label {
-  font-size: 0.92rem !important;
-  font-weight: 800 !important;
-  white-space: nowrap !important;
-}
-
-.btn-bonus-chip {
-  background: #fde047 !important;
-  color: #713f12 !important;
-  font-size: 0.78rem !important;
-  font-weight: 900 !important;
-  padding: 3px 8px !important;
-  border-radius: 10px !important;
-  white-space: nowrap !important;
-  flex-shrink: 0 !important;
 }
