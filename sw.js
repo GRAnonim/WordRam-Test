@@ -4,19 +4,19 @@
  * перенос прогресса между устройствами, 1 500 слов CEFR, Яндекс Метрика, PWA и оффлайн.
  */
 
-const CACHE_NAME = "wordram-v34";
+const CACHE_NAME = "wordram-v35";
 const ASSETS_TO_CACHE = [
   "./",
   "./index.html",
-  "./styles.css?v=34",
-  "./data.js?v=34",
-  "./storage.js?v=34",
-  "./generator.js?v=34",
-  "./game.js?v=34",
-  "./main.js?v=34",
-  "./manifest.webmanifest?v=34",
+  "./styles.css?v=35",
+  "./data.js?v=35",
+  "./storage.js?v=35",
+  "./generator.js?v=35",
+  "./game.js?v=35",
+  "./main.js?v=35",
+  "./manifest.webmanifest?v=35",
   "./logo.svg",
-  "./favicon.svg?v=34",
+  "./favicon.svg?v=35",
   "./icon-192.png",
   "./icon-512.png",
   "./og-image.png"
