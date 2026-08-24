@@ -1,0 +1,31 @@
+{
+  "name": "WordRam — Английские филворды",
+  "short_name": "WordRam",
+  "lang": "ru",
+  "description": "Увлекательные филворды для изучения 1500 английских слов (A1-C1) с живой озвучкой, темами и словарем.",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#342330",
+  "theme_color": "#43333f",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "logo.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

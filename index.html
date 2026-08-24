@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <!-- Yandex.Metrika counter (ID: 111905696) -->
+    <script type="text/javascript">
+       (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+       m[i].l=1*new Date();
+       for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+       k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
+       (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
+
+       ym(111905696, "init", {
+            clickmap:true,
+            trackLinks:true,
+            accurateTrackBounce:true,
+            webvisor:true
+       });
+    </script>
+    <noscript><div><img src="https://mc.yandex.ru/watch/111905696" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+    <!-- /Yandex.Metrika counter -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>WordRam — Английские филворды</title>
+  <meta name="description" content="Изучай 1 500 английских слов (A1–C1), решая увлекательные головоломки с живой озвучкой произношения 🔊 и тематическими уровнями!">
+  <meta name="theme-color" content="#43333f">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="WordRam">
+
+  <!-- Open Graph / Telegram / WhatsApp / VK Previews -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://granonim.github.io/WordRam/">
+  <meta property="og:title" content="WordRam — Английские филворды">
+  <meta property="og:description" content="Изучай 1 500 английских слов (A1–C1) с живой озвучкой произношения 🔊 и тематическими уровнями!">
+  <meta property="og:image" content="https://granonim.github.io/WordRam/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="WordRam — Английские филворды">
+  <meta name="twitter:description" content="Изучай 1 500 английских слов (A1–C1) с живой озвучкой и словарем!">
+  <meta name="twitter:image" content="https://granonim.github.io/WordRam/og-image.png">
+
+  <!-- Icons -->
+  <link rel="manifest" href="manifest.webmanifest?v=33">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg?v=33">
+  <link rel="apple-touch-icon" href="icon-192.png?v=33">
+  <link rel="stylesheet" href="styles.css?v=33">
+</head>
+<body>
+  <div id="app">
+    <!-- Верхняя панель (Header) -->
+    <header class="app-header">
+      <div class="header-left">
+        <h1 class="app-title">WordRam</h1>
+        <span id="current-level-title" class="level-badge">Уровень 1 (4×4)</span>
+        <span id="header-cefr-badge" class="cefr-badge clickable-badge" title="Нажмите для справки">🇬🇧 A2</span>
+      </div>
+      <div class="header-right">
+        <div class="coins-badge clickable-badge" id="btn-show-coins-info" title="Нажмите для справки">
+          <span class="coin-icon">🪙</span>
+          <span id="coins-counter">60</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Основная область с экранами -->
+    <main class="app-content">
+      <!-- ЭКРАН 1: ИГРА -->
+      <section id="screen-game" class="screen-view">
+        <div class="game-top-bar">
+          <div id="level-progress-text" class="progress-label">Слов: 0 из 4 (0/16 букв)</div>
+          <div id="level-theme-badge" class="theme-pill-badge">
+            <span id="theme-icon">☕</span> <span id="theme-title">Тема: Еда и кухня</span>
+          </div>
+          <div id="word-slots-container" class="word-slots"></div>
+        </div>
+
+        <!-- Плашка текущего набираемого слова -->
+        <div class="preview-wrapper">
+          <div id="word-preview" class="word-preview-box"></div>
+        </div>
+
+        <!-- Игровое поле с тактильными 3D плитками и SVG соединителем -->
+        <div class="grid-container">
+          <svg id="drag-connector-svg" class="drag-svg-overlay"></svg>
+          <div id="game-grid" class="letter-grid"></div>
+        </div>
+
+        <!-- Нижняя панель действий игры -->
+        <div class="game-controls">
+          <button id="btn-hint" class="action-btn hint-btn">
+            <span class="btn-icon">💡</span>
+            <span class="btn-text">Подсказка (3 беспл.)</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- ЭКРАН 2: МОЙ СЛОВАРЬ (С БЛИЦ-ПОВТОРЕНИЕМ) -->
+      <section id="screen-vocab" class="screen-view" style="display: none;">
+        <div class="screen-header">
+          <h2>Мой словарь</h2>
+          <p id="vocab-stats-subtitle" class="subtitle">Выучено слов: 0 из 1500</p>
+        </div>
+
+        <!-- Кнопка запуска Блиц-повторения -->
+        <div class="vocab-top-actions full-width">
+          <button id="btn-start-blitz" class="primary-btn full-width pulse-glow mb-3">
+            ⚡ Блиц-повторение (Карточки +XP)
+          </button>
+        </div>
+
+        <!-- Поиск и фильтры по CEFR -->
+        <div id="vocab-cefr-breakdown-card" class="cefr-breakdown-card mb-3"></div>
+        <div class="vocab-toolbar">
+          <input type="text" id="vocab-search-input" class="search-input" placeholder="🔍 Поиск по словам и переводу...">
+          <div id="vocab-cefr-filters" class="filter-chips">
+            <button class="chip active" data-filter="ALL">Все</button>
+            <button class="chip" data-filter="A1">A1</button>
+            <button class="chip" data-filter="A2">A2</button>
+            <button class="chip" data-filter="B1">B1</button>
+            <button class="chip" data-filter="B2">B2</button>
+            <button class="chip" data-filter="C1">C1</button>
+          </div>
+        </div>
+
+        <!-- Список выученных карточек слов -->
+        <div id="vocab-cards-grid" class="vocab-grid"></div>
+      </section>
+
+      <!-- ЭКРАН 3: УРОВНИ И МОНСТРИКИ (В ТОЧНОСТИ КАК В ФИЛВОРДАХ) -->
+      <section id="screen-levels" class="screen-view stage-screen-view" style="display: none;">
+        <div class="stage-top-row full-width">
+          <div class="stage-app-title">WordRam</div>
+          <div class="bonus-piggy-badge" id="btn-show-bonus-words" title="Копилка эрудита">
+            <span class="piggy-icon">🐷</span>
+            <span id="bonus-words-counter" class="piggy-count">0 🪙</span>
+          </div>
+        </div>
+
+        <!-- Центральная колба с монстриком этапа -->
+        <div class="stage-monster-container">
+          <div class="monster-flask-ring">
+            <div id="stage-monster-avatar" class="monster-avatar">🧽</div>
+          </div>
+          <h2 id="stage-monster-name" class="stage-monster-name">Морская губка</h2>
+          <div id="stage-percent-display" class="stage-percent-text">0,00%</div>
+        </div>
+
+        <!-- Линия прогресса этапа с вехами/сундуками -->
+        <div class="stage-milestone-track-wrap full-width">
+          <div class="milestone-track-bg">
+            <div id="stage-milestone-fill" class="milestone-track-fill" style="width: 0%;"></div>
+          </div>
+          <div id="stage-milestones-points" class="stage-milestones-points-row"></div>
+        </div>
+
+        <!-- Большая зеленая 3D кнопка запуска УРОВЕНЬ N -->
+        <div class="stage-play-btn-wrap full-width mt-3">
+          <button id="btn-stage-play-current" class="stage-green-play-btn pulse-glow full-width">
+            УРОВЕНЬ 1
+          </button>
+        </div>
+
+        <!-- Переключатель сетки всех уровней -->
+        <div class="stage-toggle-grid-row full-width mt-2">
+          <button id="btn-toggle-levels-grid" class="secondary-btn small-btn">
+            📋 Все уровни со звездами
+          </button>
+        </div>
+
+        <!-- Раскрывающаяся сетка всех уровней -->
+        <div id="levels-grid-wrapper" class="levels-grid-collapsible mt-2" style="display: none;">
+          <div id="levels-grid" class="levels-scroll-grid"></div>
+        </div>
+      </section>
+
+      <!-- ЭКРАН 4: СОБЫТИЯ (КВЕСТЫ, КОЛЕСО ФОРТУНЫ, СТРИК) -->
+      <section id="screen-daily" class="screen-view" style="display: none;">
+        <div class="screen-header">
+          <h2>События и квесты</h2>
+          <p class="subtitle">Выполняйте задания дня и крутите Колесо фортуны</p>
+        </div>
+
+        <!-- Слово дня (Ежедневное интеллектуальное открытие) -->
+        <div class="event-banner-card word-of-day-card" id="card-word-of-day">
+          <div class="wod-top-row">
+            <span class="wod-badge">💡 Слово дня</span>
+            <span id="wod-reward-tag" class="wod-reward-tag">+20 🪙 +40 XP</span>
+          </div>
+          <div class="wod-content mt-2">
+            <div class="wod-word-row">
+              <h3 id="wod-word" class="wod-word">COURAGE</h3>
+              <span id="wod-phonetic" class="wod-phonetic">[ˈkʌrɪdʒ]</span>
+              <button id="btn-wod-speak" class="speak-btn small-speak" title="Прослушать">🔊</button>
+            </div>
+            <div id="wod-translation" class="wod-translation">Мужество / Смелость / Отвага</div>
+            <div id="wod-example" class="wod-example">Have the courage to speak — Иметь смелость заговорить.</div>
+          </div>
+          <button id="btn-claim-wod" class="primary-btn small-btn full-width mt-2">
+            Изучить и забрать награду (+20 🪙)
+          </button>
+        </div>
+
+        <!-- Ежедневные квесты (3 задания) -->
+        <div class="daily-quests-card mt-3">
+          <div class="card-title-row">
+            <h3>🎯 Задания дня</h3>
+            <span id="quests-progress-counter" class="quests-badge">0 / 3</span>
+          </div>
+          <div id="daily-quests-list" class="quests-list"></div>
+          <div id="quests-super-chest" class="super-chest-box mt-3">
+            <span class="chest-icon">🎁</span>
+            <div class="chest-info">
+              <strong>Сундук мастера</strong>
+              <div class="chest-sub">Выполните все 3 квеста дня (+50 🪙, +100 XP, +1 💡)</div>
+            </div>
+            <button id="btn-claim-super-chest" class="primary-btn small-btn" disabled>Забрать</button>
+          </div>
+        </div>
+
+        <!-- Календарь стрика и Заморозка -->
+        <div class="daily-streak-card mt-3">
+          <div class="streak-header-row">
+            <span>Серия: <strong id="daily-streak-count">0</strong> дн. 🔥</span>
+            <span id="freeze-counter-badge" class="freeze-pill">❄️ Защита: 0/2</span>
+          </div>
+          <div id="daily-rewards-calendar" class="rewards-calendar-grid"></div>
+          
+          <div class="freeze-shop-row mt-3">
+            <button id="btn-buy-freeze" class="secondary-btn small-btn full-width">
+              Купить Заморозку стрика ❄️ (60 🪙)
+            </button>
+          </div>
+
+          <button id="btn-start-daily" class="primary-btn full-width mt-3 pulse-glow">
+            Сыграть ежедневный филворд (+50 🪙, +150 XP)
+          </button>
+        </div>
+      </section>
+
+      <!-- ЭКРАН 5: РЕЙТИНГ, ЛИГИ И ПРОФИЛЬ -->
+      <section id="screen-settings" class="screen-view" style="display: none;">
+        <div class="screen-header">
+          <h2>Профиль и Настройки</h2>
+        </div>
+
+        <!-- Быстрые действия: Поделиться и Поддержка -->
+        <div class="community-highlight-card">
+          <button id="btn-share-game" class="share-highlight-btn pulse-glow">
+            <span class="btn-main-label">📤 Поделиться игрой с другом</span>
+            <span class="btn-bonus-chip">+30 🪙</span>
+          </button>
+          <a href="https://t.me/WordRamFeedbackBot" target="_blank" rel="noopener" class="tg-feedback-link-btn">
+            <div class="tg-btn-left">
+              <span class="tg-btn-icon">💬</span>
+              <div class="tg-btn-text">
+                <span class="tg-btn-title">Написать в поддержку</span>
+                <span class="tg-btn-sub">Telegram-бот: @WordRamFeedbackBot</span>
+              </div>
+            </div>
+            <span class="tg-btn-arrow">➔</span>
+          </a>
+        </div>
+
+        <!-- Еженедельная лига -->
+        <div class="settings-group league-card">
+          <div class="league-header">
+            <div class="league-title-left">
+              <span id="league-icon" class="league-big-icon">🥇</span>
+              <div>
+                <h3 id="league-name" class="league-name-text">Золотая лига</h3>
+                <div class="league-sub">Топ-3 переходят в высшую лигу в конце недели</div>
+              </div>
+            </div>
+            <div class="league-badge-pill" id="league-reward-preview">+180 🪙</div>
+          </div>
+          <div id="league-leaderboard-list" class="leaderboard-list mt-3"></div>
+        </div>
+
+        <!-- Шкала опыта и ранга CEFR -->
+        <div class="settings-group xp-profile-card mt-3">
+          <div class="xp-rank-header">
+            <span class="xp-rank-title">Ранг английского:</span>
+            <strong id="profile-cefr-badge" class="cefr-pill">A2 — Pre-Intermediate</strong>
+          </div>
+          <div class="xp-progress-bar-wrap mt-2">
+            <div id="profile-xp-fill" class="xp-bar-fill" style="width: 40%;"></div>
+          </div>
+          <div class="xp-sub-info">
+            <span id="profile-xp-text">Опыт: 300 / 800 XP</span>
+            <span id="profile-xp-percent">38%</span>
+          </div>
+          <button id="btn-open-placement-test" class="secondary-btn full-width mt-3">
+            📝 Пройти тест на определение уровня (A1–C1)
+          </button>
+        </div>
+
+        <!-- Блок достижений -->
+        <div class="settings-group mt-3">
+          <h3>Достижения и трофеи</h3>
+          <div id="achievements-list" class="achievements-container"></div>
+        </div>
+
+        <!-- Настройки -->
+        <div class="settings-group mt-3">
+          <h3>Параметры</h3>
+          <div class="setting-item">
+            <label for="setting-voice">Авто-озвучка слов (Speech)</label>
+            <input type="checkbox" id="setting-voice" class="toggle-switch" checked>
+          </div>
+          <div class="setting-item">
+            <label for="setting-sound">Звуковые эффекты</label>
+            <input type="checkbox" id="setting-sound" class="toggle-switch" checked>
+          </div>
+          <div class="setting-item">
+            <label for="setting-vibration">Вибрация (Haptic)</label>
+            <input type="checkbox" id="setting-vibration" class="toggle-switch" checked>
+          </div>
+        </div>
+
+        <div class="settings-danger">
+          <button id="btn-reset-data" class="danger-btn">Сбросить весь прогресс</button>
+        </div>
+      </section>
+    </main>
+
+    <!-- Нижнее навигационное меню (5 вкладок) -->
+    <nav class="bottom-nav">
+      <button id="nav-btn-game" class="nav-item active">
+        <span class="nav-icon">🎮</span>
+        <span class="nav-label">Игра</span>
+      </button>
+      <button id="nav-btn-vocab" class="nav-item">
+        <span class="nav-icon">📖</span>
+        <span class="nav-label">Словарь</span>
+      </button>
+      <button id="nav-btn-levels" class="nav-item">
+        <span class="nav-icon">🗺️</span>
+        <span class="nav-label">Карта</span>
+      </button>
+      <button id="nav-btn-daily" class="nav-item">
+        <span class="nav-icon">📅</span>
+        <span class="nav-label">События</span>
+      </button>
+      <button id="nav-btn-settings" class="nav-item">
+        <span class="nav-icon">👤</span>
+        <span class="nav-label">Профиль</span>
+      </button>
+    </nav>
+
+    <!-- МОДАЛЬНОЕ ОКНО: КОЛЕСО ФОРТУНЫ -->
+    <div id="modal-lucky-wheel" class="modal-overlay" style="display: none !important;">
+      <div class="modal-card wheel-modal-card">
+        <button id="btn-close-wheel" class="modal-close-icon" aria-label="Закрыть">✕</button>
+        <h2 class="modal-title">🎡 Колесо Фортуны</h2>
+        <p class="modal-subtitle">Испытайте удачу и заберите ежедневный приз!</p>
+        
+        <div class="wheel-container">
+          <div class="wheel-pointer">▼</div>
+          <canvas id="lucky-wheel-canvas" width="280" height="280"></canvas>
+        </div>
+
+        <div id="wheel-result-box" class="wheel-result-badge" style="display: none;"></div>
+
+        <button id="btn-spin-wheel" class="primary-btn full-width mt-3 pulse-glow">
+          Вращать бесплатно!
+        </button>
+      </div>
+    </div>
+
+    <!-- МОДАЛЬНОЕ ОКНО: БЛИЦ-ПОВТОРЕНИЕ (FLASHCARDS) -->
+    <div id="modal-blitz-quiz" class="modal-overlay" style="display: none !important;">
+      <div class="modal-card blitz-modal-card">
+        <button id="btn-close-blitz" class="modal-close-icon" aria-label="Закрыть">✕</button>
+        <div class="blitz-header">
+          <span class="blitz-title">⚡ Блиц-повторение</span>
+          <span id="blitz-score-counter" class="blitz-badge">Очки: 0</span>
+        </div>
+        <div class="blitz-progress-wrap mt-2">
+          <div id="blitz-progress-fill" class="blitz-progress-bar-fill" style="width: 10%;"></div>
+        </div>
+
+        <div class="blitz-card-box mt-3">
+          <div class="blitz-word-row">
+            <div id="blitz-target-word" class="blitz-target-word">BEAUTIFUL</div>
+            <button id="btn-speak-blitz" class="speak-btn small-speak">🔊</button>
+          </div>
+          <div id="blitz-target-ph" class="blitz-target-ph">[ˈbjuːtɪfl]</div>
+        </div>
+
+        <p class="blitz-prompt">Выберите правильный перевод:</p>
+        <div id="blitz-options-grid" class="blitz-options-grid"></div>
+      </div>
+    </div>
+
+    <!-- МОДАЛЬНОЕ ОКНО ПЕРЕВОДА И ОПРЕДЕЛЕНИЯ УГАДАННОГО СЛОВА -->
+    <div id="modal-word-definition" class="modal-overlay" style="display: none !important;">
+      <div class="modal-card word-definition-card">
+        <button id="btn-close-definition" class="modal-close-icon" aria-label="Закрыть">✕</button>
+        <div class="ribbon-wrap">
+          <div id="def-word-ribbon" class="word-ribbon-badge">BEAUTIFUL</div>
+          <button id="btn-speak-definition" class="speak-btn" title="Прослушать произношение">🔊</button>
+        </div>
+        <div class="def-content-box">
+          <div id="def-phonetic" class="def-phonetic-text">[ˈbjuːtɪfl]</div>
+          <h3 id="def-translation" class="def-translation-title">Красивый / Прекрасный</h3>
+          <p id="def-meaning" class="def-meaning-text">Обладающий приятной внешностью или радующий глаз.</p>
+          <div id="def-example-box" class="def-example-box">
+            <span class="example-label">Пример:</span>
+            <span id="def-example-text" class="example-text">A beautiful view — Прекрасный вид.</span>
+          </div>
+          <div id="def-collocations-box" class="def-collocations-box mt-2">
+            <span class="collocations-label">Частые сочетания:</span>
+            <div id="def-collocations-list" class="collocations-tags"></div>
+          </div>
+        </div>
+        <button id="btn-ok-definition" class="primary-btn full-width mt-3">Понятно</button>
+      </div>
+    </div>
+
+    <!-- МОДАЛЬНОЕ ОКНО ТЕСТА УРОВНЯ АНГЛИЙСКОГО -->
+    <div id="modal-placement" class="modal-overlay" style="display: none !important;">
+      <div class="modal-card placement-card">
+        <button id="btn-close-placement" class="modal-close-icon" aria-label="Закрыть">✕</button>
+        
+        <div id="placement-quiz-step">
+          <div class="quiz-header">
+            <span class="quiz-step-title">Тест словарного запаса</span>
+            <span id="quiz-progress-counter" class="quiz-counter">1 / 15</span>
+          </div>
+          <div class="quiz-progress-bar-wrap">
+            <div id="quiz-progress-fill" class="quiz-progress-bar-fill" style="width: 6.6%;"></div>
+          </div>
+
+          <div class="quiz-word-card">
+            <h3 id="quiz-word-display" class="quiz-target-word">FAMILY</h3>
+          </div>
+
+          <p class="quiz-prompt">Знаете ли вы это слово и его значение?</p>
+
+          <div class="quiz-actions">
+            <button class="quiz-btn btn-know" data-answer="KNOW">🟢 Знаю</button>
+            <button class="quiz-btn btn-unsure" data-answer="NOT_SURE">🟡 Не уверен</button>
+            <button class="quiz-btn btn-dontknow" data-answer="DONT_KNOW">🔴 Не знаю</button>
+          </div>
+        </div>
+
+        <div id="placement-result-step" style="display: none;">
+          <div class="modal-confetti">🎓</div>
+          <h2 class="modal-title">Ваш уровень определен!</h2>
+          <div id="placement-result-badge" class="result-cefr-badge">A2 — Pre-Intermediate</div>
+          <h3 id="placement-result-title" class="result-cefr-title">Базовый уровень</h3>
+          <p id="placement-result-desc" class="result-cefr-desc">Вам отлично подойдут уровни базовой сложности.</p>
+          <button id="btn-apply-placement" class="primary-btn modal-action-btn mt-3">
+            Применить и начать игру ➔
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Модальное окно победы на уровне -->
+    <div id="modal-victory" class="modal-overlay" style="display: none !important;">
+      <div class="modal-card">
+        <button id="btn-close-modal" class="modal-close-icon" aria-label="Закрыть">✕</button>
+        <div class="modal-confetti">🎉</div>
+        <h2 class="modal-title">Уровень пройден!</h2>
+        <div class="modal-stars">★★★</div>
+        <p class="modal-subtitle">Все буквы сетки раскрыты:</p>
+        <ul id="win-words-list" class="win-words-list"></ul>
+        <div id="win-reward-text" class="win-reward-badge">+20 🪙 монет получено!</div>
+        <button id="btn-next-level" class="primary-btn modal-action-btn">Следующий уровень ➔</button>
+      </div>
+    </div>
+  </div>
+
+    <!-- КАСТОМНОЕ МОДАЛЬНОЕ ОКНО ИНФОРМАЦИИ (ВМЕСТО СИСТЕМНОГО ALERT) -->
+    <div id="modal-info-dialog" class="modal-overlay" style="display: none !important;">
+      <div class="modal-card info-dialog-card">
+        <button id="btn-close-info-dialog" class="modal-close-icon" aria-label="Закрыть">✕</button>
+        <div id="info-dialog-icon" class="info-dialog-icon">ℹ️</div>
+        <h2 id="info-dialog-title" class="modal-title info-dialog-title">Справка</h2>
+        <div id="info-dialog-message" class="info-dialog-message-box"></div>
+        <button id="btn-ok-info-dialog" class="primary-btn full-width mt-3">Понятно</button>
+      </div>
+    </div>
+
+  <!-- Подключение скриптов с версионированием -->
+  <script src="data.js?v=21"></script>
+  <script src="storage.js?v=21"></script>
+  <script src="generator.js?v=21"></script>
+  <script src="game.js?v=21"></script>
+  <script src="main.js?v=21"></script>
+</body>
+</html>
