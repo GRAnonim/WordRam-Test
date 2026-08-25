@@ -4,18 +4,18 @@
  * Complete PWA Offline Cache.
  */
 
-const CACHE_NAME = "wordram-v46";
+const CACHE_NAME = "wordram-v47";
 const ASSETS_TO_CACHE = [
   "./",
   "./index.html",
-  "./styles.css?v=46",
-  "./data.js?v=46",
+  "./styles.css?v=47",
+  "./data.js?v=47",
   "./chechen.json",
-  "./storage.js?v=46",
-  "./generator.js?v=46",
-  "./game.js?v=46",
-  "./main.js?v=46",
-  "./manifest.webmanifest?v=46",
+  "./storage.js?v=47",
+  "./generator.js?v=47",
+  "./game.js?v=47",
+  "./main.js?v=47",
+  "./manifest.webmanifest?v=47",
   "./favicon.svg",
   "./icon-192.png",
   "./icon-512.png",

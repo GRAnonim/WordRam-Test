@@ -43,10 +43,10 @@
   <meta name="twitter:image" content="https://granonim.github.io/WordRam/og-image.png">
 
   <!-- Icons -->
-  <link rel="manifest" href="manifest.webmanifest?v=46">
-  <link rel="icon" type="image/svg+xml" href="favicon.svg?v=46">
-  <link rel="apple-touch-icon" href="icon-192.png?v=46">
-  <link rel="stylesheet" href="styles.css?v=46">
+  <link rel="manifest" href="manifest.webmanifest?v=47">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg?v=47">
+  <link rel="apple-touch-icon" href="icon-192.png?v=47">
+  <link rel="stylesheet" href="styles.css?v=47">
 </head>
 <body>
   <div id="app">
@@ -130,7 +130,7 @@
         <!-- Список выученных карточек слов -->
         
         <!-- Подробное объяснение шкалы сложности слов -->
-        <div id="vocab-cefr-info-card" class="cefr-info-banner mb-3">
+        <div id="vocab-cefr-info-card" class="cefr-info-banner mb-3" style="display: none;">
           <div class="cefr-info-banner-title">
             <span id="cefr-info-title-text">📚 Шкала сложности чеченского языка в WordRam</span>
           </div>
@@ -290,21 +290,20 @@
       </section>
 
       <!-- ЭКРАН 5: РЕЙТИНГ, ЛИГИ И ПРОФИЛЬ -->
+            <!-- ЭКРАН 5: РЕЙТИНГ, ЛИГИ И ПРОФИЛЬ -->
       <section id="screen-settings" class="screen-view" style="display: none;">
         <div class="screen-header">
           <h2>Профиль и Настройки</h2>
         </div>
 
         <!-- Быстрые действия: Поделиться и Поддержка -->
-        
-        <!-- Блок шеринга: Поделиться игрой и Поделиться прогрессом -->
-        <div class="settings-group community-highlight-card">
-          <button id="btn-share-app-link" class="share-highlight-btn pulse-glow">
+        <div class="community-highlight-card">
+          <button id="btn-share-game" class="share-highlight-btn pulse-glow">
             <span class="btn-main-label">📤 Поделиться игрой с другом</span>
             <span class="btn-bonus-chip">+30 🪙</span>
           </button>
           <button id="btn-share-progress-card" class="share-highlight-btn secondary-share-btn mt-2">
-            <span class="btn-main-label">🏆 Поделиться своим прогрессом и титулом</span>
+            <span class="btn-main-label">🏆 Поделиться своим прогрессом и званием</span>
             <span class="btn-bonus-chip">+30 🪙</span>
           </button>
           <a href="https://t.me/WordRamFeedbackBot" target="_blank" rel="noopener" class="tg-feedback-link-btn mt-2">
@@ -315,17 +314,28 @@
                 <span class="tg-btn-sub">Telegram-бот: @WordRamFeedbackBot</span>
               </div>
             </div>
-            <span class="tg-arrow">➔</span>
-          </a>
-        </div>
-
-            </div>
             <span class="tg-btn-arrow">➔</span>
           </a>
         </div>
 
+        <!-- Выбор языка слов в игре (Мультиязычность) -->
+        <div class="settings-group mt-3">
+          <h3>Язык слов в игре</h3>
+          <div class="lang-selector-group">
+            <button id="btn-lang-en" class="lang-btn active" data-lang="english">
+              <span class="lang-flag">🇬🇧</span>
+              <span class="lang-title">English</span>
+            </button>
+            <button id="btn-lang-ce" class="lang-btn" data-lang="chechen">
+              <span class="lang-flag">🟢</span>
+              <span class="lang-title">Чеченский</span>
+            </button>
+          </div>
+          <div class="setting-hint-text">Интерфейс игры остаётся на русском языке. При смене языка на поле генерируются слова выбранного словаря с независимым прогрессом.</div>
+        </div>
+
         <!-- Еженедельная лига -->
-        <div class="settings-group league-card">
+        <div class="settings-group league-card mt-3">
           <div class="league-header">
             <div class="league-title-left">
               <span id="league-icon" class="league-big-icon">🥇</span>
@@ -339,10 +349,10 @@
           <div id="league-leaderboard-list" class="leaderboard-list mt-3"></div>
         </div>
 
-        <!-- Шкала опыта и ранга CEFR -->
+        <!-- Шкала опыта и ранга -->
         <div class="settings-group xp-profile-card mt-3">
           <div class="xp-rank-header">
-            <span class="xp-rank-title">Ранг английского:</span>
+            <span class="xp-rank-title" id="profile-rank-header-title">Текущий ранг:</span>
             <strong id="profile-cefr-badge" class="cefr-pill">A2 — Pre-Intermediate</strong>
           </div>
           <div class="xp-progress-bar-wrap mt-2">
@@ -363,28 +373,11 @@
           <div id="achievements-list" class="achievements-container"></div>
         </div>
 
-        
-        <!-- Язык слов в игре (Мультиязычность) -->
-        <div class="settings-group mt-3">
-          <h3>Язык слов в игре</h3>
-          <div class="lang-selector-group">
-            <button id="btn-lang-en" class="lang-btn active" data-lang="english">
-              <span class="lang-flag">🇬🇧</span>
-              <span class="lang-title">English</span>
-            </button>
-            <button id="btn-lang-ce" class="lang-btn" data-lang="chechen">
-              <span class="lang-flag">🟢</span>
-              <span class="lang-title">Чеченский</span>
-            </button>
-          </div>
-          <div class="setting-hint-text">Интерфейс игры остаётся на русском языке. При смене языка на поле появляются слова выбранного словаря с независимым прогрессом.</div>
-        </div>
-
         <!-- Настройки -->
         <div class="settings-group mt-3">
           <h3>Параметры</h3>
           <div class="setting-item">
-            <label for="setting-voice">Авто-озвучка слов (Speech)</label>
+            <label for="setting-voice">Авто-озвучка английских слов (Speech)</label>
             <input type="checkbox" id="setting-voice" class="toggle-switch" checked>
           </div>
           <div class="setting-item">
@@ -580,11 +573,11 @@
     </div>
 
   <!-- Подключение скриптов с версионированием -->
-  <script src="data.js?v=46"></script>
-  <script src="storage.js?v=46"></script>
-  <script src="generator.js?v=46"></script>
-  <script src="game.js?v=46"></script>
-  <script src="main.js?v=46"></script>
+  <script src="data.js?v=47"></script>
+  <script src="storage.js?v=47"></script>
+  <script src="generator.js?v=47"></script>
+  <script src="game.js?v=47"></script>
+  <script src="main.js?v=47"></script>
 
     <!-- Модальное окно: Поделиться прогрессом -->
     

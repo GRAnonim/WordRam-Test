@@ -540,7 +540,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const userRankIdx = rankOrder.indexOf(userCefr);
 
     
-    // Обновляем заголовок и текст обучающего баннера под активный язык
+    // Показываем пояснительный баннер сложности чеченского языка ТОЛЬКО в чеченском режиме
+    const vocabCefrInfoCard = document.getElementById("vocab-cefr-info-card");
+    if (vocabCefrInfoCard) {
+      vocabCefrInfoCard.style.display = (currentLang === "chechen") ? "block" : "none";
+    }
+
     const infoTitleEl = document.getElementById("cefr-info-title-text");
     const infoDescEl = document.getElementById("cefr-info-desc-text");
     const levelsListEl = document.getElementById("cefr-levels-list-container");
@@ -1339,6 +1344,12 @@ document.addEventListener("DOMContentLoaded", () => {
     btnCloseShareGame.addEventListener("click", () => hideAllModals());
   }
 
+  const btnShareGameEl = document.getElementById("btn-share-game");
+  if (btnShareGameEl) {
+    btnShareGameEl.addEventListener("click", () => {
+      openShareGameModal();
+    });
+  }
   if (btnShareAppLink) {
     btnShareAppLink.addEventListener("click", () => {
       openShareGameModal();
