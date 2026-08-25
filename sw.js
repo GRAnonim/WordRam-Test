@@ -1,82 +1,46 @@
-/**
- * WordRam - Service Worker (v40)
- * Multilingual Support: English CEFR & Chechen (~1500 words),
- * Complete PWA Offline Cache.
- */
-
-const CACHE_NAME = "wordram-v50";
+const CACHE_NAME = "wordram-v51";
 const ASSETS_TO_CACHE = [
   "./",
-  "./index.html",
-  "./styles.css?v=50",
-  "./data.js?v=50",
+  "./index.html?v=51",
+  "./styles.css?v=51",
+  "./data-ce.js?v=51",
+  "./data-en.js?v=51",
+  "./data.js?v=51",
+  "./storage.js?v=51",
+  "./generator.js?v=51",
+  "./game.js?v=51",
+  "./main.js?v=51",
   "./chechen.json",
-  "./storage.js?v=50",
-  "./generator.js?v=50",
-  "./game.js?v=50",
-  "./main.js?v=50",
-  "./manifest.webmanifest?v=50",
-  "./favicon.svg",
-  "./icon-192.png",
-  "./icon-512.png",
+  "./manifest.webmanifest?v=51",
+  "./favicon.svg?v=51",
+  "./icon-192.png?v=51",
+  "./icon-512.png?v=51",
   "./logo.svg",
   "./og-image.png"
 ];
 
-self.addEventListener("install", (event) => {
-  self.skipWaiting();
-  event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(ASSETS_TO_CACHE);
-    })
+self.addEventListener("install", (e) => {
+  e.waitUntil(
+    caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS_TO_CACHE))
   );
+  self.skipWaiting();
 });
 
-self.addEventListener("activate", (event) => {
-  event.waitUntil(
+self.addEventListener("activate", (e) => {
+  e.waitUntil(
     caches.keys().then((keys) => {
       return Promise.all(
-        keys.map((key) => {
-          if (key !== CACHE_NAME) {
-            console.log("[ServiceWorker] Очистка старого кэша:", key);
-            return caches.delete(key);
-          }
+        keys.map((k) => {
+          if (k !== CACHE_NAME) return caches.delete(k);
         })
       );
-    }).then(() => self.clients.claim())
+    })
   );
+  self.clients.claim();
 });
 
-self.addEventListener("fetch", (event) => {
-  if (event.request.method !== "GET") return;
-
-  event.respondWith(
-    caches.match(event.request).then((cachedResponse) => {
-      if (cachedResponse) {
-        fetch(event.request).then((networkResponse) => {
-          if (networkResponse && networkResponse.status === 200) {
-            caches.open(CACHE_NAME).then((cache) => {
-              cache.put(event.request, networkResponse.clone());
-            });
-          }
-        }).catch(() => {});
-        return cachedResponse;
-      }
-
-      return fetch(event.request).then((networkResponse) => {
-        if (!networkResponse || networkResponse.status !== 200 || networkResponse.type !== "basic") {
-          return networkResponse;
-        }
-
-        const responseToCache = networkResponse.clone();
-        caches.open(CACHE_NAME).then((cache) => {
-          cache.put(event.request, responseToCache);
-        });
-
-        return networkResponse;
-      }).catch(() => {
-        return caches.match("./index.html");
-      });
-    })
+self.addEventListener("fetch", (e) => {
+  e.respondWith(
+    caches.match(e.request).then((res) => res || fetch(e.request))
   );
 });

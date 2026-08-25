@@ -27,26 +27,18 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="WordRam">
 
-  <!-- Open Graph / Telegram / WhatsApp / VK Previews -->
+  <!-- Open Graph / Previews -->
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://granonim.github.io/WordRam/">
   <meta property="og:title" content="WordRam — игра в слова">
   <meta property="og:description" content="Увлекательная игра-головоломка. Находи слова, тренируй мозг и расширяй словарный запас!">
   <meta property="og:image" content="https://granonim.github.io/WordRam/og-image.png">
-  <meta property="og:image:width" content="1200">
-  <meta property="og:image:height" content="630">
 
-  <!-- Twitter Card -->
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="WordRam — игра в слова">
-  <meta name="twitter:description" content="Увлекательная игра-головоломка. Находи слова, тренируй мозг и расширяй словарный запас!">
-  <meta name="twitter:image" content="https://granonim.github.io/WordRam/og-image.png">
-
-  <!-- Icons -->
-  <link rel="manifest" href="manifest.webmanifest?v=50">
-  <link rel="icon" type="image/svg+xml" href="favicon.svg?v=50">
-  <link rel="apple-touch-icon" href="icon-192.png?v=50">
-  <link rel="stylesheet" href="styles.css?v=50">
+  <!-- Icons & Styles -->
+  <link rel="manifest" href="manifest.webmanifest?v=51">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg?v=51">
+  <link rel="apple-touch-icon" href="icon-192.png?v=51">
+  <link rel="stylesheet" href="styles.css?v=51">
 </head>
 <body>
   <div id="app">
@@ -55,7 +47,7 @@
       <div class="header-left">
         <h1 class="app-title">WordRam</h1>
         <span id="current-level-title" class="level-badge">Уровень 1 (4×4)</span>
-        <span id="header-cefr-badge" class="cefr-badge clickable-badge" title="Нажмите для справки">🇬🇧 A2</span>
+        <span id="header-cefr-badge" class="cefr-badge clickable-badge" title="Нажмите для справки">🇬🇧 A1</span>
       </div>
       <div class="header-right">
         <div class="coins-badge clickable-badge" id="btn-show-coins-info" title="Нажмите для справки">
@@ -70,9 +62,9 @@
       <!-- ЭКРАН 1: ИГРА -->
       <section id="screen-game" class="screen-view">
         <div class="game-top-bar">
-          <div id="level-progress-text" class="progress-label">Слов: 0 из 4 (0/16 букв)</div>
+          <div id="level-progress-text" class="progress-label">Найдено 0 / 4</div>
           <div id="level-theme-badge" class="theme-pill-badge">
-            <span id="theme-icon">☕</span> <span id="theme-title">Тема: Еда и кухня</span>
+            <span id="theme-icon">☕</span> <span id="theme-title">Тема: Еда и напитки</span>
           </div>
           <div id="word-slots-container" class="word-slots"></div>
         </div>
@@ -98,7 +90,7 @@
         </div>
       </section>
 
-      <!-- ЭКРАН 2: МОЙ СЛОВАРЬ (С БЛИЦ-ПОВТОРЕНИЕМ) -->
+      <!-- ЭКРАН 2: МОЙ СЛОВАРЬ -->
       <section id="screen-vocab" class="screen-view" style="display: none;">
         <div class="screen-header">
           <h2>Мой словарь</h2>
@@ -117,7 +109,7 @@
         <div class="vocab-toolbar">
           <input type="text" id="vocab-search-input" class="search-input" placeholder="🔍 Поиск по словам и переводу...">
           <div id="vocab-cefr-filters" class="filter-chips">
-            <button class="chip active" data-filter="ALL">Все</button>
+            <button class="chip active" data-filter="ALL">Все (0)</button>
             <button class="chip" data-filter="A1">A1</button>
             <button class="chip" data-filter="A2">A2</button>
             <button class="chip" data-filter="B1">B1</button>
@@ -128,67 +120,62 @@
         </div>
 
         <!-- Список выученных карточек слов -->
-        
-        </div>
-
         <div id="vocab-cards-grid" class="vocab-grid"></div>
       </section>
 
-      <!-- ЭКРАН 3: УРОВНИ И МОНСТРИКИ (В ТОЧНОСТИ КАК В ФИЛВОРДАХ) -->
+      <!-- ЭКРАН 3: КАРТА И УРОВНИ -->
       <section id="screen-levels" class="screen-view stage-screen-view" style="display: none;">
-        <div class="stage-top-row full-width">
-          <div class="stage-app-title">WordRam</div>
-          <div class="bonus-piggy-badge" id="btn-show-bonus-words" title="Копилка эрудита">
-            <span class="piggy-icon">🐷</span>
-            <span id="bonus-words-counter" class="piggy-count">0 🪙</span>
-          </div>
+        <div class="screen-header">
+          <h2>Карта монстриков</h2>
+          <p class="subtitle">Побеждайте монстров и собирайте сундуки</p>
         </div>
 
-        <!-- Центральная колба с монстриком этапа -->
-        <div class="stage-monster-container">
-          <div class="monster-flask-ring">
-            <div id="stage-monster-avatar" class="monster-avatar">🧽</div>
+        <!-- Карточка текущего монстрика -->
+        <div class="stage-boss-card" id="stage-boss-card">
+          <div class="stage-boss-header">
+            <span class="stage-boss-avatar" id="stage-monster-avatar">🌱</span>
+            <div class="stage-boss-info">
+              <h3 id="stage-monster-name" class="stage-boss-name">Лилипут Росток</h3>
+              <div class="stage-boss-sub">Прогресс локации: <strong id="stage-percent-display">0.00%</strong></div>
+            </div>
           </div>
-          <h2 id="stage-monster-name" class="stage-monster-name">Морская губка</h2>
-          <div id="stage-percent-display" class="stage-percent-text">0,00%</div>
-        </div>
-
-        <!-- Линия прогресса этапа с вехами/сундуками -->
-        <div class="stage-milestone-track-wrap full-width">
-          <div class="milestone-track-bg">
-            <div id="stage-milestone-fill" class="milestone-track-fill" style="width: 0%;"></div>
+          <div class="stage-milestones-track mt-3">
+            <div class="stage-milestones-line-bg">
+              <div id="stage-milestone-fill" class="stage-milestones-line-fill" style="width: 0%;"></div>
+            </div>
+            <div class="stage-milestones-points" id="stage-milestones-points"></div>
           </div>
-          <div id="stage-milestones-points" class="stage-milestones-points-row"></div>
-        </div>
-
-        <!-- Большая зеленая 3D кнопка запуска УРОВЕНЬ N -->
-        <div class="stage-play-btn-wrap full-width mt-3">
-          <button id="btn-stage-play-current" class="stage-green-play-btn pulse-glow full-width">
+          <button id="btn-stage-play-current" class="primary-btn full-width mt-3">
             УРОВЕНЬ 1
           </button>
         </div>
 
-        <!-- Переключатель сетки всех уровней -->
-        <div class="stage-toggle-grid-row full-width mt-2">
-          <button id="btn-toggle-levels-grid" class="secondary-btn small-btn">
-            📋 Все уровни со звездами
-          </button>
+        <!-- Свинья-копилка бонусных слов -->
+        <div class="piggy-bank-card mt-3">
+          <div class="piggy-left">
+            <span class="piggy-icon">🐷</span>
+            <div>
+              <strong>Копилка редких слов</strong>
+              <div class="piggy-sub">Найдено бонусных слов: <span id="bonus-words-counter">0 🪙</span></div>
+            </div>
+          </div>
+          <div class="piggy-rate">+5 🪙 / слово</div>
         </div>
 
-        <!-- Раскрывающаяся сетка всех уровней -->
-        <div id="levels-grid-wrapper" class="levels-grid-collapsible mt-2" style="display: none;">
-          <div id="levels-grid" class="levels-scroll-grid"></div>
+        <!-- Сетка всех уровней -->
+        <div class="levels-scroll-wrapper mt-3">
+          <div id="levels-grid" class="levels-grid"></div>
         </div>
       </section>
 
-      <!-- ЭКРАН 4: СОБЫТИЯ (КВЕСТЫ, КОЛЕСО ФОРТУНЫ, СТРИК) -->
+      <!-- ЭКРАН 4: СОБЫТИЯ И КВЕСТЫ -->
       <section id="screen-daily" class="screen-view" style="display: none;">
         <div class="screen-header">
           <h2>События и квесты</h2>
           <p class="subtitle">Выполняйте задания дня и крутите Колесо фортуны</p>
         </div>
 
-        <!-- Слово дня (Ежедневное интеллектуальное открытие) -->
+        <!-- Слово дня -->
         <div class="event-banner-card word-of-day-card" id="card-word-of-day">
           <div class="wod-top-row">
             <span class="wod-badge">💡 Слово дня</span>
@@ -208,45 +195,50 @@
           </button>
         </div>
 
-        <!-- Ежедневные квесты (3 задания) -->
-        <div class="daily-quests-card mt-3">
-          <div class="card-title-row">
-            <h3>🎯 Задания дня</h3>
-            <span id="quests-progress-counter" class="quests-badge">0 / 3</span>
+        <!-- Ежедневные квесты -->
+        <div class="settings-group mt-3">
+          <div class="daily-quests-header">
+            <h3>Задания дня</h3>
+            <span id="quests-progress-counter" class="quests-counter-badge">0 / 3</span>
           </div>
-          <div id="daily-quests-list" class="quests-list"></div>
-          <div id="quests-super-chest" class="super-chest-box mt-3">
-            <span class="chest-icon">🎁</span>
+          <div id="daily-quests-list" class="daily-quests-container mt-2"></div>
+          <div class="super-chest-box mt-3">
+            <div class="chest-icon">🎁</div>
             <div class="chest-info">
               <strong>Сундук мастера</strong>
-              <div class="chest-sub">Выполните все 3 квеста дня (+50 🪙, +100 XP, +1 💡)</div>
+              <div class="chest-sub">Выполните все 3 квеста дня: +50 🪙, +100 XP, +1 💡</div>
             </div>
-            <button id="btn-claim-super-chest" class="primary-btn small-btn" disabled>Забрать</button>
+            <button id="btn-claim-super-chest" class="primary-btn small-btn" disabled>
+              Открыть
+            </button>
           </div>
         </div>
 
-        <!-- Календарь стрика и Заморозка -->
-        <div class="daily-streak-card mt-3">
-          <div class="streak-header-row">
-            <span>Серия: <strong id="daily-streak-count">0</strong> дн. 🔥</span>
-            <span id="freeze-counter-badge" class="freeze-pill">❄️ Защита: 0/2</span>
-          </div>
-          <div id="daily-rewards-calendar" class="rewards-calendar-grid"></div>
-          
-          <div class="freeze-shop-row mt-3">
-            <button id="btn-buy-freeze" class="secondary-btn small-btn full-width">
-              Купить Заморозку стрика ❄️ (60 🪙)
-            </button>
-          </div>
+        <!-- Стрик и Колесо фортуны -->
+        <div class="daily-banner mt-3">
+          <div class="streak-badge-big">🔥 <span id="daily-streak-count">0</span> дн. ударного режима</div>
+          <div class="freeze-info-pill mt-1" id="freeze-counter-badge">❄️ Защита: 0/2</div>
+          <button id="btn-buy-freeze" class="secondary-btn small-btn mt-2">
+            Купить заморозку (60 🪙)
+          </button>
+          <div id="daily-rewards-calendar" class="daily-calendar-grid mt-3"></div>
+        </div>
 
-          <button id="btn-start-daily" class="primary-btn full-width mt-3 pulse-glow">
-            Сыграть ежедневный филворд (+50 🪙, +150 XP)
+        <div class="lucky-wheel-banner mt-3">
+          <div class="wheel-banner-left">
+            <span class="wheel-banner-icon">🎡</span>
+            <div>
+              <strong>Колесо фортуны</strong>
+              <div class="wheel-sub">Крутите каждый день и выигрывайте призы!</div>
+            </div>
+          </div>
+          <button id="btn-open-wheel" class="primary-btn small-btn">
+            Крутить
           </button>
         </div>
       </section>
 
-      <!-- ЭКРАН 5: РЕЙТИНГ, ЛИГИ И ПРОФИЛЬ -->
-            <!-- ЭКРАН 5: РЕЙТИНГ, ЛИГИ И ПРОФИЛЬ -->
+      <!-- ЭКРАН 5: ПРОФИЛЬ И НАСТРОЙКИ -->
       <section id="screen-settings" class="screen-view" style="display: none;">
         <div class="screen-header">
           <h2>Профиль и Настройки</h2>
@@ -274,7 +266,7 @@
           </a>
         </div>
 
-        <!-- Выбор языка слов в игре (Мультиязычность) -->
+        <!-- Выбор языка слов в игре -->
         <div class="settings-group mt-3">
           <h3>Язык слов в игре</h3>
           <div class="lang-selector-group">
@@ -287,7 +279,7 @@
               <span class="lang-title">Чеченский</span>
             </button>
           </div>
-          <div class="setting-hint-text">Интерфейс игры остаётся на русском языке. При смене языка на поле генерируются слова выбранного словаря с независимым прогрессом.</div>
+          <div class="setting-hint-text">Интерфейс игры остаётся на русском языке. При смене языка генерируются слова выбранного словаря с независимым прогрессом.</div>
         </div>
 
         <!-- Еженедельная лига -->
@@ -309,7 +301,7 @@
         <div class="settings-group xp-profile-card mt-3">
           <div class="xp-rank-header">
             <span class="xp-rank-title" id="profile-rank-header-title">Текущий ранг:</span>
-            <strong id="profile-cefr-badge" class="cefr-pill">A2 — Pre-Intermediate</strong>
+            <strong id="profile-cefr-badge" class="cefr-pill">A1</strong>
           </div>
           <div class="xp-progress-bar-wrap mt-2">
             <div id="profile-xp-fill" class="xp-bar-fill" style="width: 40%;"></div>
@@ -346,7 +338,7 @@
           </div>
         </div>
 
-        <!-- Резервное копирование прогресса (Перенос на другое устройство) -->
+        <!-- Резервное копирование прогресса -->
         <div class="settings-group mt-3">
           <h3>Сохранение и перенос прогресса</h3>
           <p class="subtitle" style="text-align:left; margin-bottom:10px; font-size:0.8rem;">
@@ -368,7 +360,7 @@
       </section>
     </main>
 
-    <!-- Нижнее навигационное меню (5 вкладок) -->
+    <!-- Нижняя панель навигации -->
     <nav class="bottom-nav">
       <button id="nav-btn-game" class="nav-item active">
         <span class="nav-icon">🎮</span>
@@ -391,279 +383,218 @@
         <span class="nav-label">Профиль</span>
       </button>
     </nav>
+  </div>
 
-    <!-- МОДАЛЬНОЕ ОКНО: КОЛЕСО ФОРТУНЫ -->
-    <div id="modal-lucky-wheel" class="modal-overlay" style="display: none !important;">
-      <div class="modal-card wheel-modal-card">
-        <button id="btn-close-wheel" class="modal-close-icon" aria-label="Закрыть">✕</button>
-        <h2 class="modal-title">🎡 Колесо Фортуны</h2>
-        <p class="modal-subtitle">Испытайте удачу и заберите ежедневный приз!</p>
-        
-        <div class="wheel-container">
-          <div class="wheel-pointer">▼</div>
-          <canvas id="lucky-wheel-canvas" width="280" height="280"></canvas>
+  <!-- МОДАЛЬНЫЕ ОКНА -->
+
+  <!-- 1. Модальное окно: Колесо Фортуны -->
+  <div id="modal-lucky-wheel" class="modal-overlay" style="display: none;">
+    <div class="modal-card wheel-modal-card">
+      <button id="btn-close-wheel" class="modal-close-icon" aria-label="Закрыть">✕</button>
+      <h2 class="modal-title">🎡 Колесо фортуны</h2>
+      <p class="modal-subtitle">Испытайте удачу и заберите ежедневный приз!</p>
+      <div class="wheel-outer-wrapper">
+        <div class="wheel-pointer">▼</div>
+        <canvas id="wheel-canvas" width="280" height="280"></canvas>
+      </div>
+      <button id="btn-spin-wheel" class="primary-btn modal-action-btn mt-3">
+        Вращать колесо!
+      </button>
+    </div>
+  </div>
+
+  <!-- 2. Модальное окно: Блиц-повторение -->
+  <div id="modal-blitz-quiz" class="modal-overlay" style="display: none;">
+    <div class="modal-card blitz-modal-card">
+      <button id="btn-close-blitz" class="modal-close-icon" aria-label="Закрыть">✕</button>
+      <div class="blitz-header">
+        <h2 class="modal-title">⚡ Блиц-повторение</h2>
+        <span id="blitz-timer-pill" class="blitz-timer">⏱️ 45с</span>
+      </div>
+      <div class="blitz-score-row">
+        <span>Правильно: <strong id="blitz-correct-counter" style="color: #22c55e;">0</strong></span>
+        <span>Опыт: <strong id="blitz-xp-counter" style="color: #fde047;">+0 XP</strong></span>
+      </div>
+      <div class="blitz-card mt-3">
+        <h3 id="blitz-target-word" class="blitz-word">WORD</h3>
+        <span id="blitz-target-ph" class="blitz-ph">[wɜːd]</span>
+      </div>
+      <div id="blitz-options-grid" class="blitz-options mt-3"></div>
+    </div>
+  </div>
+
+  <!-- 3. Модальное окно: Карточка слова / Перевод -->
+  <div id="modal-word-definition" class="modal-overlay" style="display: none;">
+    <div class="modal-card definition-card">
+      <button id="btn-close-definition" class="modal-close-icon" aria-label="Закрыть">✕</button>
+      <div class="def-header">
+        <div id="def-word-ribbon" class="def-word-badge">WORD</div>
+        <button id="btn-speak-definition" class="speak-btn" title="Прослушать">🔊</button>
+      </div>
+      <div id="def-phonetic" class="def-phonetic-text">[wɜːd]</div>
+      <div id="def-translation" class="def-translation-title">Слово</div>
+      <div id="def-meaning" class="def-meaning-text">Единица речи, служащая для выражения мысли.</div>
+      <div id="def-example-box" class="def-example-box mt-2" style="display: none;">
+        <div class="def-section-label">Пример контекста:</div>
+        <p id="def-example-text" class="def-example-content"></p>
+      </div>
+      <button id="btn-ok-definition" class="primary-btn modal-action-btn mt-3">Понятно</button>
+    </div>
+  </div>
+
+  <!-- 4. Модальное окно: Тест уровня -->
+  <div id="modal-placement" class="modal-overlay" style="display: none;">
+    <div class="modal-card placement-modal-card">
+      <button id="btn-close-placement" class="modal-close-icon" aria-label="Закрыть">✕</button>
+      <div class="modal-header">
+        <h2>🎯 Тест словарного запаса</h2>
+      </div>
+      <div id="placement-quiz-step">
+        <div class="quiz-header">
+          <span class="quiz-step-title">Диагностика уровня</span>
+          <span id="quiz-progress-counter" class="quiz-counter">1 / 12</span>
         </div>
-
-        <div id="wheel-result-box" class="wheel-result-badge" style="display: none;"></div>
-
-        <button id="btn-spin-wheel" class="primary-btn full-width mt-3 pulse-glow">
-          Вращать бесплатно!
+        <div class="quiz-progress-bar-wrap">
+          <div id="quiz-progress-fill" class="quiz-progress-bar-fill" style="width: 8.3%;"></div>
+        </div>
+        <div class="quiz-word-card">
+          <h3 id="quiz-word-display" class="quiz-target-word">ДА</h3>
+        </div>
+        <p class="quiz-prompt">Знаете ли вы это слово и его значение?</p>
+        <div class="quiz-actions">
+          <button class="quiz-btn btn-know" data-answer="KNOW">🟢 Знаю</button>
+          <button class="quiz-btn btn-unsure" data-answer="NOT_SURE">🟡 Не уверен</button>
+          <button class="quiz-btn btn-dontknow" data-answer="DONT_KNOW">🔴 Не знаю</button>
+        </div>
+      </div>
+      <div id="placement-result-step" style="display: none;">
+        <div class="result-icon">🎓</div>
+        <h3 class="result-title">Ваш уровень определен!</h3>
+        <div id="placement-result-badge" class="result-badge-pill">A1</div>
+        <h4 id="placement-result-title" class="result-rank-name">Начальный (A1)</h4>
+        <div id="placement-result-desc" class="result-description"></div>
+        <button id="btn-apply-placement" class="primary-btn modal-action-btn mt-3">
+          Применить и начать игру ➔
         </button>
-      </div>
-    </div>
-
-    <!-- МОДАЛЬНОЕ ОКНО: БЛИЦ-ПОВТОРЕНИЕ (FLASHCARDS) -->
-    <div id="modal-blitz-quiz" class="modal-overlay" style="display: none !important;">
-      <div class="modal-card blitz-modal-card">
-        <button id="btn-close-blitz" class="modal-close-icon" aria-label="Закрыть">✕</button>
-        <div class="blitz-header">
-          <span class="blitz-title">⚡ Блиц-повторение</span>
-          <span id="blitz-score-counter" class="blitz-badge">Очки: 0</span>
-        </div>
-        <div class="blitz-progress-wrap mt-2">
-          <div id="blitz-progress-fill" class="blitz-progress-bar-fill" style="width: 10%;"></div>
-        </div>
-
-        <div class="blitz-card-box mt-3">
-          <div class="blitz-word-row">
-            <div id="blitz-target-word" class="blitz-target-word">BEAUTIFUL</div>
-            <button id="btn-speak-blitz" class="speak-btn small-speak">🔊</button>
-          </div>
-          <div id="blitz-target-ph" class="blitz-target-ph">[ˈbjuːtɪfl]</div>
-        </div>
-
-        <p class="blitz-prompt">Выберите правильный перевод:</p>
-        <div id="blitz-options-grid" class="blitz-options-grid"></div>
-      </div>
-    </div>
-
-    <!-- МОДАЛЬНОЕ ОКНО ПЕРЕВОДА И ОПРЕДЕЛЕНИЯ УГАДАННОГО СЛОВА -->
-    <div id="modal-word-definition" class="modal-overlay" style="display: none !important;">
-      <div class="modal-card word-definition-card">
-        <button id="btn-close-definition" class="modal-close-icon" aria-label="Закрыть">✕</button>
-        <div class="ribbon-wrap">
-          <div id="def-word-ribbon" class="word-ribbon-badge">BEAUTIFUL</div>
-          <button id="btn-speak-definition" class="speak-btn" title="Прослушать произношение">🔊</button>
-        </div>
-        <div class="def-content-box">
-          <div id="def-phonetic" class="def-phonetic-text">[ˈbjuːtɪfl]</div>
-          <h3 id="def-translation" class="def-translation-title">Красивый / Прекрасный</h3>
-          <p id="def-meaning" class="def-meaning-text">Обладающий приятной внешностью или радующий глаз.</p>
-          <div id="def-example-box" class="def-example-box">
-            <span class="example-label">Пример:</span>
-            <span id="def-example-text" class="example-text">A beautiful view — Прекрасный вид.</span>
-          </div>
-          <div id="def-collocations-box" class="def-collocations-box mt-2">
-            <span class="collocations-label">Частые сочетания:</span>
-            <div id="def-collocations-list" class="collocations-tags"></div>
-          </div>
-        </div>
-        <button id="btn-ok-definition" class="primary-btn full-width mt-3">Понятно</button>
-      </div>
-    </div>
-
-    <!-- МОДАЛЬНОЕ ОКНО ТЕСТА УРОВНЯ АНГЛИЙСКОГО -->
-    <div id="modal-placement" class="modal-overlay" style="display: none !important;">
-      <div class="modal-card placement-card">
-        <button id="btn-close-placement" class="modal-close-icon" aria-label="Закрыть">✕</button>
-        
-        <div id="placement-quiz-step">
-          <div class="quiz-header">
-            <span class="quiz-step-title">Тест словарного запаса</span>
-            <span id="quiz-progress-counter" class="quiz-counter">1 / 15</span>
-          </div>
-          <div class="quiz-progress-bar-wrap">
-            <div id="quiz-progress-fill" class="quiz-progress-bar-fill" style="width: 6.6%;"></div>
-          </div>
-
-          <div class="quiz-word-card">
-            <h3 id="quiz-word-display" class="quiz-target-word">FAMILY</h3>
-          </div>
-
-          <p class="quiz-prompt">Знаете ли вы это слово и его значение?</p>
-
-          <div class="quiz-actions">
-            <button class="quiz-btn btn-know" data-answer="KNOW">🟢 Знаю</button>
-            <button class="quiz-btn btn-unsure" data-answer="NOT_SURE">🟡 Не уверен</button>
-            <button class="quiz-btn btn-dontknow" data-answer="DONT_KNOW">🔴 Не знаю</button>
-          </div>
-        </div>
-
-        <div id="placement-result-step" style="display: none;">
-          <div class="modal-confetti">🎓</div>
-          <h2 class="modal-title">Ваш уровень определен!</h2>
-          <div id="placement-result-badge" class="result-cefr-badge">A2 — Pre-Intermediate</div>
-          <h3 id="placement-result-title" class="result-cefr-title">Базовый уровень</h3>
-          <p id="placement-result-desc" class="result-cefr-desc">Вам отлично подойдут уровни базовой сложности.</p>
-          <button id="btn-apply-placement" class="primary-btn modal-action-btn mt-3">
-            Применить и начать игру ➔
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Модальное окно победы на уровне -->
-    <div id="modal-victory" class="modal-overlay" style="display: none !important;">
-      <div class="modal-card">
-        <button id="btn-close-modal" class="modal-close-icon" aria-label="Закрыть">✕</button>
-        <div class="modal-confetti">🎉</div>
-        <h2 class="modal-title">Уровень пройден!</h2>
-        <div class="modal-stars">★★★</div>
-        <p class="modal-subtitle">Все буквы сетки раскрыты:</p>
-        <ul id="win-words-list" class="win-words-list"></ul>
-        <div id="win-reward-text" class="win-reward-badge">+20 🪙 монет получено!</div>
-        <button id="btn-next-level" class="primary-btn modal-action-btn">Следующий уровень ➔</button>
       </div>
     </div>
   </div>
 
-    <!-- КАСТОМНОЕ МОДАЛЬНОЕ ОКНО ИНФОРМАЦИИ (ВМЕСТО СИСТЕМНОГО ALERT) -->
-    <div id="modal-info-dialog" class="modal-overlay" style="display: none !important;">
-      <div class="modal-card info-dialog-card">
-        <button id="btn-close-info-dialog" class="modal-close-icon" aria-label="Закрыть">✕</button>
-        <div id="info-dialog-icon" class="info-dialog-icon">ℹ️</div>
-        <h2 id="info-dialog-title" class="modal-title info-dialog-title">Справка</h2>
-        <div id="info-dialog-message" class="info-dialog-message-box"></div>
-        <button id="btn-ok-info-dialog" class="primary-btn full-width mt-3">Понятно</button>
-      </div>
+  <!-- 5. Модальное окно: Победа на уровне -->
+  <div id="modal-victory" class="modal-overlay" style="display: none;">
+    <div class="modal-card victory-card">
+      <button id="btn-close-modal" class="modal-close-icon" aria-label="Закрыть">✕</button>
+      <div class="modal-confetti">🎉</div>
+      <h2 class="modal-title">Уровень пройден!</h2>
+      <div class="modal-stars" id="win-stars">★★★</div>
+      <p class="modal-subtitle">Все слова сетки раскрыты:</p>
+      <ul id="win-words-list" class="win-words-summary-list"></ul>
+      <div id="win-reward-badge" class="reward-tag-badge">+15 🪙 монет получено!</div>
+      <button id="btn-next-level" class="primary-btn full-width mt-3">
+        Следующий уровень ➔
+      </button>
+      <button id="btn-share-win" class="secondary-btn full-width mt-2">
+        🏆 Поделиться победой (+10 🪙)
+      </button>
     </div>
+  </div>
 
-  <!-- Подключение скриптов с версионированием -->
-  <script src="data.js?v=50"></script>
-  <script src="storage.js?v=50"></script>
-  <script src="generator.js?v=50"></script>
-  <script src="game.js?v=50"></script>
-  <script src="main.js?v=50"></script>
-
-    <!-- Модальное окно: Поделиться прогрессом -->
-    
-        <!-- Модальное окно: Поделиться игрой (Пригласить друзей) -->
-    <div id="modal-share-game" class="modal-overlay" style="display: none;">
-      <div class="modal-content modal-card">
-        <button id="btn-close-share-game" class="modal-close-icon" aria-label="Закрыть">✕</button>
-        <div class="modal-header">
-          <h2>📤 Поделиться игрой WordRam</h2>
-        </div>
-        <div class="modal-body text-center">
-          <p class="mb-3" style="color: var(--text-muted); font-size: 0.9rem;">Пригласите друзей в WordRam и получайте бонусные монеты!</p>
-          <div class="share-actions-container mt-3">
-            <button id="btn-game-share-tg" class="social-share-btn tg-btn">
-              <span class="share-icon">💬</span> Telegram
-            </button>
-            <button id="btn-game-share-wa" class="social-share-btn wa-btn">
-              <span class="share-icon">🟢</span> WhatsApp
-            </button>
-            <button id="btn-game-share-copy" class="social-share-btn copy-btn">
-              <span class="share-icon">📋</span> Скопировать
-            </button>
-          </div>
-          <button id="btn-game-share-native" class="primary-btn full-width mt-3">
-            📱 Открыть меню «Поделиться»
+  <!-- 6. Модальное окно: Поделиться игрой (Пригласить друзей) -->
+  <div id="modal-share-game" class="modal-overlay" style="display: none;">
+    <div class="modal-card">
+      <button id="btn-close-share-game" class="modal-close-icon" aria-label="Закрыть">✕</button>
+      <div class="modal-header">
+        <h2>📤 Поделиться игрой WordRam</h2>
+      </div>
+      <div class="modal-body text-center">
+        <p class="mb-3" style="color: var(--text-muted); font-size: 0.9rem;">Пригласите друзей в WordRam и получайте бонусные монеты!</p>
+        <div class="share-actions-container mt-3">
+          <button id="btn-game-share-tg" class="social-share-btn tg-btn">
+            <span class="share-icon">💬</span> Telegram
+          </button>
+          <button id="btn-game-share-wa" class="social-share-btn wa-btn">
+            <span class="share-icon">🟢</span> WhatsApp
+          </button>
+          <button id="btn-game-share-copy" class="social-share-btn copy-btn">
+            <span class="share-icon">📋</span> Скопировать
           </button>
         </div>
+        <button id="btn-game-share-native" class="primary-btn full-width mt-3">
+          📱 Открыть меню «Поделиться»
+        </button>
       </div>
     </div>
+  </div>
 
-    <!-- Модальное окно: Поделиться прогрессом -->
-    <div id="modal-share-progress" class="modal-overlay" style="display: none;">
-      <div class="modal-content modal-card">
-        <button id="btn-close-share-progress" class="modal-close-icon" aria-label="Закрыть">✕</button>
-        <div class="modal-header">
-          <h2>🏆 Мой прогресс в WordRam</h2>
-        </div>
-        <div class="modal-body">
-          <div class="share-preview-card" id="share-preview-card">
-            <div class="share-card-header">
-              <span class="share-card-logo">✨ WordRam</span>
-              <span id="share-card-lang-badge" class="share-card-badge">🟢 Чеченский</span>
-            </div>
-            <div class="share-card-main">
-              <div class="share-mastery-title" id="share-mastery-title">Къонах</div>
-              <div class="share-mastery-desc" id="share-mastery-desc">Благородный муж слова</div>
-              <div class="share-stats-grid mt-3">
-                <div class="share-stat-box">
-                  <span class="stat-num" id="share-stat-words">400 / 1500</span>
-                  <span class="stat-lbl">Слов выучено</span>
-                </div>
-                <div class="share-stat-box">
-                  <span class="stat-num" id="share-stat-level">18</span>
-                  <span class="stat-lbl">Уровень</span>
-                </div>
-                <div class="share-stat-box">
-                  <span class="stat-num" id="share-stat-stars">45 ⭐</span>
-                  <span class="stat-lbl">Звезды</span>
-                </div>
+  <!-- 7. Модальное окно: Поделиться прогрессом -->
+  <div id="modal-share-progress" class="modal-overlay" style="display: none;">
+    <div class="modal-card">
+      <button id="btn-close-share-progress" class="modal-close-icon" aria-label="Закрыть">✕</button>
+      <div class="modal-header">
+        <h2>🏆 Мой прогресс в WordRam</h2>
+      </div>
+      <div class="modal-body">
+        <div class="share-preview-card" id="share-preview-card">
+          <div class="share-card-header">
+            <span class="share-card-logo">✨ WordRam</span>
+            <span id="share-card-lang-badge" class="share-card-badge">🟢 Чеченский</span>
+          </div>
+          <div class="share-card-main">
+            <div class="share-mastery-title" id="share-mastery-title">Къонах</div>
+            <div class="share-mastery-desc" id="share-mastery-desc">Благородный муж слова</div>
+            <div class="share-stats-grid mt-3">
+              <div class="share-stat-box">
+                <span class="stat-num" id="share-stat-words">0 / 1500</span>
+                <span class="stat-lbl">Слов выучено</span>
+              </div>
+              <div class="share-stat-box">
+                <span class="stat-num" id="share-stat-level">1</span>
+                <span class="stat-lbl">Уровень</span>
+              </div>
+              <div class="share-stat-box">
+                <span class="stat-num" id="share-stat-stars">0 ⭐</span>
+                <span class="stat-lbl">Звезды</span>
               </div>
             </div>
           </div>
+        </div>
 
-          <div class="share-actions-container mt-3">
-            <button id="btn-share-tg" class="social-share-btn tg-btn">
-              <span class="share-icon">💬</span> Telegram
-            </button>
-            <button id="btn-share-wa" class="social-share-btn wa-btn">
-              <span class="share-icon">🟢</span> WhatsApp
-            </button>
-            <button id="btn-share-copy" class="social-share-btn copy-btn">
-              <span class="share-icon">📋</span> Скопировать
-            </button>
-          </div>
-          <button id="btn-share-native" class="primary-btn full-width mt-3">
-            📱 Другие соцсети (Меню «Поделиться»)
+        <div class="share-actions-container mt-3">
+          <button id="btn-share-tg" class="social-share-btn tg-btn">
+            <span class="share-icon">💬</span> Telegram
+          </button>
+          <button id="btn-share-wa" class="social-share-btn wa-btn">
+            <span class="share-icon">🟢</span> WhatsApp
+          </button>
+          <button id="btn-share-copy" class="social-share-btn copy-btn">
+            <span class="share-icon">📋</span> Скопировать
           </button>
         </div>
-      </div>
-    </div>/div>
-
-<div id="modal-share-progress" class="modal-overlay" style="display: none;">
-      <div class="modal-content modal-card">
-        <div class="modal-header">
-          <h2>🏆 Мой прогресс в WordRam</h2>
-          <button id="btn-close-share-progress" class="close-btn" aria-label="Закрыть">✕</button>
-        </div>
-        <div class="modal-body">
-          <div class="share-preview-card" id="share-preview-card">
-            <div class="share-card-header">
-              <span class="share-card-logo">✨ WordRam</span>
-              <span id="share-card-lang-badge" class="share-card-badge">🟢 Чеченский</span>
-            </div>
-            <div class="share-card-main">
-              <div class="share-mastery-title" id="share-mastery-title">Къонах</div>
-              <div class="share-mastery-desc" id="share-mastery-desc">Благородный муж слова</div>
-              <div class="share-stats-grid mt-3">
-                <div class="share-stat-box">
-                  <span class="stat-num" id="share-stat-words">400</span>
-                  <span class="stat-lbl">Слов выучено</span>
-                </div>
-                <div class="share-stat-box">
-                  <span class="stat-num" id="share-stat-level">18</span>
-                  <span class="stat-lbl">Уровень</span>
-                </div>
-                <div class="share-stat-box">
-                  <span class="stat-num" id="share-stat-stars">45 ⭐</span>
-                  <span class="stat-lbl">Звезды</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="share-actions-container mt-4">
-            <button id="btn-share-tg" class="social-share-btn tg-btn">
-              <span class="share-icon">💬</span> Telegram
-            </button>
-            <button id="btn-share-wa" class="social-share-btn wa-btn">
-              <span class="share-icon">🟢</span> WhatsApp
-            </button>
-            <button id="btn-share-copy" class="social-share-btn copy-btn">
-              <span class="share-icon">📋</span> Скопировать
-            </button>
-          </div>
-          <button id="btn-share-native" class="primary-btn full-width mt-3">
-            📱 Другие соцсети (Меню «Поделиться»)
-          </button>
-        </div>
+        <button id="btn-share-native" class="primary-btn full-width mt-3">
+          📱 Другие соцсети (Меню «Поделиться»)
+        </button>
       </div>
     </div>
+  </div>
 
+  <!-- 8. Кастомное модальное окно информации -->
+  <div id="modal-info-dialog" class="modal-overlay" style="display: none;">
+    <div class="modal-card info-dialog-card">
+      <button id="btn-close-info-dialog" class="modal-close-icon" aria-label="Закрыть">✕</button>
+      <div id="info-dialog-icon" class="info-dialog-icon">ℹ️</div>
+      <h2 id="info-dialog-title" class="modal-title info-dialog-title">Справка</h2>
+      <div id="info-dialog-message" class="info-dialog-message-box"></div>
+      <button id="btn-ok-info-dialog" class="primary-btn full-width mt-3">Понятно</button>
+    </div>
+  </div>
+
+  <!-- Подключение скриптов -->
+  <script src="data-ce.js?v=51"></script>
+  <script src="data-en.js?v=51"></script>
+  <script src="data.js?v=51"></script>
+  <script src="storage.js?v=51"></script>
+  <script src="generator.js?v=51"></script>
+  <script src="game.js?v=51"></script>
+  <script src="main.js?v=51"></script>
 </body>
 </html>
