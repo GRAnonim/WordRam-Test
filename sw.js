@@ -5,19 +5,19 @@
  * 1 500 слов CEFR, Яндекс Метрика, PWA и оффлайн.
  */
 
-const CACHE_NAME = "wordram-v38";
+const CACHE_NAME = "wordram-v39";
 const ASSETS_TO_CACHE = [
   "./",
   "./index.html",
-  "./styles.css?v=38",
-  "./data.js?v=38",
-  "./storage.js?v=38",
-  "./generator.js?v=38",
-  "./game.js?v=38",
-  "./main.js?v=38",
-  "./manifest.webmanifest?v=38",
+  "./styles.css?v=39",
+  "./data.js?v=39",
+  "./storage.js?v=39",
+  "./generator.js?v=39",
+  "./game.js?v=39",
+  "./main.js?v=39",
+  "./manifest.webmanifest?v=39",
   "./logo.svg",
-  "./favicon.svg?v=38",
+  "./favicon.svg?v=39",
   "./icon-192.png",
   "./icon-512.png",
   "./og-image.png"
