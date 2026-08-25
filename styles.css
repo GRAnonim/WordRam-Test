@@ -2409,3 +2409,122 @@ html, body {
   font-size: 0.82rem;
   line-height: 1.35;
 }
+
+/* ==================================================== */
+/* SHARE PROGRESS MODAL & WORD MASTERY STYLES (v44) */
+/* ==================================================== */
+
+.share-preview-card {
+  background: linear-gradient(135deg, #2d1838, #1c1024);
+  border: 2px solid #a855f7;
+  border-radius: 18px;
+  padding: 18px;
+  box-shadow: 0 8px 24px rgba(168, 85, 247, 0.35);
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.share-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.share-card-logo {
+  font-weight: 900;
+  font-size: 1.1rem;
+  color: #c084fc;
+}
+
+.share-card-badge {
+  background: rgba(168, 85, 247, 0.25);
+  border: 1px solid #a855f7;
+  border-radius: 12px;
+  padding: 3px 8px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #e9d5ff;
+}
+
+.share-mastery-title {
+  font-size: 1.85rem;
+  font-weight: 900;
+  color: #fef08a;
+  text-shadow: 0 0 12px rgba(250, 204, 21, 0.6);
+  margin-bottom: 4px;
+}
+
+.share-mastery-desc {
+  font-size: 0.9rem;
+  color: #d8b4fe;
+  margin-bottom: 14px;
+}
+
+.share-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.share-stat-box {
+  background: rgba(0, 0, 0, 0.35);
+  border-radius: 12px;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.share-stat-box .stat-num {
+  font-size: 1.15rem;
+  font-weight: 900;
+  color: #ffffff;
+}
+
+.share-stat-box .stat-lbl {
+  font-size: 0.68rem;
+  color: #9ca3af;
+  margin-top: 2px;
+}
+
+.share-actions-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px;
+}
+
+.social-share-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px;
+  border-radius: 12px;
+  border: none;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.15s;
+}
+
+.social-share-btn:hover {
+  transform: translateY(-2px);
+}
+
+.social-share-btn.tg-btn {
+  background: #229ED9;
+  color: #ffffff;
+}
+
+.social-share-btn.wa-btn {
+  background: #25D366;
+  color: #ffffff;
+}
+
+.social-share-btn.copy-btn {
+  background: #374151;
+  color: #f3f4f6;
+  border: 1px solid #4b5563;
+}

@@ -629,6 +629,25 @@ class WordRamStorage {
     this.save();
   }
 
+
+  canClaimShareReward() {
+    const todayStr = new Date().toISOString().slice(0, 10);
+    if (!this.state.daily) this.state.daily = {};
+    return this.state.daily.lastShareClaimDate !== todayStr;
+  }
+
+  claimShareReward(amount = 30) {
+    const todayStr = new Date().toISOString().slice(0, 10);
+    if (this.canClaimShareReward()) {
+      this.state.daily.lastShareClaimDate = todayStr;
+      this.addCoins(amount);
+      this.addXp(amount);
+      this.save();
+      return { success: true, rewarded: true, coinsAdded: amount };
+    }
+    return { success: true, rewarded: false };
+  }
+
   resetAll() {
     this.state = this.getDefaultState();
     this.save();

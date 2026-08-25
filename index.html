@@ -43,10 +43,10 @@
   <meta name="twitter:image" content="https://granonim.github.io/WordRam/og-image.png">
 
   <!-- Icons -->
-  <link rel="manifest" href="manifest.webmanifest?v=42">
-  <link rel="icon" type="image/svg+xml" href="favicon.svg?v=42">
-  <link rel="apple-touch-icon" href="icon-192.png?v=42">
-  <link rel="stylesheet" href="styles.css?v=42">
+  <link rel="manifest" href="manifest.webmanifest?v=44">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg?v=44">
+  <link rel="apple-touch-icon" href="icon-192.png?v=44">
+  <link rel="stylesheet" href="styles.css?v=44">
 </head>
 <body>
   <div id="app">
@@ -251,7 +251,7 @@
         <!-- Быстрые действия: Поделиться и Поддержка -->
         <div class="community-highlight-card">
           <button id="btn-share-game" class="share-highlight-btn pulse-glow">
-            <span class="btn-main-label">📤 Поделиться игрой с другом</span>
+            <span class="btn-main-label">🏆 Поделиться своим прогрессом</span>
             <span class="btn-bonus-chip">+30 🪙</span>
           </button>
           <a href="https://t.me/WordRamFeedbackBot" target="_blank" rel="noopener" class="tg-feedback-link-btn">
@@ -522,10 +522,62 @@
     </div>
 
   <!-- Подключение скриптов с версионированием -->
-  <script src="data.js?v=42"></script>
-  <script src="storage.js?v=42"></script>
-  <script src="generator.js?v=42"></script>
-  <script src="game.js?v=42"></script>
-  <script src="main.js?v=42"></script>
+  <script src="data.js?v=44"></script>
+  <script src="storage.js?v=44"></script>
+  <script src="generator.js?v=44"></script>
+  <script src="game.js?v=44"></script>
+  <script src="main.js?v=44"></script>
+
+    <!-- Модальное окно: Поделиться прогрессом -->
+    <div id="modal-share-progress" class="modal-backdrop" style="display: none;">
+      <div class="modal-content modal-card">
+        <div class="modal-header">
+          <h2>🏆 Мой прогресс в WordRam</h2>
+          <button id="btn-close-share-progress" class="close-btn" aria-label="Закрыть">✕</button>
+        </div>
+        <div class="modal-body">
+          <div class="share-preview-card" id="share-preview-card">
+            <div class="share-card-header">
+              <span class="share-card-logo">✨ WordRam</span>
+              <span id="share-card-lang-badge" class="share-card-badge">🟢 Чеченский</span>
+            </div>
+            <div class="share-card-main">
+              <div class="share-mastery-title" id="share-mastery-title">Къонах</div>
+              <div class="share-mastery-desc" id="share-mastery-desc">Благородный муж слова</div>
+              <div class="share-stats-grid mt-3">
+                <div class="share-stat-box">
+                  <span class="stat-num" id="share-stat-words">400</span>
+                  <span class="stat-lbl">Слов выучено</span>
+                </div>
+                <div class="share-stat-box">
+                  <span class="stat-num" id="share-stat-level">18</span>
+                  <span class="stat-lbl">Уровень</span>
+                </div>
+                <div class="share-stat-box">
+                  <span class="stat-num" id="share-stat-stars">45 ⭐</span>
+                  <span class="stat-lbl">Звезды</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="share-actions-container mt-4">
+            <button id="btn-share-tg" class="social-share-btn tg-btn">
+              <span class="share-icon">💬</span> Telegram
+            </button>
+            <button id="btn-share-wa" class="social-share-btn wa-btn">
+              <span class="share-icon">🟢</span> WhatsApp
+            </button>
+            <button id="btn-share-copy" class="social-share-btn copy-btn">
+              <span class="share-icon">📋</span> Скопировать
+            </button>
+          </div>
+          <button id="btn-share-native" class="primary-btn full-width mt-3">
+            📱 Другие соцсети (Меню «Поделиться»)
+          </button>
+        </div>
+      </div>
+    </div>
+
 </body>
 </html>

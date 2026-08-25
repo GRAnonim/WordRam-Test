@@ -1129,7 +1129,11 @@ document.addEventListener("DOMContentLoaded", () => {
   // Кнопка: Поделиться игрой с другом (+30 монет)
   const btnShareGame = document.getElementById("btn-share-game");
   if (btnShareGame) {
-    btnShareGame.addEventListener("click", async () => {
+    btnShareGame.addEventListener("click", () => {
+      openShareProgressModal();
+    });
+  }
+  const oldUnusedShare = async () => {
       const shareData = {
         title: "WordRam — Увлекательные филворды",
         text: "Играй в WordRam: филворды со змейками, английский и чеченский языки, квесты и лиги!",
@@ -1157,6 +1161,122 @@ document.addEventListener("DOMContentLoaded", () => {
       game.updateCoinsDisplay();
       updateProfileUI();
       game.showFloatingMessage("🎉 Спасибо, что делитесь WordRam! Награда: +30 🪙 получена!", "bonus");
+    });
+  }
+
+
+  // ----------------------------------------------------
+  // Модальное окно: Поделиться прогрессом (v44)
+  // ----------------------------------------------------
+  const shareProgressModal = document.getElementById("modal-share-progress");
+  const btnCloseShareProgress = document.getElementById("btn-close-share-progress");
+  const shareCardLangBadge = document.getElementById("share-card-lang-badge");
+  const shareMasteryTitleEl = document.getElementById("share-mastery-title");
+  const shareMasteryDescEl = document.getElementById("share-mastery-desc");
+  const shareStatWordsEl = document.getElementById("share-stat-words");
+  const shareStatLevelEl = document.getElementById("share-stat-level");
+  const shareStatStarsEl = document.getElementById("share-stat-stars");
+
+  const btnShareTg = document.getElementById("btn-share-tg");
+  const btnShareWa = document.getElementById("btn-share-wa");
+  const btnShareCopy = document.getElementById("btn-share-copy");
+  const btnShareNative = document.getElementById("btn-share-native");
+
+  function openShareProgressModal(customContext = null) {
+    const currentLang = storage.getLanguage();
+    const wordsCount = storage.getCollectedWordsCount(currentLang);
+    const mastery = WordRamData.getWordMastery(wordsCount, currentLang);
+    const curLvl = storage.getCurrentLevel(currentLang);
+    
+    // Подсчет звезд
+    const starsObj = storage.getLanguageProgress(currentLang).levelStars || {};
+    const totalStars = Object.values(starsObj).reduce((a, b) => a + b, 0);
+
+    if (shareCardLangBadge) {
+      shareCardLangBadge.textContent = currentLang === "chechen" ? "🟢 Чеченский язык" : "🇬🇧 English";
+    }
+    if (shareMasteryTitleEl) shareMasteryTitleEl.textContent = `«${mastery.title}»`;
+    if (shareMasteryDescEl) shareMasteryDescEl.textContent = mastery.desc;
+    if (shareStatWordsEl) shareStatWordsEl.textContent = `${wordsCount} / 1500`;
+    if (shareStatLevelEl) shareStatLevelEl.textContent = curLvl;
+    if (shareStatStarsEl) shareStatStarsEl.textContent = `${totalStars} ⭐`;
+
+    showModal(shareProgressModal);
+  }
+
+  function getShareTextPayload() {
+    const currentLang = storage.getLanguage();
+    const wordsCount = storage.getCollectedWordsCount(currentLang);
+    const mastery = WordRamData.getWordMastery(wordsCount, currentLang);
+    const curLvl = storage.getCurrentLevel(currentLang);
+    const langName = currentLang === "chechen" ? "чеченском" : "английском";
+
+    return `🏆 Мой титул в WordRam: «${mastery.title}» (${mastery.desc})! Выучено слов: ${wordsCount}/1500 на ${langName} языке (Уровень ${curLvl}). Сыграй со мной: https://granonim.github.io/WordRam/`;
+  }
+
+  function onShareActionExecuted() {
+    const res = storage.claimShareReward(30);
+    if (res.rewarded) {
+      game.playSound("win");
+      game.vibrate([20, 40, 20]);
+      game.updateCoinsDisplay();
+      updateProfileUI();
+      game.showFloatingMessage("🎉 Спасибо, что делитесь! Награда: +30 🪙 монет и +30 XP получена!", "bonus");
+    }
+  }
+
+  if (btnCloseShareProgress) {
+    btnCloseShareProgress.addEventListener("click", () => hideAllModals());
+  }
+
+  if (btnShareTg) {
+    btnShareTg.addEventListener("click", () => {
+      const textPayload = encodeURIComponent(getShareTextPayload());
+      window.open(`https://t.me/share/url?url=https://granonim.github.io/WordRam/&text=${textPayload}`, "_blank");
+      onShareActionExecuted();
+    });
+  }
+
+  if (btnShareWa) {
+    btnShareWa.addEventListener("click", () => {
+      const textPayload = encodeURIComponent(getShareTextPayload());
+      window.open(`https://api.whatsapp.com/send?text=${textPayload}`, "_blank");
+      onShareActionExecuted();
+    });
+  }
+
+  if (btnShareCopy) {
+    btnShareCopy.addEventListener("click", async () => {
+      try {
+        if (navigator.clipboard) {
+          await navigator.clipboard.writeText(getShareTextPayload());
+          game.showFloatingMessage("📋 Текст и ссылка скопированы в буфер обмена!", "info");
+          onShareActionExecuted();
+        }
+      } catch (e) {}
+    });
+  }
+
+  if (btnShareNative) {
+    btnShareNative.addEventListener("click", async () => {
+      try {
+        if (navigator.share) {
+          await navigator.share({
+            title: "WordRam",
+            text: getShareTextPayload(),
+            url: "https://granonim.github.io/WordRam/"
+          });
+          onShareActionExecuted();
+        } else if (navigator.clipboard) {
+          await navigator.clipboard.writeText(getShareTextPayload());
+          game.showFloatingMessage("📋 Ссылка скопирована!", "info");
+          onShareActionExecuted();
+        }
+      } catch (err) {
+        if (err.name !== "AbortError") {
+          console.warn("Share error:", err);
+        }
+      }
     });
   }
 
