@@ -1133,38 +1133,6 @@ document.addEventListener("DOMContentLoaded", () => {
       openShareProgressModal();
     });
   }
-  const oldUnusedShare = async () => {
-      const shareData = {
-        title: "WordRam — Увлекательные филворды",
-        text: "Играй в WordRam: филворды со змейками, английский и чеченский языки, квесты и лиги!",
-        url: "https://granonim.github.io/WordRam/"
-      };
-
-      try {
-        if (navigator.share) {
-          await navigator.share(shareData);
-        } else if (navigator.clipboard) {
-          await navigator.clipboard.writeText(shareData.url);
-          game.showFloatingMessage("🔗 Ссылка на игру скопирована в буфер обмена!", "info");
-        }
-      } catch (err) {
-        if (err.name !== "AbortError") {
-          console.warn("Share error:", err);
-        }
-      }
-
-      // Награждаем игрока 30 монетами
-      storage.addCoins(30);
-      storage.addXp(30);
-      game.playSound("win");
-      game.vibrate([20, 40, 20]);
-      game.updateCoinsDisplay();
-      updateProfileUI();
-      game.showFloatingMessage("🎉 Спасибо, что делитесь WordRam! Награда: +30 🪙 получена!", "bonus");
-    });
-  }
-
-
   // ----------------------------------------------------
   // Модальное окно: Поделиться прогрессом (v44)
   // ----------------------------------------------------

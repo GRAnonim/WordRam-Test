@@ -71959,6 +71959,7 @@ const WordRamData = {
   }
 };
 
+
 WordRamData.WordRamTokenizer = WordRamTokenizer;
 WordRamData.WordRamData = WordRamData;
 
@@ -71966,7 +71967,10 @@ if (typeof window !== "undefined") {
   window.WordRamData = WordRamData;
   window.WordRamTokenizer = WordRamTokenizer;
 }
-
+if (typeof globalThis !== "undefined") {
+  globalThis.WordRamData = WordRamData;
+  globalThis.WordRamTokenizer = WordRamTokenizer;
+}
 if (typeof module !== "undefined" && module.exports) {
   module.exports = WordRamData;
 }

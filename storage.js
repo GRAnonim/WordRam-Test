@@ -654,6 +654,13 @@ class WordRamStorage {
   }
 }
 
+
+if (typeof window !== "undefined") {
+  window.WordRamStorage = WordRamStorage;
+}
+if (typeof globalThis !== "undefined") {
+  globalThis.WordRamStorage = WordRamStorage;
+}
 if (typeof module !== "undefined" && module.exports) {
   module.exports = WordRamStorage;
 }

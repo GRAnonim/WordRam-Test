@@ -327,6 +327,13 @@ class WordRamGenerator {
   }
 }
 
+
+if (typeof window !== "undefined") {
+  window.WordRamGenerator = WordRamGenerator;
+}
+if (typeof globalThis !== "undefined") {
+  globalThis.WordRamGenerator = WordRamGenerator;
+}
 if (typeof module !== "undefined" && module.exports) {
   module.exports = WordRamGenerator;
 }

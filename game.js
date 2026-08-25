@@ -988,6 +988,13 @@ class WordRamGame {
   }
 }
 
+
+if (typeof window !== "undefined") {
+  window.WordRamGame = WordRamGame;
+}
+if (typeof globalThis !== "undefined") {
+  globalThis.WordRamGame = WordRamGame;
+}
 if (typeof module !== "undefined" && module.exports) {
   module.exports = WordRamGame;
 }
