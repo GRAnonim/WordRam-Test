@@ -171,7 +171,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     if (winRewardText) {
-      winRewardText.textContent = `+${summary.rewardCoins} 🪙 монет получено!`;
+      const coins = summary.coinsEarned || summary.rewardCoins || 15;
+      winRewardText.textContent = `+${coins} 🪙 монет получено!`;
     }
 
     showModal(winModal);
@@ -537,6 +538,72 @@ document.addEventListener("DOMContentLoaded", () => {
     const userCefr = storage.getEnglishLevel();
     const rankOrder = ["A1", "A2", "B1", "B2", "C1"];
     const userRankIdx = rankOrder.indexOf(userCefr);
+
+    
+    // Обновляем заголовок и текст обучающего баннера под активный язык
+    const infoTitleEl = document.getElementById("cefr-info-title-text");
+    const infoDescEl = document.getElementById("cefr-info-desc-text");
+    const levelsListEl = document.getElementById("cefr-levels-list-container");
+
+    if (currentLang === "chechen") {
+      if (infoTitleEl) infoTitleEl.textContent = "📚 Шкала сложности чеченского языка в WordRam";
+      if (infoDescEl) infoDescEl.textContent = "Словарь чеченского языка (1500 аутентичных слов) структурирован по 6 игровым уровням сложности:";
+      if (levelsListEl) {
+        levelsListEl.innerHTML = `
+          <div class="cefr-level-item">
+            <span class="cefr-lvl-pill A1">A1</span>
+            <div class="cefr-level-text"><strong>Начальный (300 слов)</strong> — Семья, человек, дом, еда, животные, природа, базовые действия и числа.</div>
+          </div>
+          <div class="cefr-level-item">
+            <span class="cefr-lvl-pill A2">A2</span>
+            <div class="cefr-level-text"><strong>Базовый (300 слов)</strong> — Город, транспорт, профессии, эмоции, покупки, время, быт и труд.</div>
+          </div>
+          <div class="cefr-level-item">
+            <span class="cefr-lvl-pill B1">B1</span>
+            <div class="cefr-level-text"><strong>Средний (300 слов)</strong> — Культура, традиции, этикет (гIиллакх), честь (нохчалла), образование, ремесла.</div>
+          </div>
+          <div class="cefr-level-item">
+            <span class="cefr-lvl-pill B2">B2</span>
+            <div class="cefr-level-text"><strong>Продвинутый (250 слов)</strong> — Общественная жизнь, право, наука, литература, абстрактные понятия.</div>
+          </div>
+          <div class="cefr-level-item">
+            <span class="cefr-lvl-pill C1">C1</span>
+            <div class="cefr-level-text"><strong>Высокий (200 слов)</strong> — Литературная речь, ораторское мастерство, философия, летописи и история.</div>
+          </div>
+          <div class="cefr-level-item">
+            <span class="cefr-lvl-pill C2">C2</span>
+            <div class="cefr-level-text"><strong>Мастер слова (150 слов)</strong> — Сокровищница языка: редкая эпическая, традиционная и академическая лексика.</div>
+          </div>
+        `;
+      }
+    } else {
+      if (infoTitleEl) infoTitleEl.textContent = "📚 Общеевропейская шкала CEFR (English)";
+      if (infoDescEl) infoDescEl.textContent = "Словарь английского языка разбит по уровням международной системы CEFR:";
+      if (levelsListEl) {
+        levelsListEl.innerHTML = `
+          <div class="cefr-level-item">
+            <span class="cefr-lvl-pill A1">A1</span>
+            <div class="cefr-level-text"><strong>Beginner (314 слов)</strong> — Базовая повседневная лексика и простые фразы.</div>
+          </div>
+          <div class="cefr-level-item">
+            <span class="cefr-lvl-pill A2">A2</span>
+            <div class="cefr-level-text"><strong>Pre-Intermediate (659 слов)</strong> — Повседневное общение, работа, поездки и покупки.</div>
+          </div>
+          <div class="cefr-level-item">
+            <span class="cefr-lvl-pill B1">B1</span>
+            <div class="cefr-level-text"><strong>Intermediate (331 слово)</strong> — Уверенная речь, обсуждение абстрактных тем и планов.</div>
+          </div>
+          <div class="cefr-level-item">
+            <span class="cefr-lvl-pill B2">B2</span>
+            <div class="cefr-level-text"><strong>Upper-Intermediate (76 слов)</strong> — Сложные тексты, профессиональная и тематическая лексика.</div>
+          </div>
+          <div class="cefr-level-item">
+            <span class="cefr-lvl-pill C1">C1</span>
+            <div class="cefr-level-text"><strong>Advanced (120 слов)</strong> — Академический язык, беглая речь на уровне носителя.</div>
+          </div>
+        `;
+      }
+    }
 
     if (vocabStatsSubtitle) {
       vocabStatsSubtitle.textContent = "Выучено слов: " + collectedWordsList.length + " из 1500";
@@ -1237,6 +1304,93 @@ document.addEventListener("DOMContentLoaded", () => {
           onShareActionExecuted();
         } else if (navigator.clipboard) {
           await navigator.clipboard.writeText(getShareTextPayload());
+          game.showFloatingMessage("📋 Ссылка скопирована!", "info");
+          onShareActionExecuted();
+        }
+      } catch (err) {
+        if (err.name !== "AbortError") {
+          console.warn("Share error:", err);
+        }
+      }
+    });
+  }
+
+
+  // Модальные окна шеринга
+  const modalShareGame = document.getElementById("modal-share-game");
+  const btnCloseShareGame = document.getElementById("btn-close-share-game");
+  const btnShareAppLink = document.getElementById("btn-share-app-link");
+  const btnShareProgressCard = document.getElementById("btn-share-progress-card");
+
+  const btnGameShareTg = document.getElementById("btn-game-share-tg");
+  const btnGameShareWa = document.getElementById("btn-game-share-wa");
+  const btnGameShareCopy = document.getElementById("btn-game-share-copy");
+  const btnGameShareNative = document.getElementById("btn-game-share-native");
+
+  function getGameInviteText() {
+    return "WordRam — Увлекательная игра в слова (Английский и Чеченский языки)! Собирай слова-змейки, изучай словари и соревнуйся в лигах! Играй онлайн: https://granonim.github.io/WordRam/";
+  }
+
+  function openShareGameModal() {
+    showModal(modalShareGame);
+  }
+
+  if (btnCloseShareGame) {
+    btnCloseShareGame.addEventListener("click", () => hideAllModals());
+  }
+
+  if (btnShareAppLink) {
+    btnShareAppLink.addEventListener("click", () => {
+      openShareGameModal();
+    });
+  }
+
+  if (btnShareProgressCard) {
+    btnShareProgressCard.addEventListener("click", () => {
+      openShareProgressModal();
+    });
+  }
+
+  if (btnGameShareTg) {
+    btnGameShareTg.addEventListener("click", () => {
+      const textPayload = encodeURIComponent(getGameInviteText());
+      window.open(`https://t.me/share/url?url=https://granonim.github.io/WordRam/&text=${textPayload}`, "_blank");
+      onShareActionExecuted();
+    });
+  }
+
+  if (btnGameShareWa) {
+    btnGameShareWa.addEventListener("click", () => {
+      const textPayload = encodeURIComponent(getGameInviteText());
+      window.open(`https://api.whatsapp.com/send?text=${textPayload}`, "_blank");
+      onShareActionExecuted();
+    });
+  }
+
+  if (btnGameShareCopy) {
+    btnGameShareCopy.addEventListener("click", async () => {
+      try {
+        if (navigator.clipboard) {
+          await navigator.clipboard.writeText(getGameInviteText());
+          game.showFloatingMessage("📋 Ссылка и приглашение скопированы!", "info");
+          onShareActionExecuted();
+        }
+      } catch (e) {}
+    });
+  }
+
+  if (btnGameShareNative) {
+    btnGameShareNative.addEventListener("click", async () => {
+      try {
+        if (navigator.share) {
+          await navigator.share({
+            title: "WordRam",
+            text: getGameInviteText(),
+            url: "https://granonim.github.io/WordRam/"
+          });
+          onShareActionExecuted();
+        } else if (navigator.clipboard) {
+          await navigator.clipboard.writeText(getGameInviteText());
           game.showFloatingMessage("📋 Ссылка скопирована!", "info");
           onShareActionExecuted();
         }

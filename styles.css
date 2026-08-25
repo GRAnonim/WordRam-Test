@@ -2528,3 +2528,99 @@ html, body {
   color: #f3f4f6;
   border: 1px solid #4b5563;
 }
+
+
+/* CEFR Breakdown list in Vocab screen */
+.cefr-info-banner {
+  background: rgba(168, 85, 247, 0.14);
+  border: 2px solid rgba(168, 85, 247, 0.4);
+  border-radius: 16px;
+  padding: 14px;
+  margin-bottom: 14px;
+}
+
+.cefr-info-banner-title {
+  font-size: 1rem;
+  font-weight: 800;
+  color: #fef08a;
+  margin-bottom: 6px;
+}
+
+.cefr-info-intro {
+  font-size: 0.82rem;
+  color: #e9d5ff;
+  line-height: 1.4;
+  margin-bottom: 8px;
+}
+
+.cefr-level-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.cefr-level-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  background: rgba(0, 0, 0, 0.25);
+  border-radius: 10px;
+  padding: 8px 10px;
+}
+
+.cefr-lvl-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 32px;
+  height: 24px;
+  border-radius: 8px;
+  font-weight: 900;
+  font-size: 0.75rem;
+  color: #ffffff;
+  flex-shrink: 0;
+}
+
+.cefr-lvl-pill.A1 { background: #22c55e; }
+.cefr-lvl-pill.A2 { background: #3b82f6; }
+.cefr-lvl-pill.B1 { background: #f59e0b; }
+.cefr-lvl-pill.B2 { background: #ec4899; }
+.cefr-lvl-pill.C1 { background: #ef4444; }
+.cefr-lvl-pill.C2 { background: #8b5cf6; }
+
+.cefr-level-text {
+  font-size: 0.78rem;
+  color: #f3f4f6;
+  line-height: 1.35;
+}
+
+.cefr-level-text strong {
+  color: #ffffff;
+}
+
+.secondary-share-btn {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(147, 51, 234, 0.3)) !important;
+  border: 1px solid rgba(147, 51, 234, 0.5) !important;
+  margin-top: 8px;
+}
+
+
+/* Found word cells: cozy, vibrant pastel gradient cards */
+.grid-cell.cell-found,
+.grid-cell.found {
+  color: #ffffff !important;
+  font-weight: 900 !important;
+  border-width: 2px !important;
+  border-style: solid !important;
+  border-radius: 13px !important;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3), inset 0 1px 1px rgba(255, 255, 255, 0.4) !important;
+  transform: scale(0.97);
+  transition: all 0.25s ease;
+  z-index: 3;
+}
+
+.word-slot.found {
+  border-radius: 12px;
+  font-weight: 800;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}

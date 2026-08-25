@@ -39,16 +39,16 @@ class WordRamGame {
 
     // Палитра цветов для найденных слов
     this.wordColors = [
-      { bg: "rgba(168, 85, 247, 0.25)", border: "#a855f7", text: "#e9d5ff" },
-      { bg: "rgba(59, 130, 246, 0.25)", border: "#3b82f6", text: "#bfdbfe" },
-      { bg: "rgba(34, 197, 94, 0.25)", border: "#22c55e", text: "#bbf7d0" },
-      { bg: "rgba(245, 158, 11, 0.25)", border: "#f59e0b", text: "#fef3c7" },
-      { bg: "rgba(236, 72, 153, 0.25)", border: "#ec4899", text: "#fbcfe8" },
-      { bg: "rgba(14, 165, 233, 0.25)", border: "#0ea5e9", text: "#bae6fd" },
-      { bg: "rgba(139, 92, 246, 0.25)", border: "#8b5cf6", text: "#ddd6fe" },
-      { bg: "rgba(20, 184, 166, 0.25)", border: "#14b8a6", text: "#ccfbf1" },
-      { bg: "rgba(234, 179, 8, 0.25)", border: "#eab308", text: "#fef08a" },
-      { bg: "rgba(244, 63, 94, 0.25)", border: "#f43f5e", text: "#fecdd3" }
+      { bg: "linear-gradient(135deg, #10b981, #059669)", border: "#34d399", text: "#ffffff" },
+      { bg: "linear-gradient(135deg, #8b5cf6, #7c3aed)", border: "#a78bfa", text: "#ffffff" },
+      { bg: "linear-gradient(135deg, #f59e0b, #d97706)", border: "#fbbf24", text: "#ffffff" },
+      { bg: "linear-gradient(135deg, #0ea5e9, #0284c7)", border: "#38bdf8", text: "#ffffff" },
+      { bg: "linear-gradient(135deg, #f43f5e, #e11d48)", border: "#fb7185", text: "#ffffff" },
+      { bg: "linear-gradient(135deg, #14b8a6, #0d9488)", border: "#2dd4bf", text: "#ffffff" },
+      { bg: "linear-gradient(135deg, #6366f1, #4f46e5)", border: "#818cf8", text: "#ffffff" },
+      { bg: "linear-gradient(135deg, #f97316, #ea580c)", border: "#fb923c", text: "#ffffff" },
+      { bg: "linear-gradient(135deg, #ec4899, #db2777)", border: "#f472b6", text: "#ffffff" },
+      { bg: "linear-gradient(135deg, #06b6d4, #0891b2)", border: "#22d3ee", text: "#ffffff" }
     ];
 
     // Звуковой синтез Web Audio API
@@ -75,8 +75,9 @@ class WordRamGame {
   }
 
   ensureAudioUnlocked() {
-    if (this.audioCtx && this.audioCtx.state === "suspended") {
-      this.audioCtx.resume();
+    if (!this.audioCtx) this.initAudio();
+    if (this.audioCtx && this.audioCtx.state !== "running") {
+      this.audioCtx.resume().catch(() => {});
     }
   }
 
@@ -121,48 +122,49 @@ class WordRamGame {
   }
 
   playSound(type) {
-    if (!this.storage.getSetting("soundEnabled")) return;
-    if (!this.audioCtx) return;
+    if (this.storage.getSetting("soundEnabled") === false) return;
     this.ensureAudioUnlocked();
+    if (!this.audioCtx) return;
 
     const now = this.audioCtx.currentTime;
 
     if (type === "drag") {
-      // Мягкий, кристальный щелчок маримбы при выборе буквы
+      // Сочный маримба-щелчок при свайпе букв
       const osc = this.audioCtx.createOscillator();
       const gain = this.audioCtx.createGain();
-      const baseFreq = 340 + (Math.min(this.selectedPath.length, 10) * 35);
+      const baseFreq = 380 + (Math.min(this.selectedPath.length, 10) * 40);
       osc.type = "sine";
       osc.frequency.setValueAtTime(baseFreq, now);
-      osc.frequency.exponentialRampToValueAtTime(baseFreq * 1.05, now + 0.05);
+      osc.frequency.exponentialRampToValueAtTime(baseFreq * 1.08, now + 0.05);
 
-      gain.gain.setValueAtTime(0.035, now);
-      gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.05);
+      gain.gain.setValueAtTime(0.001, now);
+      gain.gain.linearRampToValueAtTime(0.12, now + 0.005);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.06);
 
       osc.connect(gain);
       gain.connect(this.audioCtx.destination);
       osc.start(now);
-      osc.stop(now + 0.05);
+      osc.stop(now + 0.06);
     } else if (type === "found") {
-      // Гармоничный искрящийся мажорный аккорд (C5 - E5 - G5 - C6) с мягкой атакой
+      // Яркий радостный мажорный аккорд (C5 - E5 - G5 - C6)
       const notes = [523.25, 659.25, 783.99, 1046.50];
       notes.forEach((freq, idx) => {
         const osc = this.audioCtx.createOscillator();
         const gain = this.audioCtx.createGain();
         osc.type = "sine";
-        osc.frequency.setValueAtTime(freq, now + idx * 0.055);
+        osc.frequency.setValueAtTime(freq, now + idx * 0.05);
 
-        gain.gain.setValueAtTime(0.0001, now + idx * 0.055);
-        gain.gain.linearRampToValueAtTime(0.08, now + idx * 0.055 + 0.015);
-        gain.gain.exponentialRampToValueAtTime(0.0001, now + idx * 0.055 + 0.35);
+        gain.gain.setValueAtTime(0.001, now + idx * 0.05);
+        gain.gain.linearRampToValueAtTime(0.18, now + idx * 0.05 + 0.01);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + idx * 0.05 + 0.4);
 
         osc.connect(gain);
         gain.connect(this.audioCtx.destination);
-        osc.start(now + idx * 0.055);
-        osc.stop(now + idx * 0.055 + 0.35);
+        osc.start(now + idx * 0.05);
+        osc.stop(now + idx * 0.05 + 0.4);
       });
     } else if (type === "combo") {
-      // Изящный колокольчик-арпеджио
+      // Звонкий праздничный перезвон
       const chord = [587.33, 739.99, 880.00, 1174.66];
       chord.forEach((freq, idx) => {
         const osc = this.audioCtx.createOscillator();
@@ -170,8 +172,8 @@ class WordRamGame {
         osc.type = "sine";
         osc.frequency.setValueAtTime(freq, now + idx * 0.04);
 
-        gain.gain.setValueAtTime(0.0001, now + idx * 0.04);
-        gain.gain.linearRampToValueAtTime(0.09, now + idx * 0.04 + 0.01);
+        gain.gain.setValueAtTime(0.001, now + idx * 0.04);
+        gain.gain.linearRampToValueAtTime(0.20, now + idx * 0.04 + 0.01);
         gain.gain.exponentialRampToValueAtTime(0.0001, now + idx * 0.04 + 0.45);
 
         osc.connect(gain);
@@ -180,54 +182,55 @@ class WordRamGame {
         osc.stop(now + idx * 0.04 + 0.45);
       });
     } else if (type === "win") {
-      // Праздничный теплый победный аккорд
+      // Торжественный победный аккорд
       const victoryChords = [523.25, 659.25, 783.99, 1046.50, 1318.51];
       victoryChords.forEach((freq, idx) => {
         const osc = this.audioCtx.createOscillator();
         const gain = this.audioCtx.createGain();
         osc.type = "sine";
-        osc.frequency.setValueAtTime(freq, now + idx * 0.08);
+        osc.frequency.setValueAtTime(freq, now + idx * 0.07);
 
-        gain.gain.setValueAtTime(0.0001, now + idx * 0.08);
-        gain.gain.linearRampToValueAtTime(0.10, now + idx * 0.08 + 0.02);
-        gain.gain.exponentialRampToValueAtTime(0.0001, now + idx * 0.08 + 0.7);
+        gain.gain.setValueAtTime(0.001, now + idx * 0.07);
+        gain.gain.linearRampToValueAtTime(0.22, now + idx * 0.07 + 0.015);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + idx * 0.07 + 0.75);
 
         osc.connect(gain);
         gain.connect(this.audioCtx.destination);
-        osc.start(now + idx * 0.08);
-        osc.stop(now + idx * 0.08 + 0.7);
+        osc.start(now + idx * 0.07);
+        osc.stop(now + idx * 0.07 + 0.75);
       });
-    } else if (type === "error") {
-      // Деликатный мягкий глухой стук без резкого жужжания
-      const osc = this.audioCtx.createOscillator();
-      const gain = this.audioCtx.createGain();
-      osc.type = "sine";
-      osc.frequency.setValueAtTime(150, now);
-      osc.frequency.exponentialRampToValueAtTime(80, now + 0.12);
-
-      gain.gain.setValueAtTime(0.06, now);
-      gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.12);
-
-      osc.connect(gain);
-      gain.connect(this.audioCtx.destination);
-      osc.start(now);
-      osc.stop(now + 0.12);
     } else if (type === "hint") {
       // Эфирный стеклянный колокольчик
       const osc = this.audioCtx.createOscillator();
       const gain = this.audioCtx.createGain();
       osc.type = "sine";
       osc.frequency.setValueAtTime(1046.50, now);
-      osc.frequency.exponentialRampToValueAtTime(1318.51, now + 0.22);
+      osc.frequency.exponentialRampToValueAtTime(1318.51, now + 0.2);
 
-      gain.gain.setValueAtTime(0.0001, now);
-      gain.gain.linearRampToValueAtTime(0.08, now + 0.02);
+      gain.gain.setValueAtTime(0.001, now);
+      gain.gain.linearRampToValueAtTime(0.18, now + 0.015);
       gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.3);
 
       osc.connect(gain);
       gain.connect(this.audioCtx.destination);
       osc.start(now);
       osc.stop(now + 0.3);
+    } else if (type === "error") {
+      // Мягкий деревянный глухой стук
+      const osc = this.audioCtx.createOscillator();
+      const gain = this.audioCtx.createGain();
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(160, now);
+      osc.frequency.exponentialRampToValueAtTime(90, now + 0.1);
+
+      gain.gain.setValueAtTime(0.001, now);
+      gain.gain.linearRampToValueAtTime(0.12, now + 0.01);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.12);
+
+      osc.connect(gain);
+      gain.connect(this.audioCtx.destination);
+      osc.start(now);
+      osc.stop(now + 0.12);
     }
   }
 
@@ -325,6 +328,17 @@ class WordRamGame {
 
     if (this.progressElement && this.levelData) {
       this.progressElement.textContent = `Найдено ${this.foundWords.length} / ${this.levelData.words.length}`;
+    }
+
+    const themeIconEl = document.getElementById("theme-icon");
+    const themeTitleEl = document.getElementById("theme-title");
+    if (this.levelData) {
+      if (themeIconEl && this.levelData.themeIcon) {
+        themeIconEl.textContent = this.levelData.themeIcon;
+      }
+      if (themeTitleEl && this.levelData.themeTitle) {
+        themeTitleEl.textContent = `Тема: ${this.levelData.themeTitle}`;
+      }
     }
   }
 
@@ -826,7 +840,7 @@ class WordRamGame {
           const cell = this.getCellElement(r, c);
           if (cell) {
             cell.classList.add("cell-found");
-            cell.style.backgroundColor = color.bg;
+            cell.style.background = color.bg;
             cell.style.borderColor = color.border;
             cell.style.color = color.text;
           }
@@ -919,6 +933,7 @@ class WordRamGame {
         level: this.currentLevel,
         stars: stars,
         coinsEarned: rewardCoins,
+        rewardCoins: rewardCoins,
         xpEarned: res.xpResult ? res.xpResult.xpAdded : 30,
         words: this.levelData.words,
         bonusWords: this.foundBonusWordsInLevel,
