@@ -2624,3 +2624,46 @@ html, body {
   font-weight: 800;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
+
+
+/* Share preview card mobile responsiveness */
+.share-preview-card {
+  background: linear-gradient(135deg, #2d1838, #1c1024);
+  border: 2px solid #a855f7;
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: 0 8px 24px rgba(168, 85, 247, 0.35);
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.share-stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 6px;
+}
+
+.share-stat-box {
+  background: rgba(0, 0, 0, 0.35);
+  border-radius: 10px;
+  padding: 8px 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.share-stat-box .stat-num {
+  font-size: 1rem;
+  font-weight: 900;
+  color: #ffffff;
+  white-space: nowrap;
+}
+
+.share-stat-box .stat-lbl {
+  font-size: 0.65rem;
+  color: #9ca3af;
+  margin-top: 2px;
+  white-space: nowrap;
+}

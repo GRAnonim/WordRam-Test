@@ -43,10 +43,10 @@
   <meta name="twitter:image" content="https://granonim.github.io/WordRam/og-image.png">
 
   <!-- Icons -->
-  <link rel="manifest" href="manifest.webmanifest?v=48">
-  <link rel="icon" type="image/svg+xml" href="favicon.svg?v=48">
-  <link rel="apple-touch-icon" href="icon-192.png?v=48">
-  <link rel="stylesheet" href="styles.css?v=48">
+  <link rel="manifest" href="manifest.webmanifest?v=49">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg?v=49">
+  <link rel="apple-touch-icon" href="icon-192.png?v=49">
+  <link rel="stylesheet" href="styles.css?v=49">
 </head>
 <body>
   <div id="app">
@@ -129,50 +129,6 @@
 
         <!-- Список выученных карточек слов -->
         
-        <!-- Подробное объяснение шкалы сложности слов -->
-        <div id="vocab-cefr-info-card" class="cefr-info-banner mb-3" style="display: none;">
-          <div class="cefr-info-banner-title">
-            <span id="cefr-info-title-text">📚 Шкала сложности чеченского языка в WordRam</span>
-          </div>
-          <p id="cefr-info-desc-text" class="cefr-info-intro">Словарь чеченского языка (1500 аутентичных слов) структурирован по 6 игровым уровням сложности:</p>
-          <div id="cefr-levels-list-container" class="cefr-level-grid mt-2">
-            <div class="cefr-level-item">
-              <span class="cefr-lvl-pill A1">A1</span>
-              <div class="cefr-level-text">
-                <strong>Начальный (300 слов)</strong> — Семья, человек, дом, еда, животные, природа, базовые действия и числа.
-              </div>
-            </div>
-            <div class="cefr-level-item">
-              <span class="cefr-lvl-pill A2">A2</span>
-              <div class="cefr-level-text">
-                <strong>Базовый (300 слов)</strong> — Город, транспорт, профессии, эмоции, покупки, время, быт и труд.
-              </div>
-            </div>
-            <div class="cefr-level-item">
-              <span class="cefr-lvl-pill B1">B1</span>
-              <div class="cefr-level-text">
-                <strong>Средний (300 слов)</strong> — Культура, традиции, этикет (гIиллакх), честь (нохчалла), образование, ремесла.
-              </div>
-            </div>
-            <div class="cefr-level-item">
-              <span class="cefr-lvl-pill B2">B2</span>
-              <div class="cefr-level-text">
-                <strong>Продвинутый (250 слов)</strong> — Общественная жизнь, право, наука, литература, абстрактные понятия.
-              </div>
-            </div>
-            <div class="cefr-level-item">
-              <span class="cefr-lvl-pill C1">C1</span>
-              <div class="cefr-level-text">
-                <strong>Высокий (200 слов)</strong> — Литературная речь, ораторское мастерство, философия, летописи и история.
-              </div>
-            </div>
-            <div class="cefr-level-item">
-              <span class="cefr-lvl-pill C2">C2</span>
-              <div class="cefr-level-text">
-                <strong>Мастер слова (150 слов)</strong> — Сокровищница языка: редкая эпическая, традиционная и академическая лексика.
-              </div>
-            </div>
-          </div>
         </div>
 
         <div id="vocab-cards-grid" class="vocab-grid"></div>
@@ -573,23 +529,23 @@
     </div>
 
   <!-- Подключение скриптов с версионированием -->
-  <script src="data.js?v=48"></script>
-  <script src="storage.js?v=48"></script>
-  <script src="generator.js?v=48"></script>
-  <script src="game.js?v=48"></script>
-  <script src="main.js?v=48"></script>
+  <script src="data.js?v=49"></script>
+  <script src="storage.js?v=49"></script>
+  <script src="generator.js?v=49"></script>
+  <script src="game.js?v=49"></script>
+  <script src="main.js?v=49"></script>
 
     <!-- Модальное окно: Поделиться прогрессом -->
     
-    <!-- Модальное окно: Поделиться игрой (Пригласить друзей) -->
+        <!-- Модальное окно: Поделиться игрой (Пригласить друзей) -->
     <div id="modal-share-game" class="modal-overlay" style="display: none;">
       <div class="modal-content modal-card">
+        <button id="btn-close-share-game" class="modal-close-icon" aria-label="Закрыть">✕</button>
         <div class="modal-header">
           <h2>📤 Поделиться игрой WordRam</h2>
-          <button id="btn-close-share-game" class="close-btn" aria-label="Закрыть">✕</button>
         </div>
         <div class="modal-body text-center">
-          <p class="mb-3">Пригласите друзей в WordRam и получайте бонусные монеты!</p>
+          <p class="mb-3" style="color: var(--text-muted); font-size: 0.9rem;">Пригласите друзей в WordRam и получайте бонусные монеты!</p>
           <div class="share-actions-container mt-3">
             <button id="btn-game-share-tg" class="social-share-btn tg-btn">
               <span class="share-icon">💬</span> Telegram
@@ -607,6 +563,57 @@
         </div>
       </div>
     </div>
+
+    <!-- Модальное окно: Поделиться прогрессом -->
+    <div id="modal-share-progress" class="modal-overlay" style="display: none;">
+      <div class="modal-content modal-card">
+        <button id="btn-close-share-progress" class="modal-close-icon" aria-label="Закрыть">✕</button>
+        <div class="modal-header">
+          <h2>🏆 Мой прогресс в WordRam</h2>
+        </div>
+        <div class="modal-body">
+          <div class="share-preview-card" id="share-preview-card">
+            <div class="share-card-header">
+              <span class="share-card-logo">✨ WordRam</span>
+              <span id="share-card-lang-badge" class="share-card-badge">🟢 Чеченский</span>
+            </div>
+            <div class="share-card-main">
+              <div class="share-mastery-title" id="share-mastery-title">Къонах</div>
+              <div class="share-mastery-desc" id="share-mastery-desc">Благородный муж слова</div>
+              <div class="share-stats-grid mt-3">
+                <div class="share-stat-box">
+                  <span class="stat-num" id="share-stat-words">400 / 1500</span>
+                  <span class="stat-lbl">Слов выучено</span>
+                </div>
+                <div class="share-stat-box">
+                  <span class="stat-num" id="share-stat-level">18</span>
+                  <span class="stat-lbl">Уровень</span>
+                </div>
+                <div class="share-stat-box">
+                  <span class="stat-num" id="share-stat-stars">45 ⭐</span>
+                  <span class="stat-lbl">Звезды</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="share-actions-container mt-3">
+            <button id="btn-share-tg" class="social-share-btn tg-btn">
+              <span class="share-icon">💬</span> Telegram
+            </button>
+            <button id="btn-share-wa" class="social-share-btn wa-btn">
+              <span class="share-icon">🟢</span> WhatsApp
+            </button>
+            <button id="btn-share-copy" class="social-share-btn copy-btn">
+              <span class="share-icon">📋</span> Скопировать
+            </button>
+          </div>
+          <button id="btn-share-native" class="primary-btn full-width mt-3">
+            📱 Другие соцсети (Меню «Поделиться»)
+          </button>
+        </div>
+      </div>
+    </div>/div>
 
 <div id="modal-share-progress" class="modal-overlay" style="display: none;">
       <div class="modal-content modal-card">

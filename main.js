@@ -458,6 +458,16 @@ document.addEventListener("DOMContentLoaded", () => {
   if (btnOpenPlacement) btnOpenPlacement.addEventListener("click", () => openPlacementTest());
   if (btnClosePlacement) btnClosePlacement.addEventListener("click", () => closePlacementTest());
 
+  
+  // Привязка кнопок ответа в Тесте уровня
+  const quizActionButtons = document.querySelectorAll("#placement-quiz-step .quiz-btn, #placement-quiz-step button[data-answer]");
+  quizActionButtons.forEach(btn => {
+    btn.addEventListener("click", () => {
+      const ans = btn.dataset.answer || "DONT_KNOW";
+      handleQuizAnswer(ans);
+    });
+  });
+
   if (btnApplyPlacement) {
     btnApplyPlacement.addEventListener("click", () => {
       if (evaluatedResult) {
@@ -572,97 +582,35 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!vocabCardsGrid) return;
     vocabCardsGrid.innerHTML = "";
 
-    const collected = storage.getCollectedWords();
+    const currentLang = storage.getLanguage();
+    const collected = storage.getCollectedWords(currentLang);
     const collectedWordsList = Object.keys(collected);
-    const userCefr = storage.getEnglishLevel();
-    const rankOrder = ["A1", "A2", "B1", "B2", "C1"];
+    const userCefr = storage.getLanguageLevel(currentLang);
+
+    const rankOrder = currentLang === "chechen"
+      ? ["A1", "A2", "B1", "B2", "C1", "C2"]
+      : ["A1", "A2", "B1", "B2", "C1"];
     const userRankIdx = rankOrder.indexOf(userCefr);
 
-    
-    // Показываем пояснительный баннер сложности чеченского языка ТОЛЬКО в чеченском режиме
-    const vocabCefrInfoCard = document.getElementById("vocab-cefr-info-card");
-    if (vocabCefrInfoCard) {
-      vocabCefrInfoCard.style.display = (currentLang === "chechen") ? "block" : "none";
-    }
-
-    const infoTitleEl = document.getElementById("cefr-info-title-text");
-    const infoDescEl = document.getElementById("cefr-info-desc-text");
-    const levelsListEl = document.getElementById("cefr-levels-list-container");
-
-    if (currentLang === "chechen") {
-      if (infoTitleEl) infoTitleEl.textContent = "📚 Шкала сложности чеченского языка в WordRam";
-      if (infoDescEl) infoDescEl.textContent = "Словарь чеченского языка (1500 аутентичных слов) структурирован по 6 игровым уровням сложности:";
-      if (levelsListEl) {
-        levelsListEl.innerHTML = `
-          <div class="cefr-level-item">
-            <span class="cefr-lvl-pill A1">A1</span>
-            <div class="cefr-level-text"><strong>Начальный (300 слов)</strong> — Семья, человек, дом, еда, животные, природа, базовые действия и числа.</div>
-          </div>
-          <div class="cefr-level-item">
-            <span class="cefr-lvl-pill A2">A2</span>
-            <div class="cefr-level-text"><strong>Базовый (300 слов)</strong> — Город, транспорт, профессии, эмоции, покупки, время, быт и труд.</div>
-          </div>
-          <div class="cefr-level-item">
-            <span class="cefr-lvl-pill B1">B1</span>
-            <div class="cefr-level-text"><strong>Средний (300 слов)</strong> — Культура, традиции, этикет (гIиллакх), честь (нохчалла), образование, ремесла.</div>
-          </div>
-          <div class="cefr-level-item">
-            <span class="cefr-lvl-pill B2">B2</span>
-            <div class="cefr-level-text"><strong>Продвинутый (250 слов)</strong> — Общественная жизнь, право, наука, литература, абстрактные понятия.</div>
-          </div>
-          <div class="cefr-level-item">
-            <span class="cefr-lvl-pill C1">C1</span>
-            <div class="cefr-level-text"><strong>Высокий (200 слов)</strong> — Литературная речь, ораторское мастерство, философия, летописи и история.</div>
-          </div>
-          <div class="cefr-level-item">
-            <span class="cefr-lvl-pill C2">C2</span>
-            <div class="cefr-level-text"><strong>Мастер слова (150 слов)</strong> — Сокровищница языка: редкая эпическая, традиционная и академическая лексика.</div>
-          </div>
-        `;
-      }
-    } else {
-      if (infoTitleEl) infoTitleEl.textContent = "📚 Общеевропейская шкала CEFR (English)";
-      if (infoDescEl) infoDescEl.textContent = "Словарь английского языка разбит по уровням международной системы CEFR:";
-      if (levelsListEl) {
-        levelsListEl.innerHTML = `
-          <div class="cefr-level-item">
-            <span class="cefr-lvl-pill A1">A1</span>
-            <div class="cefr-level-text"><strong>Beginner (314 слов)</strong> — Базовая повседневная лексика и простые фразы.</div>
-          </div>
-          <div class="cefr-level-item">
-            <span class="cefr-lvl-pill A2">A2</span>
-            <div class="cefr-level-text"><strong>Pre-Intermediate (659 слов)</strong> — Повседневное общение, работа, поездки и покупки.</div>
-          </div>
-          <div class="cefr-level-item">
-            <span class="cefr-lvl-pill B1">B1</span>
-            <div class="cefr-level-text"><strong>Intermediate (331 слово)</strong> — Уверенная речь, обсуждение абстрактных тем и планов.</div>
-          </div>
-          <div class="cefr-level-item">
-            <span class="cefr-lvl-pill B2">B2</span>
-            <div class="cefr-level-text"><strong>Upper-Intermediate (76 слов)</strong> — Сложные тексты, профессиональная и тематическая лексика.</div>
-          </div>
-          <div class="cefr-level-item">
-            <span class="cefr-lvl-pill C1">C1</span>
-            <div class="cefr-level-text"><strong>Advanced (120 слов)</strong> — Академический язык, беглая речь на уровне носителя.</div>
-          </div>
-        `;
-      }
-    }
-
     if (vocabStatsSubtitle) {
-      vocabStatsSubtitle.textContent = "Выучено слов: " + collectedWordsList.length + " из 1500";
+      const langLabel = currentLang === "chechen" ? "чеченских" : "";
+      vocabStatsSubtitle.textContent = `Выучено ${langLabel} слов: ${collectedWordsList.length} из 1500`.replace("  ", " ");
     }
 
-    // Подсчет статистики по уровням CEFR
-    const cefrCounts = { A1: 0, A2: 0, B1: 0, B2: 0, C1: 0 };
-    const cefrTotals = { A1: 314, A2: 659, B1: 331, B2: 76, C1: 120 };
+    // Подсчет статистики по уровням
+    const cefrCounts = {};
+    rankOrder.forEach(l => { cefrCounts[l] = 0; });
+
+    const cefrTotals = currentLang === "chechen"
+      ? { A1: 300, A2: 300, B1: 300, B2: 250, C1: 200, C2: 150 }
+      : { A1: 314, A2: 659, B1: 331, B2: 76, C1: 120 };
 
     collectedWordsList.forEach(w => {
-      const lvl = findCefrLevel(w);
+      const lvl = findCefrLevel(w, currentLang);
       if (cefrCounts[lvl] !== undefined) cefrCounts[lvl]++;
     });
 
-    // Отрисовка детализации прогресса по уровням
+    // Отрисовка детализации прогресса по уровням (как на скриншоте)
     const vocabBreakdownCard = document.getElementById("vocab-cefr-breakdown-card");
     if (vocabBreakdownCard) {
       let rowsHtml = "";
@@ -681,83 +629,87 @@ document.addEventListener("DOMContentLoaded", () => {
         '</div>';
       });
 
-      vocabBreakdownCard.innerHTML = '<div class="cefr-breakdown-title">📊 Прогресс по уровням CEFR</div>' +
+      const titleText = currentLang === "chechen" ? "📊 Прогресс по уровням словаря" : "📊 Прогресс по уровням CEFR";
+      vocabBreakdownCard.innerHTML = '<div class="cefr-breakdown-title">' + titleText + '</div>' +
         '<div class="cefr-breakdown-list">' + rowsHtml + '</div>';
     }
 
     // Обновляем счетчики на чипах фильтров
-    vocabChips.forEach(chip => {
+    const chipsList = document.querySelectorAll("#vocab-cefr-filters .chip");
+    chipsList.forEach(chip => {
       const f = chip.dataset.filter;
       if (f === "ALL") {
         chip.textContent = "Все (" + collectedWordsList.length + ")";
+        chip.style.display = "inline-flex";
+      } else if (f === "C2") {
+        if (currentLang === "chechen") {
+          const isLocked = rankOrder.indexOf("C2") > userRankIdx;
+          const count = cefrCounts["C2"] || 0;
+          chip.textContent = isLocked ? `C2 🔒 (${count}/150)` : `C2 (${count}/150)`;
+          chip.style.display = "inline-flex";
+        } else {
+          chip.style.display = "none";
+        }
       } else {
         const isLocked = rankOrder.indexOf(f) > userRankIdx;
         const count = cefrCounts[f] || 0;
         const total = cefrTotals[f] || 100;
-        chip.textContent = isLocked ? (f + " 🔒 (" + count + "/" + total + ")") : (f + " (" + count + "/" + total + ")");
+        chip.textContent = isLocked ? `${f} 🔒 (${count}/${total})` : `${f} (${count}/${total})`;
+        chip.style.display = "inline-flex";
       }
     });
 
-    function findCefrLevel(word) {
-      for (const lvl of ["A1", "A2", "B1", "B2", "C1"]) {
-        const wordsAtLvl = WordRamData.cefrDictionary[lvl];
-        for (const len in wordsAtLvl) {
-          if (wordsAtLvl[len].includes(word)) return lvl;
-        }
-      }
-      return "A2";
+    // Фильтрация и поиск слов
+    let filteredWords = collectedWordsList;
+    if (activeVocabFilter !== "ALL") {
+      filteredWords = filteredWords.filter(w => findCefrLevel(w, currentLang) === activeVocabFilter);
+    }
+    if (vocabSearchQuery && vocabSearchQuery.trim().length > 0) {
+      const q = vocabSearchQuery.trim().toUpperCase();
+      filteredWords = filteredWords.filter(w => {
+        const details = WordRamData.getWordDetails(w, currentLang);
+        return w.includes(q) || (details && details.tr && details.tr.toUpperCase().includes(q));
+      });
     }
 
-    const filtered = collectedWordsList.filter(w => {
-      const lvl = findCefrLevel(w);
-      if (activeVocabFilter !== "ALL" && lvl !== activeVocabFilter) return false;
-
-      if (vocabSearchQuery) {
-        const details = WordRamData.getWordDetails(w);
-        const q = vocabSearchQuery.toLowerCase();
-        const matchesWord = w.toLowerCase().includes(q);
-        const matchesTr = details && details.tr && details.tr.toLowerCase().includes(q);
-        if (!matchesWord && !matchesTr) return false;
-      }
-      return true;
-    });
-
-    if (filtered.length === 0) {
+    if (filteredWords.length === 0) {
       vocabCardsGrid.innerHTML = `
-        <div class="empty-vocab-msg">
-          <p>🔍 ${collectedWordsList.length === 0 ? "Вы еще не нашли слов. Проходите уровни, и слова появятся здесь!" : "По вашему запросу слов не найдено."}</p>
+        <div class="empty-state">
+          <span class="empty-icon">🔍</span>
+          <p>Вы еще не нашли слов. Проходите уровни, и слова появятся здесь!</p>
         </div>
       `;
       return;
     }
 
-    filtered.forEach(w => {
-      const details = WordRamData.getWordDetails(w);
-      const lvl = findCefrLevel(w);
-      const mastery = (collected[w] && collected[w].mastery) || 1;
-      const masteryStars = "⭐".repeat(mastery);
+    filteredWords.forEach(word => {
+      const info = collected[word] || { count: 1, mastery: 1 };
+      const details = WordRamData.getWordDetails(word, currentLang);
+      const lvl = findCefrLevel(word, currentLang);
 
       const card = document.createElement("div");
-      card.className = "vocab-card";
+      card.className = "vocab-word-card";
       card.innerHTML = `
-        <div class="vocab-card-left">
-          <div class="vocab-word-title">${w} <span class="mastery-stars">${masteryStars}</span></div>
-          <div class="vocab-word-tr">${details ? details.tr : ""}</div>
-          <div class="vocab-word-ph">${details && details.ph ? details.ph : ""}</div>
+        <div class="card-left">
+          <div class="card-word-title">
+            <strong>${word}</strong>
+            <span class="mastery-stars">★</span>
+          </div>
+          <div class="card-translation">${details ? details.tr : word}</div>
         </div>
-        <div class="vocab-card-right">
-          <span class="vocab-tag">${lvl}</span>
-          <span style="font-size: 1.1rem; color: #a855f7;">➔</span>
+        <div class="card-right">
+          <span class="cefr-badge-mini ${lvl}">${lvl} ➔</span>
         </div>
       `;
 
       card.addEventListener("click", () => {
-        showWordDefinitionModal(details);
+        if (details) showWordDefinitionModal(details);
       });
 
       vocabCardsGrid.appendChild(card);
     });
   }
+
 
   if (vocabSearchInput) {
     vocabSearchInput.addEventListener("input", (e) => {
