@@ -1,5 +1,5 @@
 /**
- * WordRam - Data & Pedagogical Architecture (v40)
+ * WordRam - Data & Pedagogical Architecture (v41)
  * Multilingual Word Engine: English (CEFR) & Chechen (1500 normative words)
  * Universal Grapheme Tokenization, Dynamic Difficulty, Offline PWA.
  */
@@ -145,7 +145,6 @@ const WordRamData = {
       "ХЬОСТ",
       "ШУРА",
       "КХАЧА",
-      "КХОРА",
       "БАЛЛ",
       "ДУЬГА",
       "ДУЬРА",
@@ -233,6 +232,7 @@ const WordRamData = {
       "ЧАЙ",
       "ХОХ",
       "ӀАЖ",
+      "КХОР",
       "КХОЬШ",
       "НУХ",
       "ХӀОА",
@@ -3570,7 +3570,7 @@ const WordRamData = {
     ],
     "tileCount": 3
   },
-  "КХОРА": {
+  "КХОР": {
     "tr": "груша",
     "pos": "noun",
     "level": "A1",
@@ -3578,10 +3578,9 @@ const WordRamData = {
     "tiles": [
       "КХ",
       "О",
-      "Р",
-      "А"
+      "Р"
     ],
-    "tileCount": 4
+    "tileCount": 3
   },
   "БАЛЛ": {
     "tr": "вишня / черешня",
@@ -4428,7 +4427,7 @@ const WordRamData = {
     "tileCount": 6
   },
   "АЬХКА": {
-    "tr": "лето",
+    "tr": "лето / летом",
     "pos": "noun",
     "level": "A1",
     "difficulty": 2,
@@ -5805,7 +5804,7 @@ const WordRamData = {
     "tileCount": 5
   },
   "ПОЕЗД": {
-    "tr": "поезд",
+    "tr": "поезд / железная дорога (цӀерпошт)",
     "pos": "noun",
     "level": "A2",
     "difficulty": 3,
@@ -6129,7 +6128,7 @@ const WordRamData = {
     "tileCount": 5
   },
   "НЕКЪАХО": {
-    "tr": "путник / попутчик",
+    "tr": "путник / попутчик / путешественник",
     "pos": "noun",
     "level": "A2",
     "difficulty": 4,
@@ -28322,7 +28321,7 @@ const WordRamData = {
     "tileCount": 3
   },
   {
-    "word": "КХОРА",
+    "word": "КХОР",
     "translation": "груша",
     "languageLevel": "A1",
     "gameDifficulty": 2,
@@ -28330,10 +28329,9 @@ const WordRamData = {
     "tiles": [
       "КХ",
       "О",
-      "Р",
-      "А"
+      "Р"
     ],
-    "tileCount": 4
+    "tileCount": 3
   },
   {
     "word": "БАЛЛ",
@@ -29243,7 +29241,7 @@ const WordRamData = {
   },
   {
     "word": "АЬХКА",
-    "translation": "лето",
+    "translation": "лето / летом",
     "languageLevel": "A1",
     "gameDifficulty": 2,
     "partOfSpeech": "noun",
@@ -30722,7 +30720,7 @@ const WordRamData = {
   },
   {
     "word": "ПОЕЗД",
-    "translation": "поезд",
+    "translation": "поезд / железная дорога (цӀерпошт)",
     "languageLevel": "A2",
     "gameDifficulty": 3,
     "partOfSpeech": "noun",
@@ -31070,7 +31068,7 @@ const WordRamData = {
   },
   {
     "word": "НЕКЪАХО",
-    "translation": "путник / попутчик",
+    "translation": "путник / попутчик / путешественник",
     "languageLevel": "A2",
     "gameDifficulty": 4,
     "partOfSpeech": "noun",
@@ -52444,6 +52442,72 @@ const WordRamData = {
     "tileCount": 8
   }
 ],
+  chechenThemes: {
+    food: {
+      title: "Еда и напитки",
+      icon: "☕",
+      words: ["БЕПИГ", "ШУРА", "ЖИЖИГ", "ДАЬТТА", "КХАЧА", "ХОХ", "САРАМСАКХ", "ӀАЖ", "КХОР", "БАЛЛ", "ДУЬГА", "КХОЬШ", "ЧУЬРПА", "ХЬАЛХАРХА", "МЕРЗА", "ДУЬРА", "КЪАЬХЬА", "МУЬСТА", "ХЬОЖОЛГ", "СИСКАЛ", "ХИНГАЛ", "ЧЕПАЛГ", "ТОПХА", "НЕХЧА", "ШЕКАР", "ТУЬХА", "МАРХА", "КХОЛЛАРГ", "ХОМА", "НУХ", "МАЖА", "ХӀОА", "БОДА", "ГӀАБАКХ", "КӀА", "МУКХ", "ХЬАЖКӀА", "КОМАСТ", "ЧАЙ", "ХИ"]
+    },
+    nature: {
+      title: "Природа и погода",
+      icon: "🌲",
+      words: ["МАЛХ", "БУТТ", "СЕДА", "СТИГАЛ", "ДЕ", "БУЬЙСА", "ӀУЙРЕ", "СУЬЙРЕ", "ШО", "БӀАЬСТЕ", "АЬХКА", "ГУЬЙРЕ", "ӀА", "ДОГӀА", "ЛО", "МОХ", "МАРХАШ", "ТӀУЛГ", "ДИКЪ", "ШОЛДА", "ӀАЛАМ", "ЛАМАНАШ", "ЧОЖ", "ӀАМАНАШ", "ХӀОРДАН", "АРЕ", "ДОГӀАН", "СЕРЛО", "ДИТТАШ", "ЗЕЗАГ", "ЗЕЗАГАШ", "ПОП", "ДАКХ", "НАЖ"]
+    },
+    family: {
+      title: "Семья и дом",
+      icon: "🏡",
+      words: ["ДА", "НАНА", "ВОША", "ЙИША", "БЕР", "КӀАНТ", "ЙОӀ", "СТАГ", "ЗУДА", "МАЙРА", "КЪОНАХ", "БАБА", "ДАДА", "ДАДАЙ", "МАРДА", "МАРНАНА", "НУС", "НУЦ", "ДЕНАНА", "ДЕВАША", "НЕНАВАША", "НЕНАЙИША", "ДЕЙИША", "НЕРИЙ", "ДОЬЗАЛ", "ЦӀА", "КХЕРЧ", "КОВ", "НЕӀ", "КОР", "ТХОВ", "ПЕН", "ЛАТТА", "КУЗ", "ГӀАНТ", "СТОЛ"]
+    },
+    body: {
+      title: "Человек и тело",
+      icon: "🧠",
+      words: ["КОРТА", "БӀАЬРГ", "ЛЕРГ", "МЕРА", "БАГА", "ЦЕРГ", "МОТТ", "КУЬГ", "КОГ", "НАКХА", "БУКЪ", "ЧО", "КИЙРА", "ХЬОЬХ", "ХЬАЖ", "ДОГ", "СИНО", "ПХЬИД", "ПХЬАРС", "ПӀЕЛГ", "МӀАРА", "ЦӀИЙ", "ГОЛА", "ХОНА", "БЕЛШ", "МОГУШАЛЛА", "ДАРБА"]
+    },
+    animals: {
+      title: "Животные и птицы",
+      icon: "🐺",
+      words: ["ДИН", "ГОВР", "БЕЖАН", "УЬСТАГӀ", "ГАЗА", "ЖӀАЬЛА", "ЦИЦИГ", "БОРЗ", "ЦХЬОГАЛ", "ЧА", "ОЛХАЗАР", "КХОКХА", "ТУЬРЛИ", "ГАРГО", "КОТАМ", "БУХӀА", "АКХАР", "САЙ", "ПХЬАГАЛ", "ТЕКХАРГ", "МОЗА", "ЗИНГАТ", "НАКХАР"]
+    },
+    city: {
+      title: "Город и транспорт",
+      icon: "🏙️",
+      words: ["ГӀАЛА", "ЮРТ", "НЕКЪ", "ТАЙ", "МАШЕН", "ПОЕЗД", "КЕМА", "АВТОБУС", "ТУЬКА", "БАЗАР", "ХЬУЬН", "УРАМ", "МЕХКАШ", "МОХК", "ТӀАЙ", "АРЕ", "ДОЗА", "КӀоШТ", "ЦӀЕРПОШТ", "ОТТУЗ", "НЕКЪАХО", "МЕТТИГ", "ПХЬА", "ТАКСИ", "ВАГЗАЛ"]
+    },
+    work: {
+      title: "Работа и ремесло",
+      icon: "⚒️",
+      words: ["БОЛХ", "ХЬЕХАРХО", "ЛОХТУР", "УСТАЗ", "ПХЬАР", "ТУРХО", "ЖӀАРХО", "ЭПСАР", "САЛТИ", "БАХАМХО", "ЖАӀУ", "АХАРХО", "ДЕШАРХО", "ХЬУЬНХО", "ЙОХКАРХО", "ГӀИШЛОХО", "ПХЬАЛГӀА", "ЖӀоВ", "КХОМА", "БЕЛА", "МАРС", "МАНГАЛ", "ТАЛЛАМХО", "ПАЙДА"]
+    },
+    culture: {
+      title: "Культура и традиции",
+      icon: "🎭",
+      words: ["ГӀИЛЛАКХ", "ОЬЗДАНГАЛЛА", "НОХЧАЛЛА", "ЯХЬ", "ЭСАР", "СОБАР", "СИНТЕМ", "ТЕШАМ", "МАРШО", "БАРТ", "ДАЙБАХАМ", "ДАЙМОХК", "ПОХЬМА", "КХОЛЛАРАЛЛА", "НИЙСО", "ИЛЛИ", "МУКЪАМ", "ПОНДАР", "ВОТА", "ХЕЛХАР", "СИНКЪЕРАМ", "ТОЙ", "ТУРПАЛ"]
+    },
+    education: {
+      title: "Учеба и наука",
+      icon: "📚",
+      words: ["ӀИЛМА", "ӀИЛМАНЧА", "ХААРШ", "ДЕШАРАЛЛА", "ДЕШАРХОЙ", "ХЬЕХАР", "ХЬЕХАРХОЙ", "ЙАЗАРХО", "БАЙТАШ", "ГОЧДАР", "ДОШАМ", "ТАЛЛАМ", "КНИГАШ", "ЖАЙНА", "АЛФАВИТ", "ШКОЛА", "ДЕШАРДОН", "ДЕШАРНИГ", "ЙОЗА", "ХЬАРК"]
+    },
+    society: {
+      title: "Общество и право",
+      icon: "⚖️",
+      words: ["ХЬУКМАТ", "ПАЧХЬАЛКХ", "ХАЛКЪ", "КЪОМ", "НИЗАМ", "БАКЪО", "КХЕЛ", "КХЕЛАХО", "ТОЬШАЛЛА", "СИЙ", "БАРТКХОЛЛАР", "ДОЬНАЛЛА", "КЪИНХЕТАМ", "ТУРПАЛАЛЛА", "БАКЪОЛАРХО"]
+    }
+  },
+  chechenPlacementTestWords: [
+    { word: "ДА", level: "A1", tr: "отец" },
+    { word: "БЕПИГ", level: "A1", tr: "хлеб" },
+    { word: "ГӀАЛА", level: "A2", tr: "город" },
+    { word: "ХЬЕХАРХО", level: "A2", tr: "учитель" },
+    { word: "ОЬЗДАНГАЛЛА", level: "B1", tr: "благородство / вежливость" },
+    { word: "КЪОНАХАЛЛА", level: "B1", tr: "мужество / кодекс чести" },
+    { word: "ЮКЪАРАЛЛА", level: "B2", tr: "общество" },
+    { word: "БАРТКХОЛЛАР", level: "B2", tr: "миротворчество" },
+    { word: "СИНСАКХТАЛЛА", level: "C1", tr: "духовная чуткость" },
+    { word: "ХЬАЬРКМЕТТАНАЛЛА", level: "C1", tr: "символичность" },
+    { word: "ДАРЖМЕТТИГ", level: "C2", tr: "должностной сан" },
+    { word: "СИНКХЕРАМАЛЛА", level: "C2", tr: "боговдохновенность" }
+  ],
   cefrDictionary: {
   "A1": {
     "5": [
@@ -70540,60 +70604,6 @@ const WordRamData = {
     "collocations": []
   }
 },
-
-  chechenThemes: {
-    food: {
-      title: "Еда и напитки",
-      icon: "☕",
-      words: ["БЕПИГ", "ХИ", "ШУРА", "ЧАЙ", "ЖИЖИГ", "ДАЬТТА", "КХАЧА", "ХОХ", "САРАМСАКХ", "ӀАЖ", "КХОРА", "БАЛЛ", "ДУЬГА", "КХОЬШ", "ЧУЬРПА", "ХЬАЛХАРХА", "МЕРЗА", "ДУЬРА", "КЪАЬХЬА", "МУЬСТА", "ХЬОЖОЛГ", "СИСКАЛ", "ХИНГАЛ", "ЧЕПАЛГ", "ТОПХА", "НЕХЧА", "ШЕКАР", "ТУЬХА", "МАРХА", "КХОЛЛАРГ", "ХОМА", "НУХ", "МАЖА", "ХӀОА", "БОДА", "ГӀАБАКХ", "КӀА", "МУКХ", "ХЬАЖКӀА", "КОМАСТ"]
-    },
-    nature: {
-      title: "Природа и погода",
-      icon: "🌲",
-      words: ["МАЛХ", "БУТТ", "СЕДА", "СТИГАЛ", "ДЕ", "БУЬЙСА", "ӀУЙРЕ", "СУЬЙРЕ", "ШО", "БӀАЬСТЕ", "АЬХКА", "ГУЬЙРЕ", "ӀА", "ДОГӀА", "ЛО", "МОХ", "МАРХАШ", "ТӀУЛГ", "ДИКЪ", "ШОЛДА", "ӀАЛАМ", "ЛАМАНАШ", "ЧОЖ", "ӀАМАНАШ", "ХӀОРДАН", "АРЕ", "ДОГӀАН", "СЕРЛО", "ДИТТАШ", "ЗЕЗАГ", "ЗЕЗАГАШ", "ПОП", "ДАКХ", "НАЖ"]
-    },
-    family: {
-      title: "Семья и дом",
-      icon: "🏡",
-      words: ["ДА", "НАНА", "ВОША", "ЙИША", "БЕР", "КӀАНТ", "ЙОӀ", "СТАГ", "ЗУДА", "МАЙРА", "КЪОНАХ", "БАБА", "ДАДА", "ДАДАЙ", "МАРДА", "МАРНАНА", "НУС", "НУЦ", "ДЕНАНА", "ДЕВАША", "НЕНАВАША", "НЕНАЙИША", "ДЕЙИША", "НЕРИЙ", "ДОЬЗАЛ"]
-    },
-    body: {
-      title: "Человек и тело",
-      icon: "🧠",
-      words: ["КОРТА", "БӀАЬРГ", "ЛЕРГ", "МЕРА", "БАГА", "ЦЕРГ", "МОТТ", "КУЬГ", "КОГ", "НАКХА", "БУКЪ", "ЧО", "КИЙРА", "ХЬОЬХ", "ХЬАЖ", "ДОГ", "СИНО", "ПХЬИД", "ПХЬАРС", "ПӀЕЛГ", "МӀАРА", "ЦӀИЙ", "ГОЛА", "ХОНА", "БЕЛШ", "МОГУШАЛЛА", "ДАРБА"]
-    },
-    animals: {
-      title: "Животные и птицы",
-      icon: "🐺",
-      words: ["ДИН", "ГОВР", "БЕЖАН", "УЬСТАГӀ", "ГАЗА", "ЖӀАЬЛА", "ЦИЦИГ", "БОРЗ", "ЦХЬОГАЛ", "ЧА", "ОЛХАЗАР", "КХОКХА", "ТУЬРЛИ", "ГАРГО", "КОТАМ", "БУХӀА", "АКХАР", "САЙ", "ПХЬАГАЛ", "ТЕКХАРГ", "МОЗА", "ЗИНГАТ", "НАКХАР"]
-    },
-    city: {
-      title: "Город и транспорт",
-      icon: "🏙️",
-      words: ["ГӀАЛА", "ЮРТ", "НЕКЪ", "ТАЙ", "МАШЕН", "ПОЕЗД", "КЕМА", "АВТОБУС", "ТУЬКА", "БАЗАР", "ХЬУЬН", "УРАМ", "МЕХКАШ", "МОХК", "ТӀАЙ", "АРЕ", "ДОЗА", "КӀоШТ", "ЦӀЕРПОШТ", "ОТТУЗ", "НЕКЪАХО", "МЕТТИГ", "ПХЬА", "ТАКСИ", "ВАГЗАЛ"]
-    },
-    work: {
-      title: "Работа и ремесло",
-      icon: "⚒️",
-      words: ["БОЛХ", "ХЬЕХАРХО", "ЛОХТУР", "УСТАЗ", "ПХЬАР", "ТУРХО", "ЖӀАРХО", "ЭПСАР", "САЛТИ", "БАХАМХО", "ЖАӀУ", "АХАРХО", "ДЕШАРХО", "ХЬУЬНХО", "ЙОХКАРХО", "ГӀИШЛОХО", "ПХЬАЛГӀА", "ЖӀоВ", "КХОМА", "БЕЛА", "МАРС", "МАНГАЛ", "ТАЛЛАМХО", "ПАЙДА"]
-    },
-    culture: {
-      title: "Культура и традиции",
-      icon: "🎭",
-      words: ["ГӀИЛЛАКХ", "ОЬЗДАНГАЛЛА", "НОХЧАЛЛА", "ЯХЬ", "ЭСАР", "СОБАР", "СИНТЕМ", "ТЕШАМ", "МАРШО", "БАРТ", "ДАЙБАХАМ", "ДАЙМОХК", "ПОХЬМА", "КХОЛЛАРАЛЛА", "НИЙСО", "ИЛЛИ", "МУКЪАМ", "ПОНДАР", "ВОТА", "ХЕЛХАР", "СИНКЪЕРАМ", "ТОЙ", "ТУРПАЛ"]
-    },
-    education: {
-      title: "Учеба и наука",
-      icon: "📚",
-      words: ["ӀИЛМА", "ӀИЛМАНЧА", "ХААРШ", "ДЕШАРАЛЛА", "ДЕШАРХОЙ", "ХЬЕХАР", "ХЬЕХАРХОЙ", "ЙАЗАРХО", "БАЙТАШ", "ГОЧДАР", "ДОШАМ", "ТАЛЛАМ", "КНИГАШ", "ЖАЙНА", "АЛФАВИТ", "ШКОЛА", "ДЕШАРДОН", "ДЕШАРНИГ", "ЙОЗА", "ХЬАРК"]
-    },
-    society: {
-      title: "Общество и право",
-      icon: "⚖️",
-      words: ["ХЬУКМАТ", "ПАЧХЬАЛКХ", "ХАЛКЪ", "КЪОМ", "НИЗАМ", "БАКЪО", "КХЕЛ", "КХЕЛАХО", "ТОЬШАЛЛА", "СИЙ", "БАРТКХОЛЛАР", "ДОЬНАЛЛА", "КЪИНХЕТАМ", "ТУРПАЛАЛЛА", "БАКЪОЛАРХО"]
-    }
-  },
-
   themes: {
   "food": {
     "title": "Еда и кухня",
@@ -71493,16 +71503,23 @@ const WordRamData = {
   ],
 
 
-  getWordDetails(word, lang = "english") {
+  getWordDetails(word, lang = null) {
     if (!word) return null;
-    if (lang === "chechen") {
-      const norm = WordRamTokenizer.normalizeChechen(word);
-      if (this.chechenDefinitions && this.chechenDefinitions[norm]) {
-        const def = this.chechenDefinitions[norm];
+    const rawStr = String(word).trim().toUpperCase();
+
+    // Check if Chechen word (either explicit lang or presence in chechen definitions or contains Cyrillic)
+    const normCe = WordRamTokenizer.normalizeChechen(rawStr);
+    const isChechenMode = (lang === "chechen");
+    const existsInChechen = !!(this.chechenDefinitions && this.chechenDefinitions[normCe]);
+    const hasCyrillic = /[А-ЯЁӀ]/i.test(rawStr);
+
+    if (isChechenMode || existsInChechen || (hasCyrillic && lang !== "english")) {
+      if (this.chechenDefinitions && this.chechenDefinitions[normCe]) {
+        const def = this.chechenDefinitions[normCe];
         return {
-          word: norm,
+          word: normCe,
           tr: def.tr,
-          def: "Чеченский язык (" + def.level + ", сложность: " + def.difficulty + "/5)",
+          def: "Чеченский язык (Уровень " + def.level + ", сложность: " + def.difficulty + "/5)",
           pos: def.pos,
           level: def.level,
           difficulty: def.difficulty,
@@ -71514,34 +71531,79 @@ const WordRamData = {
         };
       }
       return {
-        word: norm,
-        tr: "Чеченское слово",
+        word: normCe,
+        tr: normCe.charAt(0) + normCe.slice(1).toLowerCase(),
         def: "Чеченский язык",
         pos: null,
         level: "A1",
         difficulty: 1,
-        tiles: WordRamTokenizer.tokenize(norm, "chechen"),
-        tileCount: WordRamTokenizer.getTileCount(norm, "chechen"),
+        tiles: WordRamTokenizer.tokenize(normCe, "chechen"),
+        tileCount: WordRamTokenizer.getTileCount(normCe, "chechen"),
         ph: "",
         ex: "",
         collocations: []
       };
     }
 
-    const upper = word.toUpperCase();
-    if (this.wordDefinitions && this.wordDefinitions[upper]) {
+    if (this.wordDefinitions && this.wordDefinitions[rawStr]) {
       return {
-        word: upper,
-        ...this.wordDefinitions[upper]
+        word: rawStr,
+        ...this.wordDefinitions[rawStr]
       };
     }
     return {
-      word: upper,
-      tr: upper.charAt(0) + upper.slice(1).toLowerCase(),
+      word: rawStr,
+      tr: rawStr.charAt(0) + rawStr.slice(1).toLowerCase(),
       def: "Слово словаря английского языка.",
       ph: "",
       ex: "",
       collocations: []
+    };
+  },
+
+  evaluateChechenPlacementTest(answers) {
+    const levelWeights = { A1: 0, A2: 0, B1: 0, B2: 0, C1: 0, C2: 0 };
+    const levelCounts = { A1: 0, A2: 0, B1: 0, B2: 0, C1: 0, C2: 0 };
+
+    this.chechenPlacementTestWords.forEach(item => {
+      const ans = answers[item.word] || "DONT_KNOW";
+      levelCounts[item.level]++;
+
+      if (ans === "KNOW") {
+        levelWeights[item.level] += 1.0;
+      } else if (ans === "NOT_SURE") {
+        levelWeights[item.level] += 0.5;
+      }
+    });
+
+    const levels = ["A1", "A2", "B1", "B2", "C1", "C2"];
+    let assignedLevel = "A1";
+
+    for (const lvl of levels) {
+      if (!levelCounts[lvl]) continue;
+      const scoreRatio = levelWeights[lvl] / levelCounts[lvl];
+      if (scoreRatio >= 0.5) {
+        assignedLevel = lvl;
+      } else {
+        break;
+      }
+    }
+
+    const titles = {
+      A1: "A1 — Начальный (Нохчийн мотт)",
+      A2: "A2 — Базовый (Нохчийн мотт)",
+      B1: "B1 — Средний (Нохчийн мотт)",
+      B2: "B2 — Продвинутый (Нохчийн мотт)",
+      C1: "C1 — Высокий (Нохчийн мотт)",
+      C2: "C2 — Мастер слова (Нохчийн мотт)"
+    };
+
+    return {
+      code: assignedLevel,
+      badge: "🟢 " + assignedLevel,
+      title: titles[assignedLevel] || assignedLevel,
+      desc: "Персональный уровень владения чеченским языком",
+      startingXp: 300
     };
   },
   evaluatePlacementTest(answers) {
@@ -71687,7 +71749,7 @@ const WordRamData = {
         }
       }
 
-      // 2. Lower levels
+      // 3. Lower levels
       for (let i = userRankIdx - 1; i >= 0; i--) {
         const lowerLvl = rankOrder[i];
         if (this.chechenDictionary[lowerLvl] && this.chechenDictionary[lowerLvl][strLen]) {
@@ -71698,7 +71760,7 @@ const WordRamData = {
         }
       }
 
-      // 3. Higher levels
+      // 4. Higher levels
       for (let i = userRankIdx + 1; i < rankOrder.length; i++) {
         const higherLvl = rankOrder[i];
         if (this.chechenDictionary[higherLvl] && this.chechenDictionary[higherLvl][strLen]) {
@@ -71709,7 +71771,7 @@ const WordRamData = {
         }
       }
 
-      // 4. Any level with targetLen
+      // 5. Any level with targetLen
       for (const lvl of rankOrder) {
         if (this.chechenDictionary[lvl] && this.chechenDictionary[lvl][strLen]) {
           const words = this.chechenDictionary[lvl][strLen];
@@ -71800,10 +71862,14 @@ const WordRamData = {
     return "WORD".padEnd(targetLen, "S").slice(0, targetLen);
   },
 
-  isValidWord(word, lang = "english") {
+  isValidWord(word, lang = null) {
     if (!word) return false;
-    if (lang === "chechen") {
-      const norm = WordRamTokenizer.normalizeChechen(word);
+    const rawStr = String(word).trim().toUpperCase();
+    const isChechenMode = (lang === "chechen");
+    const hasCyrillic = /[А-ЯЁӀ]/i.test(rawStr);
+
+    if (isChechenMode || (hasCyrillic && lang !== "english")) {
+      const norm = WordRamTokenizer.normalizeChechen(rawStr);
       if (this.chechenDefinitions && this.chechenDefinitions[norm]) return true;
       const tileCount = String(WordRamTokenizer.getTileCount(norm, "chechen"));
       for (const lvl of ["A1", "A2", "B1", "B2", "C1", "C2"]) {
@@ -71814,11 +71880,10 @@ const WordRamData = {
       return false;
     }
 
-    if (word.length < 3) return false;
-    const upper = word.toUpperCase();
-    const len = upper.length;
+    if (rawStr.length < 3) return false;
+    const len = rawStr.length;
     for (const lvl of ["A1", "A2", "B1", "B2", "C1"]) {
-      if (this.cefrDictionary[lvl] && this.cefrDictionary[lvl][len] && this.cefrDictionary[lvl][len].includes(upper)) {
+      if (this.cefrDictionary[lvl] && this.cefrDictionary[lvl][len] && this.cefrDictionary[lvl][len].includes(rawStr)) {
         return true;
       }
     }

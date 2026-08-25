@@ -915,6 +915,13 @@ document.addEventListener("DOMContentLoaded", () => {
   const btnResetData = document.getElementById("btn-reset-data");
 
   function renderSettingsScreen() {
+    const btnOpenPlacementTestEl = document.getElementById("btn-open-placement-test");
+    if (btnOpenPlacementTestEl) {
+      const curLang = storage.getLanguage();
+      btnOpenPlacementTestEl.textContent = curLang === "chechen"
+        ? "📝 Пройти тест на определение уровня чеченского (A1–C2)"
+        : "📝 Пройти тест на определение уровня английского (A1–C1)";
+    }
     updateProfileUI();
     if (toggleVoice) toggleVoice.checked = storage.getSetting("voiceSpeechEnabled") !== false;
 

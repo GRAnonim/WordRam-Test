@@ -1,13 +1,35 @@
 /**
- * WordRam - LocalStorage & Gamification State Engine (v29)
+ * WordRam - LocalStorage & Gamification State Engine (v41)
  * Multilingual Progress: Independent English & Chechen level progressions,
- * Quests, Streak, Lucky Wheel, Leagues, Vocabulary, XP, Settings.
+ * Ultra-reliable Android / iOS persistent save engine with multi-key migration.
  */
 
 class WordRamStorage {
   constructor() {
-    this.STORAGE_KEY = "wordram_v28_save";
+    this.STORAGE_KEY = "wordram_persistent_save_v1";
+    this.LEGACY_KEYS = [
+      "wordram_persistent_save_v1",
+      "wordram_v28_save",
+      "wordram_v21_save",
+      "wordram_v19_save",
+      "wordram_save",
+      "wordram_user_state"
+    ];
     this.state = this.load();
+    this.bindAutoSaveListeners();
+  }
+
+  bindAutoSaveListeners() {
+    if (typeof window === "undefined") return;
+    try {
+      window.addEventListener("beforeunload", () => this.save());
+      window.addEventListener("pagehide", () => this.save());
+      document.addEventListener("visibilitychange", () => {
+        if (document.visibilityState === "hidden") {
+          this.save();
+        }
+      });
+    } catch (e) {}
   }
 
   getDefaultProgress(lang = "english") {
@@ -32,6 +54,7 @@ class WordRamStorage {
       xp: 300,
       weeklyXp: 45,
       hasCompletedPlacementTest: false,
+      hasCompletedChechenPlacementTest: false,
       unlockedAchievements: [],
       claimedDailyRewards: {},
       coins: 60,
@@ -46,7 +69,8 @@ class WordRamStorage {
       daily: {
         lastPlayedDate: null,
         streak: 0,
-        completed: false
+        completed: false,
+        lastWodClaimDate: null
       },
       dailyQuests: {
         date: null,
@@ -68,32 +92,42 @@ class WordRamStorage {
 
   load() {
     try {
-      const data = (typeof localStorage !== "undefined") ? localStorage.getItem(this.STORAGE_KEY) : null;
-      if (data) {
-        const parsed = JSON.parse(data);
-        const def = this.getDefaultState();
-        const state = { ...def, ...parsed };
-
-        // Ensure progress object exists and is migrated
-        if (!state.progress) {
-          state.progress = {
-            english: {
-              currentLevel: parsed.currentLevel || 1,
-              unlockedLevel: parsed.unlockedLevel || 1,
-              languageLevel: parsed.englishLevel || "A2",
-              levelStars: parsed.levelStars || {},
-              levelHighScores: parsed.levelHighScores || {},
-              collectedWords: parsed.collectedWords || {}
-            },
-            chechen: this.getDefaultProgress("chechen")
-          };
-        } else {
-          if (!state.progress.english) state.progress.english = this.getDefaultProgress("english");
-          if (!state.progress.chechen) state.progress.chechen = this.getDefaultProgress("chechen");
+      if (typeof localStorage !== "undefined") {
+        let rawData = null;
+        // Search across all possible keys
+        for (const key of this.LEGACY_KEYS) {
+          const item = localStorage.getItem(key);
+          if (item) {
+            rawData = item;
+            break;
+          }
         }
 
-        if (!state.language) state.language = "english";
-        return state;
+        if (rawData) {
+          const parsed = JSON.parse(rawData);
+          const def = this.getDefaultState();
+          const state = { ...def, ...parsed };
+
+          if (!state.progress) {
+            state.progress = {
+              english: {
+                currentLevel: parsed.currentLevel || 1,
+                unlockedLevel: parsed.unlockedLevel || 1,
+                languageLevel: parsed.englishLevel || "A2",
+                levelStars: parsed.levelStars || {},
+                levelHighScores: parsed.levelHighScores || {},
+                collectedWords: parsed.collectedWords || {}
+              },
+              chechen: this.getDefaultProgress("chechen")
+            };
+          } else {
+            if (!state.progress.english) state.progress.english = this.getDefaultProgress("english");
+            if (!state.progress.chechen) state.progress.chechen = this.getDefaultProgress("chechen");
+          }
+
+          if (!state.language) state.language = "english";
+          return state;
+        }
       }
     } catch (e) {
       console.warn("Ошибка чтения LocalStorage", e);
@@ -104,7 +138,10 @@ class WordRamStorage {
   save() {
     try {
       if (typeof localStorage !== "undefined") {
-        localStorage.setItem(this.STORAGE_KEY, JSON.stringify(this.state));
+        const payload = JSON.stringify(this.state);
+        localStorage.setItem(this.STORAGE_KEY, payload);
+        // Mirror save to legacy key for cross-version safety
+        localStorage.setItem("wordram_v28_save", payload);
       }
     } catch (e) {
       console.error("Ошибка сохранения в LocalStorage", e);
@@ -168,6 +205,8 @@ class WordRamStorage {
       if (rank && this.state.xp < rank.minXp) {
         this.state.xp = rank.minXp;
       }
+    } else if (lang === "chechen") {
+      this.state.hasCompletedChechenPlacementTest = true;
     }
     this.save();
   }
