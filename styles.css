@@ -2104,3 +2104,65 @@ html, body {
   max-width: min(88vw, 360px);
   margin-top: 2px;
 }
+
+
+/* Mid-Screen Toast (Между слотами и полем - не перекрывает тему и шапку v38) */
+.preview-wrapper {
+  min-height: 32px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  position: relative !important;
+  width: 100% !important;
+  max-width: 360px !important;
+  margin: 2px 0 4px 0 !important;
+}
+
+.game-mid-toast {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.8);
+  background: rgba(31, 21, 30, 0.96);
+  color: #ffffff;
+  padding: 5px 16px;
+  border-radius: 16px;
+  font-size: 0.85rem;
+  font-weight: 800;
+  opacity: 0;
+  pointer-events: none;
+  white-space: nowrap;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.45);
+  border: 1.5px solid #a855f7;
+  transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  z-index: 20;
+}
+
+.game-mid-toast.show {
+  opacity: 1 !important;
+  transform: translate(-50%, -50%) scale(1) !important;
+}
+
+.game-mid-toast.toast-success {
+  background: linear-gradient(135deg, #15803d 0%, #166534 100%);
+  border-color: #4ade80;
+  color: #ffffff;
+}
+
+.game-mid-toast.toast-bonus {
+  background: linear-gradient(135deg, #b45309 0%, #92400e 100%);
+  border-color: #fde047;
+  color: #ffffff;
+}
+
+.game-mid-toast.toast-warning {
+  background: #dc2626;
+  border-color: #f87171;
+  color: #ffffff;
+}
+
+.game-mid-toast.toast-info {
+  background: #3b0764;
+  border-color: #c084fc;
+  color: #f3e8ff;
+}

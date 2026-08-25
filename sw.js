@@ -1,22 +1,23 @@
 /**
- * WordRam - Service Worker (v34)
- * Адаптивное игровое поле без скролла, брендовый Open Graph баннер 1200x630,
- * перенос прогресса между устройствами, 1 500 слов CEFR, Яндекс Метрика, PWA и оффлайн.
+ * WordRam - Service Worker (v38)
+ * Уведомления между слотами и полем (не перекрывают тему),
+ * подсказка при первом угаданном слове, минималистичный баннер (кириллица),
+ * 1 500 слов CEFR, Яндекс Метрика, PWA и оффлайн.
  */
 
-const CACHE_NAME = "wordram-v37";
+const CACHE_NAME = "wordram-v38";
 const ASSETS_TO_CACHE = [
   "./",
   "./index.html",
-  "./styles.css?v=37",
-  "./data.js?v=37",
-  "./storage.js?v=37",
-  "./generator.js?v=37",
-  "./game.js?v=37",
-  "./main.js?v=37",
-  "./manifest.webmanifest?v=37",
+  "./styles.css?v=38",
+  "./data.js?v=38",
+  "./storage.js?v=38",
+  "./generator.js?v=38",
+  "./game.js?v=38",
+  "./main.js?v=38",
+  "./manifest.webmanifest?v=38",
   "./logo.svg",
-  "./favicon.svg?v=37",
+  "./favicon.svg?v=38",
   "./icon-192.png",
   "./icon-512.png",
   "./og-image.png"

@@ -644,6 +644,14 @@ class WordRamGame {
           });
         }
 
+                if (!this.storage.state.hasSeenWordClickHint) {
+          this.storage.state.hasSeenWordClickHint = true;
+          this.storage.save();
+          setTimeout(() => {
+            this.showFloatingMessage("💡 Нажмите на найденное слово в слоте для перевода и озвучки!", "info");
+          }, 1800);
+        }
+
         if (this.foundWords.length > 0 && this.foundWords.length === this.levelData.words.length) {
           this.handleLevelWin();
           return;
@@ -798,6 +806,17 @@ class WordRamGame {
   }
 
   showFloatingMessage(text, type = "info") {
+    const midToast = document.getElementById("game-floating-toast");
+    if (midToast && !this.isGameOver) {
+      midToast.textContent = text;
+      midToast.className = `game-mid-toast toast-${type} show`;
+      if (this.midToastTimer) clearTimeout(this.midToastTimer);
+      this.midToastTimer = setTimeout(() => {
+        midToast.className = `game-mid-toast toast-${type}`;
+      }, 1600);
+      return;
+    }
+
     const toast = document.createElement("div");
     toast.className = `game-toast toast-${type}`;
     toast.textContent = text;

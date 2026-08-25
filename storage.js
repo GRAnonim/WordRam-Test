@@ -6,7 +6,7 @@
 
 class WordRamStorage {
   constructor() {
-    this.STORAGE_KEY = "wordram_v37_save";
+    this.STORAGE_KEY = "wordram_v38_save";
     this.state = this.load();
   }
 
@@ -18,6 +18,7 @@ class WordRamStorage {
       xp: 300,
       weeklyXp: 45,
       hasCompletedPlacementTest: false,
+      hasSeenWordClickHint: false,
       collectedWords: {},           // { "BEAUTIFUL": { count: 1, firstSeen: "...", mastery: 1 } }
       unlockedAchievements: [],    // ["first_words", ...]
       claimedDailyRewards: {},      // { "1": "2026-08-24" }
