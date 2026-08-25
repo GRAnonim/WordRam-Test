@@ -789,6 +789,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const btnClaimSuperChest = document.getElementById("btn-claim-super-chest");
 
   function renderDailyScreen() {
+    updateDailyWordCard();
     const status = storage.getDailyStatus();
     if (dailyStreakEl) dailyStreakEl.textContent = status.streak;
 
@@ -997,6 +998,134 @@ document.addEventListener("DOMContentLoaded", () => {
         game.startLevel(storage.getCurrentLevel("chechen"), false);
         game.showFloatingMessage("Язык слов переключен на Чеченский 🟢", "success");
       }
+    });
+  }
+
+
+  // Обработчики: Слово дня
+  const btnClaimWod = document.getElementById("btn-claim-wod");
+  const btnWodSpeak = document.getElementById("btn-wod-speak");
+  const wodWordEl = document.getElementById("wod-word");
+  const wodPhoneticEl = document.getElementById("wod-phonetic");
+  const wodTranslationEl = document.getElementById("wod-translation");
+  const wodExampleEl = document.getElementById("wod-example");
+
+  function updateDailyWordCard() {
+    const currentLang = storage.getLanguage();
+    const todayStr = new Date().toISOString().slice(0, 10);
+    const daySeed = new Date().getDate();
+
+    let word = "COURAGE";
+    let phonetic = "[ˈkʌrɪdʒ]";
+    let translation = "Мужество / Смелость / Отвага";
+    let example = "Have the courage to speak — Иметь смелость заговорить.";
+
+    if (currentLang === "chechen") {
+      const chechenWords = [
+        { word: "КЪОНАХ", tr: "Благородный муж / Рыцарь чести", ex: "Къонахчун дош — тешаме. — Слово къонаха надежно." },
+        { word: "ОЬЗДАНГАЛЛА", tr: "Благородство / Вежливость / Такт", ex: "Оьздангалла — адамаллин коьрта билгало. — Благородство — главный признак человечности." },
+        { word: "НОХЧАЛЛА", tr: "Чеченский кодекс чести и достоинства", ex: "Нохчалла ларъяр — коьрта декхар. — Соблюдение нохчалла — главный долг." },
+        { word: "ХЬОШАЛЛА", tr: "Гостеприимство и радушие", ex: "Хьаша варе сатийсар — хаза гӀиллакх. — Ожидание гостя — прекрасный обычай." },
+        { word: "СОБАР", tr: "Терпение и выдержка", ex: "Собар — толаман некъ. — Терпение — путь к победе." }
+      ];
+      const selected = chechenWords[daySeed % chechenWords.length];
+      word = selected.word;
+      phonetic = "[чеченский]";
+      translation = selected.tr;
+      example = selected.ex;
+    } else {
+      const englishWords = [
+        { word: "COURAGE", ph: "[ˈkʌrɪdʒ]", tr: "Мужество / Смелость / Отвага", ex: "Have the courage to speak — Иметь смелость заговорить." },
+        { word: "PERSEVERE", ph: "[ˌpɜːsɪˈvɪə]", tr: "Упорствовать / Стойко продолжать", ex: "Persevere through difficulties — Преодолевать трудности." },
+        { word: "GENEROSITY", ph: "[ˌdʒenəˈrɒsɪti]", tr: "Щедрость / Великодушие", ex: "Show true generosity — Проявлять искреннее великодушие." },
+        { word: "KNOWLEDGE", ph: "[ˈnɒlɪdʒ]", tr: "Знание / Познание", ex: "Knowledge is power — Знание — сила." },
+        { word: "DISCOVERY", ph: "[dɪˈskʌvəri]", tr: "Открытие / Находка", ex: "Make a great discovery — Сделать великое открытие." }
+      ];
+      const selected = englishWords[daySeed % englishWords.length];
+      word = selected.word;
+      phonetic = selected.ph;
+      translation = selected.tr;
+      example = selected.ex;
+    }
+
+    if (wodWordEl) wodWordEl.textContent = word;
+    if (wodPhoneticEl) wodPhoneticEl.textContent = phonetic;
+    if (wodTranslationEl) wodTranslationEl.textContent = translation;
+    if (wodExampleEl) wodExampleEl.textContent = example;
+
+    const isClaimed = storage.state.daily && storage.state.daily.lastWodClaimDate === todayStr;
+    if (btnClaimWod) {
+      if (isClaimed) {
+        btnClaimWod.disabled = true;
+        btnClaimWod.textContent = "Изучено на сегодня ✔";
+        btnClaimWod.classList.add("claimed-btn");
+      } else {
+        btnClaimWod.disabled = false;
+        btnClaimWod.textContent = "Изучить и забрать награду (+20 🪙)";
+        btnClaimWod.classList.remove("claimed-btn");
+      }
+    }
+  }
+
+  if (btnWodSpeak) {
+    btnWodSpeak.addEventListener("click", () => {
+      const word = wodWordEl ? wodWordEl.textContent : "";
+      if (word) game.speakWord(word);
+    });
+  }
+
+  if (btnClaimWod) {
+    btnClaimWod.addEventListener("click", () => {
+      const todayStr = new Date().toISOString().slice(0, 10);
+      if (storage.state.daily && storage.state.daily.lastWodClaimDate === todayStr) {
+        game.showFloatingMessage("Вы уже забрали сегодняшнюю награду за Слово дня!", "info");
+        return;
+      }
+      if (!storage.state.daily) storage.state.daily = {};
+      storage.state.daily.lastWodClaimDate = todayStr;
+      storage.addCoins(20);
+      storage.addXp(40);
+      game.playSound("win");
+      game.vibrate([20, 40, 20]);
+      game.updateCoinsDisplay();
+      updateProfileUI();
+      updateDailyWordCard();
+      game.showFloatingMessage("🎁 Слово дня изучено! Получено: +20 🪙 монет и +40 XP!", "bonus");
+    });
+  }
+
+
+  // Кнопка: Поделиться игрой с другом (+30 монет)
+  const btnShareGame = document.getElementById("btn-share-game");
+  if (btnShareGame) {
+    btnShareGame.addEventListener("click", async () => {
+      const shareData = {
+        title: "WordRam — Увлекательные филворды",
+        text: "Играй в WordRam: филворды со змейками, английский и чеченский языки, квесты и лиги!",
+        url: "https://granonim.github.io/WordRam/"
+      };
+
+      try {
+        if (navigator.share) {
+          await navigator.share(shareData);
+        } else if (navigator.clipboard) {
+          await navigator.clipboard.writeText(shareData.url);
+          game.showFloatingMessage("🔗 Ссылка на игру скопирована в буфер обмена!", "info");
+        }
+      } catch (err) {
+        if (err.name !== "AbortError") {
+          console.warn("Share error:", err);
+        }
+      }
+
+      // Награждаем игрока 30 монетами
+      storage.addCoins(30);
+      storage.addXp(30);
+      game.playSound("win");
+      game.vibrate([20, 40, 20]);
+      game.updateCoinsDisplay();
+      updateProfileUI();
+      game.showFloatingMessage("🎉 Спасибо, что делитесь WordRam! Награда: +30 🪙 получена!", "bonus");
     });
   }
 

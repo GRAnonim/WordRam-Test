@@ -409,8 +409,18 @@ class WordRamGame {
     if (!pathEl) {
       pathEl = document.createElementNS("http://www.w3.org/2000/svg", "path");
       pathEl.setAttribute("class", "drag-line");
+      pathEl.setAttribute("fill", "none");
+      pathEl.setAttribute("stroke", "#a855f7");
+      pathEl.setAttribute("stroke-width", "8");
+      pathEl.setAttribute("stroke-linecap", "round");
+      pathEl.setAttribute("stroke-linejoin", "round");
       this.svgConnector.appendChild(pathEl);
     }
+    pathEl.setAttribute("fill", "none");
+    pathEl.setAttribute("stroke", "#a855f7");
+    pathEl.setAttribute("stroke-width", "8");
+    pathEl.setAttribute("stroke-linecap", "round");
+    pathEl.setAttribute("stroke-linejoin", "round");
     pathEl.setAttribute("d", pathD);
   }
 
