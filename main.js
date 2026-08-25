@@ -353,31 +353,55 @@ document.addEventListener("DOMContentLoaded", () => {
   // ----------------------------------------------------
   let quizIndex = 0;
   let quizAnswers = {};
-  let evaluatedResult = null;
+
+  function getActiveQuizList() {
+    const currentLang = storage.getLanguage();
+    if (currentLang === "chechen" && WordRamData.chechenPlacementTestWords) {
+      return WordRamData.chechenPlacementTestWords;
+    }
+    return WordRamData.placementTestWords;
+  }
 
   function openPlacementTest() {
     quizIndex = 0;
     quizAnswers = {};
     if (quizStep) quizStep.style.display = "block";
     if (resultStep) resultStep.style.display = "none";
+
+    const currentLang = storage.getLanguage();
+    const modalTitleEl = document.querySelector("#modal-placement .modal-header h2");
+    if (modalTitleEl) {
+      modalTitleEl.textContent = currentLang === "chechen"
+        ? "🟢 Определение уровня чеченского"
+        : "🎯 Тест словарного запаса (English)";
+    }
+
     renderQuizQuestion();
     showModal(placementModal);
   }
 
   function closePlacementTest() {
-    storage.setSetting("hasCompletedPlacementTest", true);
+    const currentLang = storage.getLanguage();
+    if (currentLang === "chechen") {
+      storage.setSetting("hasCompletedChechenPlacementTest", true);
+    } else {
+      storage.setSetting("hasCompletedPlacementTest", true);
+    }
     hideAllModals();
   }
 
   function renderQuizQuestion() {
-    const questions = WordRamData.placementTestWords;
+    const questions = getActiveQuizList();
     if (quizIndex >= questions.length) {
       showQuizResult();
       return;
     }
 
     const current = questions[quizIndex];
-    if (quizWordEl) quizWordEl.textContent = current.word;
+    if (quizWordEl) {
+      quizWordEl.textContent = current.word;
+      if (current.tr) quizWordEl.title = current.tr;
+    }
     if (quizCounterEl) quizCounterEl.textContent = `${quizIndex + 1} / ${questions.length}`;
     if (quizFillEl) {
       const pct = ((quizIndex + 1) / questions.length) * 100;
@@ -386,9 +410,11 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function handleQuizAnswer(answerType) {
-    const questions = WordRamData.placementTestWords;
+    const questions = getActiveQuizList();
     const current = questions[quizIndex];
-    quizAnswers[current.word] = answerType;
+    if (current) {
+      quizAnswers[current.word] = answerType;
+    }
 
     quizIndex++;
     if (quizIndex < questions.length) {
@@ -399,22 +425,35 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function showQuizResult() {
-    evaluatedResult = WordRamData.evaluatePlacementTest(quizAnswers);
     if (quizStep) quizStep.style.display = "none";
     if (resultStep) resultStep.style.display = "block";
 
-    if (resultBadgeEl) resultBadgeEl.textContent = evaluatedResult.badge;
-    if (resultTitleEl) resultTitleEl.textContent = `Ваш уровень: ${evaluatedResult.title}`;
-    if (resultDescEl) resultDescEl.textContent = evaluatedResult.desc;
-  }
+    const currentLang = storage.getLanguage();
+    if (currentLang === "chechen") {
+      const res = WordRamData.evaluateChechenPlacementTest(quizAnswers);
+      storage.setLanguageLevel(res.code, "chechen");
+      storage.setSetting("hasCompletedChechenPlacementTest", true);
 
-  const quizButtons = document.querySelectorAll(".quiz-btn");
-  quizButtons.forEach(btn => {
-    btn.addEventListener("click", () => {
-      const ans = btn.dataset.answer;
-      handleQuizAnswer(ans);
-    });
-  });
+      if (resultBadgeEl) resultBadgeEl.textContent = res.badge;
+      if (resultTitleEl) resultTitleEl.textContent = res.title;
+      if (resultDescEl) {
+        resultDescEl.innerHTML = `<p>Ваш рекомендуемый уровень: <strong>${res.title}</strong>.</p>
+        <p class='mt-2'>Чеченские слова в игре теперь откалиброваны под ваш реальный словарный запас!</p>`;
+      }
+    } else {
+      const res = WordRamData.evaluatePlacementTest(quizAnswers);
+      storage.setEnglishLevel(res.code);
+      storage.setSetting("hasCompletedPlacementTest", true);
+
+      if (resultBadgeEl) resultBadgeEl.textContent = res.badge;
+      if (resultTitleEl) resultTitleEl.textContent = res.title;
+      if (resultDescEl) {
+        resultDescEl.innerHTML = `<p>Ваш рекомендуемый уровень: <strong>${res.title}</strong>.</p>
+        <p class='mt-2'>Слова в игре теперь откалиброваны под ваш реальный словарный запас!</p>`;
+      }
+    }
+    updateProfileUI();
+  }
 
   if (btnOpenPlacement) btnOpenPlacement.addEventListener("click", () => openPlacementTest());
   if (btnClosePlacement) btnClosePlacement.addEventListener("click", () => closePlacementTest());
