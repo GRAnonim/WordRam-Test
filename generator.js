@@ -1,12 +1,12 @@
 /**
- * WordRam - Organic Labyrinth Generator & Level Packer (v23)
+ * WordRam - Organic Labyrinth Generator & Level Packer (v29)
  * 100% покрытие поля, нетривиальные змейки (без 2x2 квадратов и прямых линий),
- * строгий подбор слов по уровню CEFR.
+ * Универсальная мультиязычная генерация (English & Chechen) с поддержкой составных графем.
  */
 
 class WordRamGenerator {
   constructor(dataModule) {
-    this.data = dataModule || WordRamData;
+    this.data = dataModule || (typeof WordRamData !== "undefined" ? WordRamData : null);
   }
 
   partitionGrid(gridSize, wordLengths) {
@@ -23,7 +23,7 @@ class WordRamGenerator {
 
     // Эвристический органический поиск змеек
     let attempts = 0;
-    while (attempts < 300) {
+    while (attempts < 600) {
       attempts++;
       const result = this._findOrganicDFS(gridSize, wordLengths);
       if (result && this.validateRoutes(result, gridSize, wordLengths)) {
@@ -103,20 +103,25 @@ class WordRamGenerator {
 
       const dfsStep = () => {
         stepAttempts++;
-        if (stepAttempts > 1500) return false;
-        if (path.length === targetLen) return true;
+        if (stepAttempts > 2000) return false;
+        if (path.length === targetLen) {
+          if (targetLen >= 3 && this.countTurns(path) < 1) return false;
+          return true;
+        }
 
         const current = path[path.length - 1];
         let neighbors = getNeighbors(current[0], current[1]);
         if (neighbors.length === 0) return false;
 
         const straightTail = countStraightTail(path);
-        if (straightTail >= 3) {
+        if (straightTail >= 2) {
           const lastIdx = path.length - 1;
           const dr = path[lastIdx][0] - path[lastIdx - 1][0];
           const dc = path[lastIdx][1] - path[lastIdx - 1][1];
-          neighbors = neighbors.filter(([nr, nc]) => (nr - current[0] !== dr) || (nc - current[1] !== dc));
-          if (neighbors.length === 0) return false;
+          const turningNeighbors = neighbors.filter(([nr, nc]) => (nr - current[0] !== dr) || (nc - current[1] !== dc));
+          if (turningNeighbors.length > 0) {
+            neighbors = turningNeighbors;
+          }
         }
 
         neighbors.sort((a, b) => {
@@ -171,6 +176,32 @@ class WordRamGenerator {
   }
 
   _generateFallbackRoutes(gridSize, wordLengths) {
+    if (gridSize === 4) {
+      if (wordLengths.length === 4 && wordLengths.every(l => l === 4)) {
+        return [
+          [[0,0],[0,1],[1,1],[1,0]],
+          [[0,2],[0,3],[1,3],[1,2]],
+          [[2,0],[2,1],[3,1],[3,0]],
+          [[2,2],[2,3],[3,3],[3,2]]
+        ];
+      }
+      if (wordLengths.length === 4 && wordLengths.join(",") === "3,4,4,5") {
+        return [
+          [[0,0],[0,1],[1,1]],
+          [[0,2],[0,3],[1,3],[1,2]],
+          [[1,0],[2,0],[3,0],[3,1]],
+          [[2,1],[2,2],[3,2],[3,3],[2,3]]
+        ];
+      }
+      if (wordLengths.length === 3 && wordLengths.join(",") === "5,5,6") {
+        return [
+          [[0,0],[0,1],[0,2],[1,2],[1,1]],
+          [[1,0],[2,0],[3,0],[3,1],[2,1]],
+          [[0,3],[1,3],[2,3],[3,3],[3,2],[2,2]]
+        ];
+      }
+    }
+
     const routes = [];
     let currentPath = [];
     let lenIdx = 0;
@@ -209,40 +240,72 @@ class WordRamGenerator {
           if (dist !== 1) return false;
         }
       }
+      if (route.length >= 4 && this.countTurns(route) < 1) {
+        return false;
+      }
     }
 
     return visited.size === totalCells;
   }
 
-  validateLevel(grid, words, routes, gridSize) {
+  validateLevel(grid, words, routes, gridSize, lang = "english") {
+    const sz = gridSize || (grid && grid.length) || 5;
     const routesList = Object.values(routes);
-    const lengths = words.map(w => w.length);
-    return this.validateRoutes(routesList, gridSize, lengths);
+    const tokenizer = (this.data && this.data.WordRamTokenizer) || (typeof WordRamTokenizer !== "undefined" ? WordRamTokenizer : null);
+    const lengths = words.map(w => (tokenizer ? tokenizer.getTileCount(w, lang) : w.length));
+    return this.validateRoutes(routesList, sz, lengths);
   }
 
-  generateLevel(levelNumber, userCefr = "A2") {
+  countTurns(route) {
+    if (!route || route.length < 3) return 0;
+    let turns = 0;
+    for (let i = 1; i < route.length - 1; i++) {
+      const dr1 = route[i][0] - route[i - 1][0];
+      const dc1 = route[i][1] - route[i - 1][1];
+      const dr2 = route[i + 1][0] - route[i][0];
+      const dc2 = route[i + 1][1] - route[i][1];
+      if (dr1 !== dr2 || dc1 !== dc2) {
+        turns++;
+      }
+    }
+    return turns;
+  }
+
+  generateLevel(levelNumber, userCefr = "A2", lang = "english") {
     const config = this.data.getLevelPackingConfig(levelNumber, userCefr);
     const routesArray = this.partitionGrid(config.gridSize, config.wordLengths);
 
     const grid = Array.from({ length: config.gridSize }, () => Array(config.gridSize).fill(""));
     const words = [];
     const routesMap = {};
+    const tilesMap = {};
     const usedWords = [];
+
+    const tokenizer = (this.data && this.data.WordRamTokenizer) || (typeof WordRamTokenizer !== "undefined" ? WordRamTokenizer : null);
 
     for (let i = 0; i < routesArray.length; i++) {
       const route = routesArray[i];
       const len = route.length;
-      let word = this.data.getWordForCefrAndLength(userCefr, len, usedWords, config.themeKey);
-      if (!word || word.length !== len) {
-        word = (word || "WORD").padEnd(len, "S").slice(0, len);
+      let word = this.data.getWordForCefrAndLength(userCefr, len, usedWords, config.themeKey, lang);
+      let tiles = tokenizer ? tokenizer.tokenize(word, lang) : (word ? word.split("") : []);
+
+      if (!tiles || tiles.length !== len) {
+        if (lang === "chechen") {
+          word = this.data.getWordForCefrAndLength("A1", len, usedWords, null, "chechen");
+          tiles = tokenizer ? tokenizer.tokenize(word, "chechen") : word.split("");
+        } else {
+          word = (word || "WORD").padEnd(len, "S").slice(0, len);
+          tiles = word.split("");
+        }
       }
       usedWords.push(word);
       words.push(word);
       routesMap[word] = route;
+      tilesMap[word] = tiles;
 
       for (let j = 0; j < len; j++) {
         const [r, c] = route[j];
-        grid[r][c] = word[j];
+        grid[r][c] = tiles[j];
       }
     }
 
@@ -252,12 +315,14 @@ class WordRamGenerator {
       totalCells: config.totalCells,
       words: words,
       routes: routesMap,
+      tilesMap: tilesMap,
       grid: grid,
       themeKey: config.themeKey,
       themeTitle: config.themeTitle,
       themeIcon: config.themeIcon,
       coinsReward: config.coinsReward,
-      xpReward: config.xpReward
+      xpReward: config.xpReward,
+      language: lang
     };
   }
 }

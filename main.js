@@ -424,8 +424,18 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function updateProfileUI() {
-    const levelCode = storage.getEnglishLevel();
-    if (headerCefrBadge) headerCefrBadge.textContent = `🇬🇧 ${levelCode}`;
+    const currentLang = storage.getLanguage();
+    const levelCode = storage.getLanguageLevel(currentLang);
+    
+    if (headerCefrBadge) {
+      if (currentLang === "chechen") {
+        headerCefrBadge.textContent = `🟢 ${levelCode}`;
+        headerCefrBadge.title = "Язык игры: Чеченский";
+      } else {
+        headerCefrBadge.textContent = `🇬🇧 ${levelCode}`;
+        headerCefrBadge.title = "Язык игры: English";
+      }
+    }
 
     const profileCefrBadge = document.getElementById("profile-cefr-badge");
     const profileXpFill = document.getElementById("profile-xp-fill");
@@ -434,7 +444,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const xpData = storage.getXpProgress();
 
-    if (profileCefrBadge) profileCefrBadge.textContent = xpData.rank.badge;
+    if (profileCefrBadge) {
+      if (currentLang === "chechen") {
+        profileCefrBadge.textContent = `${levelCode} — Нохчийн мотт`;
+      } else {
+        profileCefrBadge.textContent = xpData.rank.badge;
+      }
+    }
     if (profileXpFill) profileXpFill.style.width = `${xpData.percent}%`;
     if (profileXpText) {
       profileXpText.textContent = xpData.isMax ? `Опыт: ${xpData.currentXp} XP (Макс.)` : `Опыт: ${xpData.currentXp} / ${xpData.nextXp} XP`;
@@ -773,7 +789,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const btnClaimSuperChest = document.getElementById("btn-claim-super-chest");
 
   function renderDailyScreen() {
-    renderWordOfDay();
     const status = storage.getDailyStatus();
     if (dailyStreakEl) dailyStreakEl.textContent = status.streak;
 
@@ -815,32 +830,19 @@ document.addEventListener("DOMContentLoaded", () => {
         if (qState.completed) completedCount++;
 
         const qCard = document.createElement("div");
-        qCard.className = `quest-item-card ${qState.completed ? "completed" : ""} ${qState.claimed ? "claimed-card" : ""}`;
-
-        let buttonHtml = "";
-        if (qState.claimed) {
-          buttonHtml = `<div class="quest-done-badge"><span class="check-icon">✓</span> <span>Выполнено</span></div>`;
-        } else if (qState.completed) {
-          buttonHtml = `<button class="claim-ready-btn pulse-glow">Забрать</button>`;
-        } else {
-          buttonHtml = `<div class="quest-progress-pill">${qState.current} / ${t.target}</div>`;
-        }
-
+        qCard.className = `quest-item-card ${qState.completed ? "completed" : ""}`;
         qCard.innerHTML = `
           <div class="quest-item-info">
-            <div class="quest-title-row">
-              <strong>${t.title}</strong>
-              ${qState.claimed ? '<span class="quest-check-pill">✔</span>' : ''}
-            </div>
+            <strong>${t.title}</strong>
             <div class="quest-sub">${t.desc} (${qState.current}/${t.target})</div>
             <div class="quest-reward">+${t.rewardCoins} 🪙, +${t.rewardXp} XP</div>
           </div>
-          <div class="quest-action-box">
-            ${buttonHtml}
-          </div>
+          <button class="small-btn ${qState.claimed ? "claimed-btn" : (qState.completed ? "claim-ready-btn" : "locked-btn")}" ${(!qState.completed || qState.claimed) ? "disabled" : ""}>
+            ${qState.claimed ? "✔" : (qState.completed ? "Забрать" : `${qState.current}/${t.target}`)}
+          </button>
         `;
 
-        const claimBtn = qCard.querySelector("button.claim-ready-btn");
+        const claimBtn = qCard.querySelector("button");
         if (claimBtn && qState.completed && !qState.claimed) {
           claimBtn.addEventListener("click", () => {
             storage.claimQuest(t.id);
@@ -915,6 +917,16 @@ document.addEventListener("DOMContentLoaded", () => {
     updateProfileUI();
     if (toggleVoice) toggleVoice.checked = storage.getSetting("voiceSpeechEnabled") !== false;
 
+    // Переключатель языка слов в игре
+    const btnLangEn = document.getElementById("btn-lang-en");
+    const btnLangCe = document.getElementById("btn-lang-ce");
+    const currentLang = storage.getLanguage();
+
+    if (btnLangEn && btnLangCe) {
+      btnLangEn.classList.toggle("active", currentLang === "english");
+      btnLangCe.classList.toggle("active", currentLang === "chechen");
+    }
+
     // 1. Еженедельная лига
     const leagueData = storage.getLeagueData();
     if (leagueNameEl) leagueNameEl.textContent = leagueData.league.name;
@@ -961,6 +973,33 @@ document.addEventListener("DOMContentLoaded", () => {
     if (toggleVibration) toggleVibration.checked = !!storage.getSetting("vibrationEnabled");
   }
 
+
+  // Кнопки выбора языка игры в Настройках
+  const btnLangEn = document.getElementById("btn-lang-en");
+  const btnLangCe = document.getElementById("btn-lang-ce");
+
+  if (btnLangEn) {
+    btnLangEn.addEventListener("click", () => {
+      if (storage.getLanguage() !== "english") {
+        storage.setLanguage("english");
+        renderSettingsScreen();
+        game.startLevel(storage.getCurrentLevel("english"), false);
+        game.showFloatingMessage("Язык слов переключен на English 🇬🇧", "success");
+      }
+    });
+  }
+
+  if (btnLangCe) {
+    btnLangCe.addEventListener("click", () => {
+      if (storage.getLanguage() !== "chechen") {
+        storage.setLanguage("chechen");
+        renderSettingsScreen();
+        game.startLevel(storage.getCurrentLevel("chechen"), false);
+        game.showFloatingMessage("Язык слов переключен на Чеченский 🟢", "success");
+      }
+    });
+  }
+
   if (toggleVoice) {
     toggleVoice.addEventListener("change", (e) => {
       storage.setSetting("voiceSpeechEnabled", e.target.checked);
@@ -990,183 +1029,6 @@ document.addEventListener("DOMContentLoaded", () => {
         renderSettingsScreen();
         game.startLevel(1, false);
         switchTab("game");
-      }
-    });
-  }
-
-  
-  // ----------------------------------------------------
-  // Поделиться и Обратная связь (v29)
-  // ----------------------------------------------------
-
-  
-  // ----------------------------------------------------
-  // Слово дня (Word of the Day - v32)
-  // ----------------------------------------------------
-  const wodWord = document.getElementById("wod-word");
-  const wodPhonetic = document.getElementById("wod-phonetic");
-  const wodTranslation = document.getElementById("wod-translation");
-  const wodExample = document.getElementById("wod-example");
-  const btnWodSpeak = document.getElementById("btn-wod-speak");
-  const btnClaimWod = document.getElementById("btn-claim-wod");
-  const wodRewardTag = document.getElementById("wod-reward-tag");
-
-  function getDailyWord() {
-    const words = Object.keys(WordRamData.wordDefinitions);
-    const dayOfYear = Math.floor((Date.now() - new Date(new Date().getFullYear(), 0, 0)) / 86400000);
-    const wordKey = words[dayOfYear % words.length];
-    return WordRamData.getWordDetails(wordKey);
-  }
-
-  let activeDailyWord = getDailyWord();
-
-  function renderWordOfDay() {
-    if (!wodWord || !activeDailyWord) return;
-    const todayStr = new Date().toISOString().slice(0, 10);
-    const claimedDate = storage.state.claimedDailyWordDate;
-
-    wodWord.textContent = activeDailyWord.word;
-    wodPhonetic.textContent = activeDailyWord.ph || "";
-    wodTranslation.textContent = activeDailyWord.tr || activeDailyWord.word;
-    wodExample.textContent = activeDailyWord.ex || "Learn new words every day!";
-
-    if (claimedDate === todayStr) {
-      if (btnClaimWod) {
-        btnClaimWod.textContent = "✓ Слово дня изучено (+20 🪙 получено)";
-        btnClaimWod.disabled = true;
-        btnClaimWod.className = "secondary-btn small-btn full-width mt-2";
-      }
-      if (wodRewardTag) wodRewardTag.textContent = "Изучено";
-    } else {
-      if (btnClaimWod) {
-        btnClaimWod.textContent = "Изучить и забрать награду (+20 🪙)";
-        btnClaimWod.disabled = false;
-        btnClaimWod.className = "primary-btn small-btn full-width mt-2";
-      }
-      if (wodRewardTag) wodRewardTag.textContent = "+20 🪙 +40 XP";
-    }
-  }
-
-  if (btnWodSpeak) {
-    btnWodSpeak.addEventListener("click", (e) => {
-      e.stopPropagation();
-      if (activeDailyWord) game.speakWord(activeDailyWord.word);
-    });
-  }
-
-  if (btnClaimWod) {
-    btnClaimWod.addEventListener("click", () => {
-      const todayStr = new Date().toISOString().slice(0, 10);
-      storage.state.claimedDailyWordDate = todayStr;
-      storage.addCoins(20);
-      storage.addXp(40);
-      storage.recordWordToVocabulary(activeDailyWord.word);
-      storage.save();
-      game.updateCoinsDisplay();
-      game.speakWord(activeDailyWord.word);
-      renderWordOfDay();
-      showCustomInfoDialog(
-        "💡",
-        "Слово дня изучено!",
-        "<p>Вы изучили слово <strong>" + activeDailyWord.word + "</strong> (<em>" + activeDailyWord.tr + "</em>) и получили:</p><p class='mt-2'><strong>+20 🪙 монет</strong> и <strong>+40 XP опыта</strong>!</p><p class='mt-2'>Слово добавлено в ваш Личный словарь.</p>"
-      );
-    });
-  }
-
-  // ----------------------------------------------------
-  // Поделиться игрой (v32)
-  // ----------------------------------------------------
-  const btnShareGame = document.getElementById("btn-share-game");
-  const btnWinShare = document.getElementById("btn-win-share");
-
-  function shareWordRamGame() {
-    const count = storage.getCollectedWordsCount();
-    let wordWord = "слов";
-    const mod10 = count % 10;
-    const mod100 = count % 100;
-    if (mod10 === 1 && mod100 !== 11) wordWord = "слово";
-    else if (mod10 >= 2 && mod10 <= 4 && (mod100 < 10 || mod100 >= 20)) wordWord = "слова";
-
-    const shareData = {
-      title: "WordRam — Английские филворды",
-      text: "Я изучаю английский в WordRam! 🇬🇧 Мой уровень: " + storage.getEnglishLevel() + " (выучено: " + count + " " + wordWord + "). Попробуй сыграть со мной: https://granonim.github.io/WordRam/",
-      url: "https://granonim.github.io/WordRam/"
-    };
-
-    if (navigator.share) {
-      navigator.share(shareData).then(() => {
-        storage.addCoins(30);
-        game.updateCoinsDisplay();
-        showCustomInfoDialog("🎁", "Награда получена!", "<p>Спасибо, что делитесь игрой!</p><p class='mt-2'>Вам начислено <strong>+30 🪙 монет</strong>!</p>");
-      }).catch(() => {});
-    } else {
-      if (navigator.clipboard) {
-        navigator.clipboard.writeText("https://granonim.github.io/WordRam/").then(() => {
-          storage.addCoins(30);
-          game.updateCoinsDisplay();
-          showCustomInfoDialog("📋", "Ссылка скопирована!", "<p>Ссылка на игру <strong>https://granonim.github.io/WordRam/</strong> скопирована! Отправьте её друзьям. Вам начислено <strong>+30 🪙 монет</strong>!</p>");
-        });
-      }
-    }
-  }
-
-  if (btnShareGame) btnShareGame.addEventListener("click", shareWordRamGame);
-  if (btnWinShare) btnWinShare.addEventListener("click", shareWordRamGame);
-
-  
-  // ----------------------------------------------------
-  // Резервное копирование прогресса (v34)
-  // ----------------------------------------------------
-  const btnExportBackup = document.getElementById("btn-export-backup");
-  const btnImportBackup = document.getElementById("btn-import-backup");
-
-  if (btnExportBackup) {
-    btnExportBackup.addEventListener("click", () => {
-      const code = storage.exportSaveCode();
-      if (code) {
-        if (navigator.clipboard) {
-          navigator.clipboard.writeText(code).then(() => {
-            showCustomInfoDialog(
-              "💾",
-              "Прогресс скопирован!",
-              "<p>Код резервной копии скопирован в буфер обмена!</p><p class='mt-2'>Сохраните его в заметках или отправьте себе в Telegram. Чтобы восстановить прогресс на новом телефоне, нажмите «📥 Восстановить» и вставьте этот код.</p>"
-            );
-          });
-        } else {
-          showCustomInfoDialog(
-            "💾",
-            "Ваш код прогресса",
-            "<p>Скопируйте этот текст:</p><textarea readonly style='width:100%; height:80px; font-size:0.75rem; background:#221721; color:#fde047; border:1px solid #5c4756; border-radius:8px; padding:6px; margin-top:8px;'>" + code + "</textarea>"
-          );
-        }
-      }
-    });
-  }
-
-  if (btnImportBackup) {
-    btnImportBackup.addEventListener("click", () => {
-      const inputCode = prompt("Вставьте скопированный код резервной копии:");
-      if (inputCode && inputCode.trim()) {
-        const success = storage.importSaveCode(inputCode.trim());
-        if (success) {
-          game.updateCoinsDisplay();
-          updateProfileUI();
-          renderDailyScreen();
-          renderVocabScreen();
-          const cur = storage.getSetting("currentLevel") || 1;
-          game.startLevel(cur, false);
-          showCustomInfoDialog(
-            "✅",
-            "Прогресс восстановлен!",
-            "<p>Все ваши выученные слова, уровень, звезды и монеты успешно загружены!</p>"
-          );
-        } else {
-          showCustomInfoDialog(
-            "❌",
-            "Ошибка восстановления",
-            "<p>Введен неверный или поврежденный код резервной копии. Проверьте правильность скопированного текста.</p>"
-          );
-        }
       }
     });
   }

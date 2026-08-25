@@ -1,37 +1,47 @@
 /**
- * WordRam - LocalStorage & Gamification State Engine (v21)
- * Управление всеми системами: квесты дня, заморозка стрика, колесо фортуны,
- * еженедельные лиги, словарь выученных слов, XP, авто-озвучка и настройки.
+ * WordRam - LocalStorage & Gamification State Engine (v29)
+ * Multilingual Progress: Independent English & Chechen level progressions,
+ * Quests, Streak, Lucky Wheel, Leagues, Vocabulary, XP, Settings.
  */
 
 class WordRamStorage {
   constructor() {
-    this.STORAGE_KEY = "wordram_v39_save";
+    this.STORAGE_KEY = "wordram_v28_save";
     this.state = this.load();
+  }
+
+  getDefaultProgress(lang = "english") {
+    return {
+      currentLevel: 1,
+      unlockedLevel: 1,
+      languageLevel: lang === "chechen" ? "A1" : "A2",
+      levelStars: {},
+      levelHighScores: {},
+      collectedWords: {}
+    };
   }
 
   getDefaultState() {
     return {
-      currentLevel: 1,
-      unlockedLevel: 1,
-      englishLevel: "A2",
+      language: "english", // "english" | "chechen"
+      progress: {
+        english: this.getDefaultProgress("english"),
+        chechen: this.getDefaultProgress("chechen")
+      },
+      // Global profile & currencies
       xp: 300,
       weeklyXp: 45,
       hasCompletedPlacementTest: false,
-      hasSeenWordClickHint: false,
-      collectedWords: {},           // { "BEAUTIFUL": { count: 1, firstSeen: "...", mastery: 1 } }
-      unlockedAchievements: [],    // ["first_words", ...]
-      claimedDailyRewards: {},      // { "1": "2026-08-24" }
-      levelStars: {},               // { "1": 3, "2": 2, ... }
-      levelHighScores: {},
+      unlockedAchievements: [],
+      claimedDailyRewards: {},
       coins: 60,
       hintsRemaining: 3,
       hintCost: 15,
-      streakFreezes: 0,            // Количество защит серии
+      streakFreezes: 0,
       lastWheelSpinDate: null,
       currentLeagueId: 1,
       soundEnabled: true,
-      voiceSpeechEnabled: true,     // Авто-озвучка произношения слов (включена по умолчанию)
+      voiceSpeechEnabled: true,
       vibrationEnabled: true,
       daily: {
         lastPlayedDate: null,
@@ -58,10 +68,32 @@ class WordRamStorage {
 
   load() {
     try {
-      const data = localStorage.getItem(this.STORAGE_KEY);
+      const data = (typeof localStorage !== "undefined") ? localStorage.getItem(this.STORAGE_KEY) : null;
       if (data) {
         const parsed = JSON.parse(data);
-        return { ...this.getDefaultState(), ...parsed };
+        const def = this.getDefaultState();
+        const state = { ...def, ...parsed };
+
+        // Ensure progress object exists and is migrated
+        if (!state.progress) {
+          state.progress = {
+            english: {
+              currentLevel: parsed.currentLevel || 1,
+              unlockedLevel: parsed.unlockedLevel || 1,
+              languageLevel: parsed.englishLevel || "A2",
+              levelStars: parsed.levelStars || {},
+              levelHighScores: parsed.levelHighScores || {},
+              collectedWords: parsed.collectedWords || {}
+            },
+            chechen: this.getDefaultProgress("chechen")
+          };
+        } else {
+          if (!state.progress.english) state.progress.english = this.getDefaultProgress("english");
+          if (!state.progress.chechen) state.progress.chechen = this.getDefaultProgress("chechen");
+        }
+
+        if (!state.language) state.language = "english";
+        return state;
       }
     } catch (e) {
       console.warn("Ошибка чтения LocalStorage", e);
@@ -71,27 +103,81 @@ class WordRamStorage {
 
   save() {
     try {
-      localStorage.setItem(this.STORAGE_KEY, JSON.stringify(this.state));
+      if (typeof localStorage !== "undefined") {
+        localStorage.setItem(this.STORAGE_KEY, JSON.stringify(this.state));
+      }
     } catch (e) {
       console.error("Ошибка сохранения в LocalStorage", e);
     }
   }
 
   // ----------------------------------------------------
-  // Уровень английского (CEFR) и Опыт (XP)
+  // Language Management & Independent Progress
   // ----------------------------------------------------
+  getLanguage() {
+    return this.state.language === "chechen" ? "chechen" : "english";
+  }
+
+  setLanguage(lang) {
+    this.state.language = lang === "chechen" ? "chechen" : "english";
+    this.save();
+  }
+
+  getLanguageProgress(lang = this.getLanguage()) {
+    if (!this.state.progress) {
+      this.state.progress = {
+        english: this.getDefaultProgress("english"),
+        chechen: this.getDefaultProgress("chechen")
+      };
+    }
+    if (!this.state.progress[lang]) {
+      this.state.progress[lang] = this.getDefaultProgress(lang);
+    }
+    return this.state.progress[lang];
+  }
+
+  getCurrentLevel(lang = this.getLanguage()) {
+    return this.getLanguageProgress(lang).currentLevel || 1;
+  }
+
+  setCurrentLevel(lvl, lang = this.getLanguage()) {
+    this.getLanguageProgress(lang).currentLevel = lvl;
+    this.save();
+  }
+
+  getUnlockedLevel(lang = this.getLanguage()) {
+    return this.getLanguageProgress(lang).unlockedLevel || 1;
+  }
+
+  setUnlockedLevel(lvl, lang = this.getLanguage()) {
+    this.getLanguageProgress(lang).unlockedLevel = lvl;
+    this.save();
+  }
+
+  getLanguageLevel(lang = this.getLanguage()) {
+    return this.getLanguageProgress(lang).languageLevel || (lang === "chechen" ? "A1" : "A2");
+  }
+
+  setLanguageLevel(levelCode, lang = this.getLanguage()) {
+    this.getLanguageProgress(lang).languageLevel = levelCode;
+    if (lang === "english") {
+      this.state.hasCompletedPlacementTest = true;
+      const rank = (typeof WordRamData !== "undefined" && WordRamData.xpRanks)
+        ? WordRamData.xpRanks.find(r => r.code === levelCode)
+        : null;
+      if (rank && this.state.xp < rank.minXp) {
+        this.state.xp = rank.minXp;
+      }
+    }
+    this.save();
+  }
+
   getEnglishLevel() {
-    return this.state.englishLevel || "A2";
+    return this.getLanguageLevel("english");
   }
 
   setEnglishLevel(levelCode) {
-    this.state.englishLevel = levelCode;
-    this.state.hasCompletedPlacementTest = true;
-    const rank = WordRamData.xpRanks.find(r => r.code === levelCode);
-    if (rank && this.state.xp < rank.minXp) {
-      this.state.xp = rank.minXp;
-    }
-    this.save();
+    this.setLanguageLevel(levelCode, "english");
   }
 
   getXp() {
@@ -99,14 +185,15 @@ class WordRamStorage {
   }
 
   getXpProgress() {
-    const currentCode = this.getEnglishLevel();
-    const currentRankIdx = WordRamData.xpRanks.findIndex(r => r.code === currentCode);
-    const rank = WordRamData.xpRanks[currentRankIdx] || WordRamData.xpRanks[0];
-    const isMax = currentRankIdx === WordRamData.xpRanks.length - 1;
+    const currentCode = this.getLanguageLevel("english");
+    const ranks = (typeof WordRamData !== "undefined" && WordRamData.xpRanks) ? WordRamData.xpRanks : [];
+    const currentRankIdx = ranks.findIndex(r => r.code === currentCode);
+    const rank = ranks[currentRankIdx] || ranks[0] || { minXp: 0, nextXp: 500, title: "A1", badge: "A1" };
+    const isMax = currentRankIdx === ranks.length - 1;
 
     const currentXp = this.state.xp || 0;
-    const minXp = rank.minXp;
-    const nextXp = rank.nextXp;
+    const minXp = rank.minXp || 0;
+    const nextXp = rank.nextXp || 500;
 
     const progress = isMax ? 1.0 : Math.min(1.0, Math.max(0, (currentXp - minXp) / (nextXp - minXp)));
 
@@ -126,9 +213,10 @@ class WordRamStorage {
     this.state.xp = (this.state.xp || 0) + amount;
     this.state.weeklyXp = (this.state.weeklyXp || 0) + amount;
 
+    const ranks = (typeof WordRamData !== "undefined" && WordRamData.xpRanks) ? WordRamData.xpRanks : [];
     let newLevel = oldLevel;
-    for (let i = WordRamData.xpRanks.length - 1; i >= 0; i--) {
-      const r = WordRamData.xpRanks[i];
+    for (let i = ranks.length - 1; i >= 0; i--) {
+      const r = ranks[i];
       if (this.state.xp >= r.minXp) {
         newLevel = r.code;
         break;
@@ -137,7 +225,7 @@ class WordRamStorage {
 
     let leveledUp = false;
     if (newLevel !== oldLevel) {
-      this.state.englishLevel = newLevel;
+      this.setLanguageLevel(newLevel, "english");
       leveledUp = true;
     }
 
@@ -154,18 +242,23 @@ class WordRamStorage {
   // ----------------------------------------------------
   // Коллекция словаря и Интервальное повторение
   // ----------------------------------------------------
-  recordWordToVocabulary(word) {
-    const upper = word.toUpperCase();
-    if (!this.state.collectedWords[upper]) {
-      this.state.collectedWords[upper] = {
+  recordWordToVocabulary(word, lang = this.getLanguage()) {
+    const prog = this.getLanguageProgress(lang);
+    const upper = (lang === "chechen" && typeof WordRamTokenizer !== "undefined")
+      ? WordRamTokenizer.normalizeChechen(word)
+      : word.toUpperCase();
+
+    if (!prog.collectedWords[upper]) {
+      prog.collectedWords[upper] = {
         count: 1,
         firstSeen: new Date().toISOString().slice(0, 10),
-        mastery: 1
+        mastery: 1,
+        language: lang
       };
       this.state.stats.totalWordsFound++;
       this.addXp(10);
     } else {
-      this.state.collectedWords[upper].count++;
+      prog.collectedWords[upper].count++;
       this.state.stats.totalWordsFound++;
       this.addXp(3);
     }
@@ -175,19 +268,23 @@ class WordRamStorage {
     return this.checkAchievements();
   }
 
-  getCollectedWords() {
-    return this.state.collectedWords || {};
+  getCollectedWords(lang = this.getLanguage()) {
+    return this.getLanguageProgress(lang).collectedWords || {};
   }
 
-  getCollectedWordsCount() {
-    return Object.keys(this.state.collectedWords || {}).length;
+  getCollectedWordsCount(lang = this.getLanguage()) {
+    return Object.keys(this.getCollectedWords(lang)).length;
   }
 
-  recordBlitzAnswer(word, isCorrect) {
-    const upper = word.toUpperCase();
-    if (this.state.collectedWords[upper]) {
+  recordBlitzAnswer(word, isCorrect, lang = this.getLanguage()) {
+    const prog = this.getLanguageProgress(lang);
+    const upper = (lang === "chechen" && typeof WordRamTokenizer !== "undefined")
+      ? WordRamTokenizer.normalizeChechen(word)
+      : word.toUpperCase();
+
+    if (prog.collectedWords[upper]) {
       if (isCorrect) {
-        this.state.collectedWords[upper].mastery = Math.min(3, (this.state.collectedWords[upper].mastery || 1) + 1);
+        prog.collectedWords[upper].mastery = Math.min(3, (prog.collectedWords[upper].mastery || 1) + 1);
         this.state.stats.blitzCorrectTotal++;
         this.addXp(5);
       }
@@ -203,7 +300,8 @@ class WordRamStorage {
     const todayStr = new Date().toISOString().slice(0, 10);
     if (this.state.dailyQuests.date !== todayStr) {
       const qMap = {};
-      WordRamData.dailyQuestsTemplates.forEach(t => {
+      const templates = (typeof WordRamData !== "undefined" && WordRamData.dailyQuestsTemplates) ? WordRamData.dailyQuestsTemplates : [];
+      templates.forEach(t => {
         qMap[t.id] = {
           id: t.id,
           current: 0,
@@ -238,7 +336,8 @@ class WordRamStorage {
     const q = dq.quests[questId];
     if (q && q.completed && !q.claimed) {
       q.claimed = true;
-      const t = WordRamData.dailyQuestsTemplates.find(x => x.id === questId);
+      const templates = (typeof WordRamData !== "undefined" && WordRamData.dailyQuestsTemplates) ? WordRamData.dailyQuestsTemplates : [];
+      const t = templates.find(x => x.id === questId);
       if (t) {
         this.addCoins(t.rewardCoins);
         this.addXp(t.rewardXp);
@@ -263,9 +362,6 @@ class WordRamStorage {
     return { success: false };
   }
 
-  // ----------------------------------------------------
-  // Колесо Фортуны (Daily Lucky Wheel)
-  // ----------------------------------------------------
   canSpinLuckyWheel() {
     const todayStr = new Date().toISOString().slice(0, 10);
     return this.state.lastWheelSpinDate !== todayStr;
@@ -283,9 +379,6 @@ class WordRamStorage {
     this.save();
   }
 
-  // ----------------------------------------------------
-  // Заморозка стрика (Streak Freeze)
-  // ----------------------------------------------------
   getStreakFreezes() {
     return this.state.streakFreezes || 0;
   }
@@ -300,12 +393,10 @@ class WordRamStorage {
     return { success: false, reason: this.state.coins < cost ? "NOT_ENOUGH_COINS" : "MAX_REACHED" };
   }
 
-  // ----------------------------------------------------
-  // Еженедельные Лиги (Weekly Leagues)
-  // ----------------------------------------------------
   getLeagueData() {
     const leagueId = this.state.currentLeagueId || 1;
-    const leagueInfo = WordRamData.leagues.find(l => l.id === leagueId) || WordRamData.leagues[0];
+    const leagues = (typeof WordRamData !== "undefined" && WordRamData.leagues) ? WordRamData.leagues : [];
+    const leagueInfo = leagues.find(l => l.id === leagueId) || leagues[0] || { name: "Лига", icon: "🏆" };
 
     const rivals = [
       { name: "Alex_Oxford", xp: Math.round(this.state.weeklyXp * 1.3 + 80), avatar: "🦊" },
@@ -327,17 +418,15 @@ class WordRamStorage {
     };
   }
 
-  // ----------------------------------------------------
-  // Проверка и выдача достижений
-  // ----------------------------------------------------
   checkAchievements() {
     const unlockedNow = [];
     const stats = this.state.stats;
     const wordsCount = this.getCollectedWordsCount();
     const streak = this.state.daily.streak || 0;
     const bonusWords = this.state.stats.bonusWordsFound || 0;
+    const achievements = (typeof WordRamData !== "undefined" && WordRamData.achievements) ? WordRamData.achievements : [];
 
-    WordRamData.achievements.forEach(ach => {
+    achievements.forEach(ach => {
       if (this.state.unlockedAchievements.includes(ach.id)) return;
 
       let achieved = false;
@@ -362,10 +451,25 @@ class WordRamStorage {
   }
 
   getSetting(key) {
+    if (key === "currentLevel") return this.getCurrentLevel();
+    if (key === "unlockedLevel") return this.getUnlockedLevel();
+    if (key === "englishLevel") return this.getEnglishLevel();
     return this.state[key];
   }
 
   setSetting(key, value) {
+    if (key === "currentLevel") {
+      this.setCurrentLevel(value);
+      return;
+    }
+    if (key === "unlockedLevel") {
+      this.setUnlockedLevel(value);
+      return;
+    }
+    if (key === "englishLevel") {
+      this.setEnglishLevel(value);
+      return;
+    }
     this.state[key] = value;
     this.save();
   }
@@ -398,18 +502,19 @@ class WordRamStorage {
     return { success: false, reason: "NOT_ENOUGH_COINS", needed: this.state.hintCost, current: this.state.coins };
   }
 
-  getLevelStars(lvl) {
-    return this.state.levelStars[lvl] || 0;
+  getLevelStars(lvl, lang = this.getLanguage()) {
+    return this.getLanguageProgress(lang).levelStars[lvl] || 0;
   }
 
-  completeLevel(lvl, stars = 3, score = 100, rewardCoins = 15, usedHints = 0, gridSize = 5) {
-    this.state.levelStars[lvl] = Math.max(this.state.levelStars[lvl] || 0, stars);
-    this.state.levelHighScores[lvl] = Math.max(this.state.levelHighScores[lvl] || 0, score);
+  completeLevel(lvl, stars = 3, score = 100, rewardCoins = 15, usedHints = 0, gridSize = 5, lang = this.getLanguage()) {
+    const prog = this.getLanguageProgress(lang);
+    prog.levelStars[lvl] = Math.max(prog.levelStars[lvl] || 0, stars);
+    prog.levelHighScores[lvl] = Math.max(prog.levelHighScores[lvl] || 0, score);
 
-    if (lvl >= this.state.unlockedLevel) {
-      this.state.unlockedLevel = lvl + 1;
+    if (lvl >= prog.unlockedLevel) {
+      prog.unlockedLevel = lvl + 1;
     }
-    this.state.currentLevel = lvl + 1;
+    prog.currentLevel = lvl + 1;
     this.state.stats.levelsCompleted++;
 
     if (usedHints === 0) {
@@ -483,35 +588,6 @@ class WordRamStorage {
     this.addXp(150);
     this.checkAchievements();
     this.save();
-  }
-
-  // ----------------------------------------------------
-  // Резервное копирование и перенос прогресса (v34)
-  // ----------------------------------------------------
-  exportSaveCode() {
-    try {
-      const dataStr = JSON.stringify(this.state);
-      return btoa(unescape(encodeURIComponent(dataStr)));
-    } catch (e) {
-      console.error("Export error:", e);
-      return "";
-    }
-  }
-
-  importSaveCode(codeStr) {
-    try {
-      if (!codeStr || typeof codeStr !== "string") return false;
-      const jsonStr = decodeURIComponent(escape(atob(codeStr.trim())));
-      const parsed = JSON.parse(jsonStr);
-      if (parsed && typeof parsed === "object" && (parsed.stats || parsed.collectedWords || parsed.xp !== undefined)) {
-        this.state = { ...this.getDefaultState(), ...parsed };
-        this.save();
-        return true;
-      }
-    } catch (e) {
-      console.error("Import error:", e);
-    }
-    return false;
   }
 
   resetAll() {

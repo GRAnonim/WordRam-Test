@@ -1,25 +1,25 @@
 /**
- * WordRam - Service Worker (v38)
- * Уведомления между слотами и полем (не перекрывают тему),
- * подсказка при первом угаданном слове, минималистичный баннер (кириллица),
- * 1 500 слов CEFR, Яндекс Метрика, PWA и оффлайн.
+ * WordRam - Service Worker (v40)
+ * Multilingual Support: English CEFR & Chechen (~1500 words),
+ * Complete PWA Offline Cache.
  */
 
-const CACHE_NAME = "wordram-v39";
+const CACHE_NAME = "wordram-v40";
 const ASSETS_TO_CACHE = [
   "./",
   "./index.html",
-  "./styles.css?v=39",
-  "./data.js?v=39",
-  "./storage.js?v=39",
-  "./generator.js?v=39",
-  "./game.js?v=39",
-  "./main.js?v=39",
-  "./manifest.webmanifest?v=39",
-  "./logo.svg",
-  "./favicon.svg?v=39",
+  "./styles.css?v=40",
+  "./data.js?v=40",
+  "./chechen.json",
+  "./storage.js?v=40",
+  "./generator.js?v=40",
+  "./game.js?v=40",
+  "./main.js?v=40",
+  "./manifest.webmanifest?v=40",
+  "./favicon.svg",
   "./icon-192.png",
   "./icon-512.png",
+  "./logo.svg",
   "./og-image.png"
 ];
 
@@ -49,10 +49,6 @@ self.addEventListener("activate", (event) => {
 
 self.addEventListener("fetch", (event) => {
   if (event.request.method !== "GET") return;
-
-  if (event.request.url.includes("mc.yandex.ru") || event.request.url.includes("yandex.ru")) {
-    return;
-  }
 
   event.respondWith(
     caches.match(event.request).then((cachedResponse) => {

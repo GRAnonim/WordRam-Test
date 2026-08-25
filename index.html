@@ -43,10 +43,10 @@
   <meta name="twitter:image" content="https://granonim.github.io/WordRam/og-image.png">
 
   <!-- Icons -->
-  <link rel="manifest" href="manifest.webmanifest?v=39">
-  <link rel="icon" type="image/svg+xml" href="favicon.svg?v=39">
-  <link rel="apple-touch-icon" href="icon-192.png?v=39">
-  <link rel="stylesheet" href="styles.css?v=39">
+  <link rel="manifest" href="manifest.webmanifest?v=40">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg?v=40">
+  <link rel="apple-touch-icon" href="icon-192.png?v=40">
+  <link rel="stylesheet" href="styles.css?v=40">
 </head>
 <body>
   <div id="app">
@@ -304,6 +304,23 @@
           <div id="achievements-list" class="achievements-container"></div>
         </div>
 
+        
+        <!-- Язык слов в игре (Мультиязычность) -->
+        <div class="settings-group mt-3">
+          <h3>Язык слов в игре</h3>
+          <div class="lang-selector-group">
+            <button id="btn-lang-en" class="lang-btn active" data-lang="english">
+              <span class="lang-flag">🇬🇧</span>
+              <span class="lang-title">English</span>
+            </button>
+            <button id="btn-lang-ce" class="lang-btn" data-lang="chechen">
+              <span class="lang-flag">🟢</span>
+              <span class="lang-title">Чеченский</span>
+            </button>
+          </div>
+          <div class="setting-hint-text">Интерфейс игры остаётся на русском языке. При смене языка на поле появляются слова выбранного словаря с независимым прогрессом.</div>
+        </div>
+
         <!-- Настройки -->
         <div class="settings-group mt-3">
           <h3>Параметры</h3>
@@ -504,10 +521,10 @@
     </div>
 
   <!-- Подключение скриптов с версионированием -->
-  <script src="data.js?v=39"></script>
-  <script src="storage.js?v=39"></script>
-  <script src="generator.js?v=39"></script>
-  <script src="game.js?v=39"></script>
-  <script src="main.js?v=39"></script>
+  <script src="data.js?v=40"></script>
+  <script src="storage.js?v=40"></script>
+  <script src="generator.js?v=40"></script>
+  <script src="game.js?v=40"></script>
+  <script src="main.js?v=40"></script>
 </body>
 </html>

@@ -1,13 +1,13 @@
 /**
- * WordRam - Core Game Engine (v19)
- * Web Speech API озвучка, слова-бонусы, Magnifier Bubble над пальцем,
- * комбо-множитель, тематические уровни и SVG линии.
+ * WordRam - Core Game Engine (v29)
+ * Multilingual Support: English & Chechen, Step-by-Step Hints,
+ * Multi-character Grapheme Tiles, Sound & Speech, Bonus Words.
  */
 
 class WordRamGame {
   constructor(options = {}) {
     this.storage = options.storage || new WordRamStorage();
-    this.generator = options.generator || new WordRamGenerator(WordRamData);
+    this.generator = options.generator || new WordRamGenerator(typeof WordRamData !== "undefined" ? WordRamData : null);
 
     // DOM Элементы
     this.container = options.container || document.getElementById("game-container");
@@ -33,43 +33,33 @@ class WordRamGame {
     this.hintsUsedInLevel = 0;
     this.isGameOver = false;
 
-    // Комбо-система
+    // Комбо и время
     this.comboStreak = 0;
     this.lastWordFoundTime = 0;
 
-    // Magnifier Bubble над пальцем
-    this.magnifierBubble = document.getElementById("cell-magnifier-bubble");
-    if (!this.magnifierBubble) {
-      this.magnifierBubble = document.createElement("div");
-      this.magnifierBubble.id = "cell-magnifier-bubble";
-      this.magnifierBubble.className = "magnifier-bubble";
-      document.body.appendChild(this.magnifierBubble);
-    }
-
-    // Сочная палитра цветов для слов
+    // Палитра цветов для найденных слов
     this.wordColors = [
-      { bg: "#d8b4fe", border: "#a855f7", text: "#3b0764" }, // Лаванда
-      { bg: "#fda4af", border: "#f43f5e", text: "#881337" }, // Роза / Коралл
-      { bg: "#86efac", border: "#22c55e", text: "#14532d" }, // Мята / Зеленый
-      { bg: "#93c5fd", border: "#3b82f6", text: "#1e3a8a" }, // Лазурь / Синий
-      { bg: "#fdba74", border: "#f97316", text: "#7c2d12" }, // Персик / Оранж
-      { bg: "#5eead4", border: "#14b8a6", text: "#134e4a" }, // Бирюза
-      { bg: "#fde047", border: "#eab308", text: "#713f12" }, // Золото
-      { bg: "#f0abfc", border: "#d946ef", text: "#701a75" }  // Пурпур
+      { bg: "rgba(168, 85, 247, 0.25)", border: "#a855f7", text: "#e9d5ff" },
+      { bg: "rgba(59, 130, 246, 0.25)", border: "#3b82f6", text: "#bfdbfe" },
+      { bg: "rgba(34, 197, 94, 0.25)", border: "#22c55e", text: "#bbf7d0" },
+      { bg: "rgba(245, 158, 11, 0.25)", border: "#f59e0b", text: "#fef3c7" },
+      { bg: "rgba(236, 72, 153, 0.25)", border: "#ec4899", text: "#fbcfe8" },
+      { bg: "rgba(14, 165, 233, 0.25)", border: "#0ea5e9", text: "#bae6fd" },
+      { bg: "rgba(139, 92, 246, 0.25)", border: "#8b5cf6", text: "#ddd6fe" },
+      { bg: "rgba(20, 184, 166, 0.25)", border: "#14b8a6", text: "#ccfbf1" },
+      { bg: "rgba(234, 179, 8, 0.25)", border: "#eab308", text: "#fef08a" },
+      { bg: "rgba(244, 63, 94, 0.25)", border: "#f43f5e", text: "#fecdd3" }
     ];
 
+    // Звуковой синтез Web Audio API
     this.audioCtx = null;
-    this.onLevelCompleted = options.onLevelCompleted || (() => {});
-    this.onWordDetailsRequested = options.onWordDetailsRequested || (() => {});
-    this.onXpUpdated = options.onXpUpdated || (() => {});
-
     this.initAudio();
-    if (typeof window !== "undefined" && window.speechSynthesis) {
-      window.speechSynthesis.getVoices();
-      if (window.speechSynthesis.onvoiceschanged !== undefined) {
-        window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
-      }
-    }
+
+    // Callbacks
+    this.onLevelCompleted = options.onLevelCompleted || null;
+    this.onWordDetailsRequested = options.onWordDetailsRequested || null;
+    this.onXpUpdated = options.onXpUpdated || null;
+
     this.bindEvents();
   }
 
@@ -80,7 +70,7 @@ class WordRamGame {
         this.audioCtx = new AudioContext();
       }
     } catch (e) {
-      console.warn("Web Audio API не поддерживается", e);
+      console.warn("Web Audio API не поддерживается:", e);
     }
   }
 
@@ -96,9 +86,21 @@ class WordRamGame {
       window.speechSynthesis.cancel();
       window.speechSynthesis.resume();
 
+      const currentLang = (this.levelData && this.levelData.language) || (this.storage.getLanguage ? this.storage.getLanguage() : "english");
+      
+      if (currentLang === "chechen") {
+        // Чеченский язык в SpeechSynthesis (если браузер поддерживает ru или ce)
+        const utterance = new SpeechSynthesisUtterance(word);
+        utterance.lang = "ru-RU";
+        utterance.rate = 0.85;
+        utterance.volume = 0.9;
+        window.speechSynthesis.speak(utterance);
+        return;
+      }
+
       const utterance = new SpeechSynthesisUtterance(word);
       utterance.lang = "en-US";
-      utterance.rate = 0.88; // Четкий, понятный темп для обучения
+      utterance.rate = 0.88;
       utterance.volume = 1.0;
 
       const voices = window.speechSynthesis.getVoices();
@@ -126,129 +128,112 @@ class WordRamGame {
   }
 
   playSound(type) {
-    if (!this.storage.getSetting("soundEnabled") || !this.audioCtx) return;
+    if (!this.storage.getSetting("soundEnabled")) return;
+    if (!this.audioCtx) return;
     this.ensureAudioUnlocked();
 
     const now = this.audioCtx.currentTime;
 
-    if (type === "select") {
-      const pentatonic = [261.63, 293.66, 329.63, 392.00, 440.00, 523.25, 587.33, 659.25, 783.99];
-      const pitchIdx = Math.min(this.selectedPath.length - 1, pentatonic.length - 1);
-      const freq = pentatonic[Math.max(0, pitchIdx)];
-
+    if (type === "drag") {
       const osc = this.audioCtx.createOscillator();
       const gain = this.audioCtx.createGain();
-
+      const baseFreq = 260 + (this.selectedPath.length * 40);
       osc.type = "sine";
-      osc.frequency.setValueAtTime(freq, now);
-
-      gain.gain.setValueAtTime(0.09, now);
-      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
-
+      osc.frequency.setValueAtTime(baseFreq, now);
+      osc.frequency.exponentialRampToValueAtTime(baseFreq + 20, now + 0.04);
+      gain.gain.setValueAtTime(0.04, now);
+      gain.gain.linearRampToValueAtTime(0.001, now + 0.04);
       osc.connect(gain);
       gain.connect(this.audioCtx.destination);
-
       osc.start(now);
-      osc.stop(now + 0.12);
-    } else if (type === "found" || type === "combo") {
-      const baseNotes = type === "combo" ? [659.25, 783.99, 987.77, 1318.51] : [523.25, 659.25, 783.99, 987.77, 1046.5];
-      baseNotes.forEach((freq, idx) => {
+      osc.stop(now + 0.04);
+    } else if (type === "found") {
+      const notes = [523.25, 659.25, 783.99, 1046.50];
+      notes.forEach((freq, idx) => {
         const osc = this.audioCtx.createOscillator();
         const gain = this.audioCtx.createGain();
         osc.type = "triangle";
-        osc.frequency.setValueAtTime(freq, now + idx * 0.08);
-
-        gain.gain.setValueAtTime(0.12, now + idx * 0.08);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.08 + 0.35);
-
+        osc.frequency.setValueAtTime(freq, now + idx * 0.07);
+        gain.gain.setValueAtTime(0.09, now + idx * 0.07);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.07 + 0.28);
         osc.connect(gain);
         gain.connect(this.audioCtx.destination);
-
-        osc.start(now + idx * 0.08);
-        osc.stop(now + idx * 0.08 + 0.35);
+        osc.start(now + idx * 0.07);
+        osc.stop(now + idx * 0.07 + 0.28);
       });
-    } else if (type === "error") {
-      const osc = this.audioCtx.createOscillator();
-      const gain = this.audioCtx.createGain();
-      osc.type = "sine";
-      osc.frequency.setValueAtTime(160, now);
-      osc.frequency.exponentialRampToValueAtTime(80, now + 0.14);
-
-      gain.gain.setValueAtTime(0.07, now);
-      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.14);
-
-      osc.connect(gain);
-      gain.connect(this.audioCtx.destination);
-
-      osc.start(now);
-      osc.stop(now + 0.14);
-    } else if (type === "hint") {
-      const notes = [659.25, 987.77];
-      notes.forEach((freq, idx) => {
+    } else if (type === "combo") {
+      const chord = [440, 554.37, 659.25, 880];
+      chord.forEach((freq, idx) => {
+        const osc = this.audioCtx.createOscillator();
+        const gain = this.audioCtx.createGain();
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(freq * 1.25, now + idx * 0.04);
+        gain.gain.setValueAtTime(0.12, now + idx * 0.04);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.04 + 0.4);
+        osc.connect(gain);
+        gain.connect(this.audioCtx.destination);
+        osc.start(now + idx * 0.04);
+        osc.stop(now + idx * 0.04 + 0.4);
+      });
+    } else if (type === "win") {
+      const victoryChords = [523.25, 659.25, 783.99, 1046.50, 1318.51];
+      victoryChords.forEach((freq, idx) => {
         const osc = this.audioCtx.createOscillator();
         const gain = this.audioCtx.createGain();
         osc.type = "sine";
         osc.frequency.setValueAtTime(freq, now + idx * 0.1);
-
-        gain.gain.setValueAtTime(0.1, now + idx * 0.1);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.1 + 0.4);
-
+        gain.gain.setValueAtTime(0.12, now + idx * 0.1);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.1 + 0.6);
         osc.connect(gain);
         gain.connect(this.audioCtx.destination);
-
         osc.start(now + idx * 0.1);
-        osc.stop(now + idx * 0.1 + 0.4);
+        osc.stop(now + idx * 0.1 + 0.6);
       });
-    } else if (type === "win") {
-      const chord = [261.63, 392.00, 523.25, 659.25, 783.99, 1046.5];
-      chord.forEach((freq, idx) => {
-        const osc = this.audioCtx.createOscillator();
-        const gain = this.audioCtx.createGain();
-        osc.type = "triangle";
-        osc.frequency.setValueAtTime(freq, now + idx * 0.05);
-
-        gain.gain.setValueAtTime(0.12, now + idx * 0.05);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.05 + 0.85);
-
-        osc.connect(gain);
-        gain.connect(this.audioCtx.destination);
-
-        osc.start(now + idx * 0.05);
-        osc.stop(now + idx * 0.05 + 0.85);
-      });
+    } else if (type === "error") {
+      const osc = this.audioCtx.createOscillator();
+      const gain = this.audioCtx.createGain();
+      osc.type = "sawtooth";
+      osc.frequency.setValueAtTime(140, now);
+      osc.frequency.linearRampToValueAtTime(90, now + 0.18);
+      gain.gain.setValueAtTime(0.08, now);
+      gain.gain.linearRampToValueAtTime(0.001, now + 0.18);
+      osc.connect(gain);
+      gain.connect(this.audioCtx.destination);
+      osc.start(now);
+      osc.stop(now + 0.18);
+    } else if (type === "hint") {
+      const osc = this.audioCtx.createOscillator();
+      const gain = this.audioCtx.createGain();
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(880, now);
+      osc.frequency.exponentialRampToValueAtTime(1760, now + 0.2);
+      gain.gain.setValueAtTime(0.1, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+      osc.connect(gain);
+      gain.connect(this.audioCtx.destination);
+      osc.start(now);
+      osc.stop(now + 0.25);
     }
   }
 
-  vibrate(duration = 20) {
-    if (this.storage.getSetting("vibrationEnabled") && navigator.vibrate) {
+  vibrate(pattern = 15) {
+    if (!this.storage.getSetting("vibrationEnabled")) return;
+    if (navigator.vibrate) {
       try {
-        navigator.vibrate(duration);
+        navigator.vibrate(pattern);
       } catch (e) {}
     }
   }
 
   bindEvents() {
-    const unlockHandler = () => {
-      this.ensureAudioUnlocked();
-      this.ensureSpeechUnlocked();
-      window.removeEventListener("touchstart", unlockHandler);
-      window.removeEventListener("mousedown", unlockHandler);
-      window.removeEventListener("click", unlockHandler);
-    };
-    window.addEventListener("touchstart", unlockHandler, { passive: true });
-    window.addEventListener("mousedown", unlockHandler, { passive: true });
-    window.addEventListener("click", unlockHandler, { passive: true });
-
     if (!this.gridElement) return;
 
-    this.gridElement.addEventListener("mousedown", (e) => this.handlePointerStart(e));
-    window.addEventListener("mousemove", (e) => this.handlePointerMove(e));
-    window.addEventListener("mouseup", (e) => this.handlePointerEnd(e));
+    this.gridElement.addEventListener("pointerdown", (e) => this.handlePointerStart(e));
+    window.addEventListener("pointermove", (e) => this.handlePointerMove(e));
+    window.addEventListener("pointerup", (e) => this.handlePointerEnd(e));
+    window.addEventListener("pointercancel", (e) => this.handlePointerEnd(e));
 
-    this.gridElement.addEventListener("touchstart", (e) => this.handlePointerStart(e), { passive: false });
-    window.addEventListener("touchmove", (e) => this.handlePointerMove(e), { passive: false });
-    window.addEventListener("touchend", (e) => this.handlePointerEnd(e), { passive: false });
-    window.addEventListener("touchcancel", (e) => this.handlePointerEnd(e), { passive: false });
+    this.gridElement.addEventListener("contextmenu", (e) => e.preventDefault());
 
     if (this.hintButton) {
       this.hintButton.addEventListener("click", () => this.applyStepHint());
@@ -267,8 +252,10 @@ class WordRamGame {
     this.comboStreak = 0;
     this.lastWordFoundTime = 0;
 
-    const userCefr = this.storage.getEnglishLevel();
-    this.levelData = this.generator.generateLevel(levelNumber, userCefr);
+    const currentLang = this.storage.getLanguage ? this.storage.getLanguage() : "english";
+    const userCefr = this.storage.getLanguageLevel ? this.storage.getLanguageLevel(currentLang) : this.storage.getEnglishLevel();
+    
+    this.levelData = this.generator.generateLevel(levelNumber, userCefr, currentLang);
 
     for (const w of this.levelData.words) {
       this.revealedHints[w] = 0;
@@ -300,6 +287,8 @@ class WordRamGame {
 
   renderHeader() {
     const size = this.levelData ? this.levelData.gridSize : 5;
+    const currentLang = (this.levelData && this.levelData.language) || (this.storage.getLanguage ? this.storage.getLanguage() : "english");
+    const userCefr = this.storage.getLanguageLevel ? this.storage.getLanguageLevel(currentLang) : "A1";
 
     if (this.levelTitleDisplay) {
       if (this.isDailyMode) {
@@ -309,38 +298,36 @@ class WordRamGame {
       }
     }
 
-    // Обновляем плашку семантической темы прямо над слотами
-    const themeIconEl = document.getElementById("theme-icon");
-    const themeTitleEl = document.getElementById("theme-title");
-    const themeBadgeEl = document.getElementById("level-theme-badge");
-
-    if (themeIconEl && themeTitleEl && this.levelData) {
-      themeIconEl.textContent = this.levelData.themeIcon || "🌿";
-      themeTitleEl.textContent = `Тема: ${this.levelData.themeTitle || "Слова"}`;
-      if (themeBadgeEl) themeBadgeEl.style.display = "inline-flex";
-    }
-
     if (this.cefrBadgeDisplay) {
-      this.cefrBadgeDisplay.textContent = `🇬🇧 ${this.storage.getEnglishLevel()}`;
+      if (currentLang === "chechen") {
+        this.cefrBadgeDisplay.textContent = `🟢 ${userCefr}`;
+        this.cefrBadgeDisplay.title = "Язык игры: Чеченский";
+      } else {
+        this.cefrBadgeDisplay.textContent = `🇬🇧 ${userCefr}`;
+        this.cefrBadgeDisplay.title = "Язык игры: English";
+      }
     }
 
-    if (this.progressElement) {
-      let foundLetters = 0;
-      this.foundWords.forEach(w => foundLetters += w.length);
-      const totalLetters = this.levelData ? this.levelData.totalCells : 25;
-      this.progressElement.textContent = `Слов: ${this.foundWords.length}/${this.levelData.words.length} (${foundLetters}/${totalLetters} букв)`;
+    if (this.progressElement && this.levelData) {
+      this.progressElement.textContent = `Найдено ${this.foundWords.length} / ${this.levelData.words.length}`;
     }
   }
 
   renderWordSlots() {
-    if (!this.slotsContainer) return;
+    if (!this.slotsContainer || !this.levelData) return;
     this.slotsContainer.innerHTML = "";
+
+    const currentLang = this.levelData.language || "english";
 
     this.levelData.words.forEach((word, idx) => {
       const isFound = this.foundWords.includes(word);
       const slot = document.createElement("div");
       slot.className = `word-slot ${isFound ? "found" : ""}`;
       slot.dataset.word = word;
+
+      const tileCount = this.levelData.tilesMap && this.levelData.tilesMap[word]
+        ? this.levelData.tilesMap[word].length
+        : ((typeof WordRamTokenizer !== "undefined") ? WordRamTokenizer.getTileCount(word, currentLang) : word.length);
 
       if (isFound) {
         slot.textContent = word;
@@ -354,8 +341,8 @@ class WordRamGame {
           this.showWordDefinition(word);
         });
       } else {
-        const dots = "● ".repeat(word.length).trim();
-        slot.innerHTML = `<span class="slot-dots">${dots}</span> <span class="slot-length">(${word.length})</span>`;
+        const dots = "● ".repeat(tileCount).trim();
+        slot.innerHTML = `<span class="slot-dots">${dots}</span> <span class="slot-length">(${tileCount})</span>`;
       }
 
       this.slotsContainer.appendChild(slot);
@@ -363,7 +350,7 @@ class WordRamGame {
   }
 
   renderGrid() {
-    if (!this.gridElement) return;
+    if (!this.gridElement || !this.levelData) return;
     this.gridElement.innerHTML = "";
 
     const size = this.levelData.gridSize || 5;
@@ -377,7 +364,12 @@ class WordRamGame {
         cell.className = "grid-cell";
         cell.dataset.row = r;
         cell.dataset.col = c;
-        cell.textContent = this.levelData.grid[r][c];
+        const val = this.levelData.grid[r][c];
+        cell.textContent = val;
+
+        if (val && val.length > 1) {
+          cell.classList.add("cell-multichar");
+        }
 
         const hintBadge = document.createElement("span");
         hintBadge.className = "hint-badge";
@@ -391,29 +383,35 @@ class WordRamGame {
   }
 
   updateSvgConnector() {
-    if (!this.svgConnector || !this.gridElement) return;
-    if (this.selectedPath.length < 2) {
+    if (!this.svgConnector || !this.gridElement || this.selectedPath.length < 2) {
       this.clearSvgConnector();
       return;
     }
 
     const gridRect = this.gridElement.getBoundingClientRect();
-    const points = this.selectedPath.map(([r, c]) => {
+    let pathD = "";
+
+    this.selectedPath.forEach(([r, c], idx) => {
       const cell = this.getCellElement(r, c);
-      if (!cell) return null;
+      if (!cell) return;
       const cellRect = cell.getBoundingClientRect();
-      const x = cellRect.left - gridRect.left + cellRect.width / 2;
-      const y = cellRect.top - gridRect.top + cellRect.height / 2;
-      return `${x.toFixed(1)},${y.toFixed(1)}`;
-    }).filter(Boolean);
+      const cx = (cellRect.left + cellRect.width / 2) - gridRect.left;
+      const cy = (cellRect.top + cellRect.height / 2) - gridRect.top;
 
-    if (points.length < 2) return;
+      if (idx === 0) {
+        pathD += `M ${cx} ${cy}`;
+      } else {
+        pathD += ` L ${cx} ${cy}`;
+      }
+    });
 
-    this.svgConnector.setAttribute("viewBox", `0 0 ${gridRect.width} ${gridRect.height}`);
-    this.svgConnector.innerHTML = `
-      <polyline points="${points.join(" ")}" class="drag-svg-glow" />
-      <polyline points="${points.join(" ")}" class="drag-svg-core" />
-    `;
+    let pathEl = this.svgConnector.querySelector(".drag-line");
+    if (!pathEl) {
+      pathEl = document.createElementNS("http://www.w3.org/2000/svg", "path");
+      pathEl.setAttribute("class", "drag-line");
+      this.svgConnector.appendChild(pathEl);
+    }
+    pathEl.setAttribute("d", pathD);
   }
 
   clearSvgConnector() {
@@ -422,128 +420,130 @@ class WordRamGame {
     }
   }
 
-  showMagnifier(letter, clientX, clientY) {
-    if (!this.magnifierBubble) return;
-    this.magnifierBubble.textContent = letter;
-    this.magnifierBubble.style.left = `${clientX}px`;
-    this.magnifierBubble.style.top = `${clientY - 55}px`;
-    this.magnifierBubble.classList.add("show");
+  showMagnifier(text, clientX, clientY) {
+    let mag = document.getElementById("magnifier-bubble");
+    if (!mag) {
+      mag = document.createElement("div");
+      mag.id = "magnifier-bubble";
+      mag.className = "magnifier-bubble";
+      document.body.appendChild(mag);
+    }
+    mag.textContent = text;
+    mag.style.display = "block";
+    mag.style.left = `${clientX}px`;
+    mag.style.top = `${clientY - 65}px`;
   }
 
   hideMagnifier() {
-    if (this.magnifierBubble) {
-      this.magnifierBubble.classList.remove("show");
+    const mag = document.getElementById("magnifier-bubble");
+    if (mag) {
+      mag.style.display = "none";
     }
   }
 
   getCellElement(r, c) {
-    return this.gridElement ? this.gridElement.querySelector(`[data-row='${r}'][data-col='${c}']`) : null;
+    if (!this.gridElement) return null;
+    return this.gridElement.querySelector(`.grid-cell[data-row="${r}"][data-col="${c}"]`);
   }
 
   updateCoinsDisplay() {
     if (this.coinsDisplay) {
       this.coinsDisplay.textContent = this.storage.getCoins();
     }
-    this.updateHintButtonLabel();
   }
 
-  updatePreview(text) {
-    if (this.wordPreviewElement) {
-      this.wordPreviewElement.textContent = text || " ";
-      if (text) {
-        this.wordPreviewElement.classList.add("active");
-      } else {
-        this.wordPreviewElement.classList.remove("active");
-      }
+  updatePreview(text = "") {
+    if (!this.wordPreviewElement) return;
+    this.wordPreviewElement.textContent = text;
+    if (text) {
+      this.wordPreviewElement.classList.add("active");
+    } else {
+      this.wordPreviewElement.classList.remove("active");
     }
   }
 
   getCellFromPointer(e) {
-    let clientX, clientY;
-    if (e.touches && e.touches.length > 0) {
-      clientX = e.touches[0].clientX;
-      clientY = e.touches[0].clientY;
-    } else {
-      clientX = e.clientX;
-      clientY = e.clientY;
-    }
-
-    const element = document.elementFromPoint(clientX, clientY);
-    if (!element) return null;
-
-    const cell = element.closest(".grid-cell");
+    const target = document.elementFromPoint(e.clientX, e.clientY);
+    if (!target) return null;
+    const cell = target.closest(".grid-cell");
     if (cell && this.gridElement.contains(cell)) {
       const r = parseInt(cell.dataset.row, 10);
       const c = parseInt(cell.dataset.col, 10);
-      return { coords: [r, c], clientX, clientY };
+      return [r, c];
     }
     return null;
   }
 
   handlePointerStart(e) {
     if (this.isGameOver) return;
-    const res = this.getCellFromPointer(e);
-    if (!res) return;
+    this.ensureAudioUnlocked();
+    this.ensureSpeechUnlocked();
 
-    if (e.cancelable && e.type.startsWith("touch")) {
-      e.preventDefault();
-    }
+    const cellCoords = this.getCellFromPointer(e);
+    if (!cellCoords) return;
 
-    const [r, c] = res.coords;
     this.isDragging = true;
-    this.selectedPath = [[r, c]];
-    this.playSound("select");
-    this.vibrate(15);
+    this.selectedPath = [cellCoords];
     this.refreshCellStates();
     this.updatePreviewFromPath();
     this.updateSvgConnector();
-    this.showMagnifier(this.levelData.grid[r][c], res.clientX, res.clientY);
+    this.playSound("drag");
+    this.vibrate(10);
+
+    const wordString = this.getSelectedWordString();
+    this.showMagnifier(wordString, e.clientX, e.clientY);
   }
 
   handlePointerMove(e) {
     if (!this.isDragging || this.isGameOver) return;
-    const res = this.getCellFromPointer(e);
-    if (!res) return;
 
-    if (e.cancelable && e.type.startsWith("touch")) {
-      e.preventDefault();
-    }
+    const cellCoords = this.getCellFromPointer(e);
+    if (!cellCoords) return;
 
-    const [r, c] = res.coords;
-    const pathLen = this.selectedPath.length;
-    const [lastR, lastC] = this.selectedPath[pathLen - 1];
+    const [r, c] = cellCoords;
+    const lastIdx = this.selectedPath.length - 1;
+    const [lr, lc] = this.selectedPath[lastIdx];
 
-    this.showMagnifier(this.levelData.grid[r][c], res.clientX, res.clientY);
-
-    if (pathLen > 1) {
-      const [prevR, prevC] = this.selectedPath[pathLen - 2];
-      if (prevR === r && prevC === c) {
+    if (this.selectedPath.length >= 2) {
+      const [pr, pc] = this.selectedPath[lastIdx - 1];
+      if (pr === r && pc === c) {
         this.selectedPath.pop();
-        this.playSound("select");
-        this.vibrate(10);
         this.refreshCellStates();
         this.updatePreviewFromPath();
         this.updateSvgConnector();
+        this.playSound("drag");
+        this.vibrate(8);
+        const curWord = this.getSelectedWordString();
+        this.showMagnifier(curWord, e.clientX, e.clientY);
         return;
       }
     }
 
-    const alreadyVisited = this.selectedPath.some(([pr, pc]) => pr === r && pc === c);
-    if (alreadyVisited) return;
+    if (lr === r && lc === c) {
+      const curWord = this.getSelectedWordString();
+      this.showMagnifier(curWord, e.clientX, e.clientY);
+      return;
+    }
 
-    const manhattanDist = Math.abs(r - lastR) + Math.abs(c - lastC);
-    if (manhattanDist === 1) {
-      this.selectedPath.push([r, c]);
-      this.playSound("select");
-      this.vibrate(15);
-      this.refreshCellStates();
-      this.updatePreviewFromPath();
-      this.updateSvgConnector();
+    const dist = Math.abs(r - lr) + Math.abs(c - lc);
+    if (dist === 1) {
+      const isAlreadyInPath = this.selectedPath.some(([pr, pc]) => pr === r && pc === c);
+      if (!isAlreadyInPath) {
+        this.selectedPath.push([r, c]);
+        this.refreshCellStates();
+        this.updatePreviewFromPath();
+        this.updateSvgConnector();
+        this.playSound("drag");
+        this.vibrate(12);
+
+        const curWord = this.getSelectedWordString();
+        this.showMagnifier(curWord, e.clientX, e.clientY);
+      }
     }
   }
 
   handlePointerEnd(e) {
-    if (!this.isDragging || this.isGameOver) return;
+    if (!this.isDragging) return;
     this.isDragging = false;
     this.clearSvgConnector();
     this.hideMagnifier();
@@ -577,9 +577,9 @@ class WordRamGame {
   }
 
   showWordDefinition(word) {
-    const details = this.generator.data.getWordDetails(word);
+    const currentLang = (this.levelData && this.levelData.language) || (this.storage.getLanguage ? this.storage.getLanguage() : "english");
+    const details = this.generator.data.getWordDetails(word, currentLang);
     if (details && typeof this.onWordDetailsRequested === "function") {
-      this.playSound("select");
       this.speakWord(word);
       this.onWordDetailsRequested(details);
       this.storage.updateDailyQuestProgress("vocab_review", 1);
@@ -587,7 +587,12 @@ class WordRamGame {
   }
 
   getSelectedWordString() {
-    return this.selectedPath.map(([r, c]) => this.levelData.grid[r][c]).join("");
+    const currentLang = (this.levelData && this.levelData.language) || (this.storage.getLanguage ? this.storage.getLanguage() : "english");
+    const tiles = this.selectedPath.map(([r, c]) => this.levelData.grid[r][c]);
+    if (typeof WordRamTokenizer !== "undefined") {
+      return WordRamTokenizer.reconstruct(tiles, currentLang);
+    }
+    return tiles.join("");
   }
 
   updatePreviewFromPath() {
@@ -596,9 +601,23 @@ class WordRamGame {
   }
 
   submitSelectedWord() {
-    const word = this.getSelectedWordString(); // СТРОГО прямое направление от первой буквы к последней!
+    const currentLang = (this.levelData && this.levelData.language) || (this.storage.getLanguage ? this.storage.getLanguage() : "english");
+    const selectedTiles = this.selectedPath.map(([r, c]) => this.levelData.grid[r][c]);
+    const forwardWord = (typeof WordRamTokenizer !== "undefined") ? WordRamTokenizer.reconstruct(selectedTiles, currentLang) : selectedTiles.join("");
+    const reverseTiles = [...selectedTiles].reverse();
+    const reverseWord = (typeof WordRamTokenizer !== "undefined") ? WordRamTokenizer.reconstruct(reverseTiles, currentLang) : reverseTiles.join("");
 
-    if (this.levelData.words.includes(word)) {
+    let word = null;
+    let matchedPath = this.selectedPath;
+
+    if (this.levelData.words.includes(forwardWord)) {
+      word = forwardWord;
+    } else if (this.levelData.words.includes(reverseWord)) {
+      word = reverseWord;
+      matchedPath = [...this.selectedPath].reverse();
+    }
+
+    if (word) {
       if (!this.foundWords.includes(word)) {
         this.foundWords.push(word);
 
@@ -610,10 +629,10 @@ class WordRamGame {
         }
         this.lastWordFoundTime = now;
 
-        // Записываем слово в Личный словарь
-        const newAchs = this.storage.recordWordToVocabulary(word);
+        // Записываем слово в Личный словарь с языковым тегом
+        const newAchs = this.storage.recordWordToVocabulary(word, currentLang);
 
-        // Авто-озвучка слова, если включена в настройках
+        // Авто-озвучка слова
         if (this.storage.getSetting("voiceSpeechEnabled") !== false) {
           this.speakWord(word);
         }
@@ -644,14 +663,6 @@ class WordRamGame {
           });
         }
 
-                if (!this.storage.state.hasSeenWordClickHint) {
-          this.storage.state.hasSeenWordClickHint = true;
-          this.storage.save();
-          setTimeout(() => {
-            this.showFloatingMessage("💡 Нажмите на найденное слово в слоте для перевода и озвучки!", "info");
-          }, 1800);
-        }
-
         if (this.foundWords.length > 0 && this.foundWords.length === this.levelData.words.length) {
           this.handleLevelWin();
           return;
@@ -660,21 +671,26 @@ class WordRamGame {
         this.showFloatingMessage("Уже найдено! Нажмите на слово для перевода.", "info");
       }
     } else {
-      // Проверяем: может быть, это реальное английское слово (Слово-бонус!)
-      if (WordRamData.isValidWord(word)) {
-        if (!this.foundBonusWordsInLevel.includes(word)) {
-          this.foundBonusWordsInLevel.push(word);
+      // Проверяем: может быть, это реальное слово активного языка (Слово-бонус!)
+      const isForwardBonus = WordRamData.isValidWord(forwardWord, currentLang);
+      const isReverseBonus = !isForwardBonus && WordRamData.isValidWord(reverseWord, currentLang);
+      const bonusWord = isForwardBonus ? forwardWord : (isReverseBonus ? reverseWord : null);
+
+      if (bonusWord) {
+        if (!this.foundBonusWordsInLevel.includes(bonusWord)) {
+          this.foundBonusWordsInLevel.push(bonusWord);
           this.storage.state.stats.bonusWordsFound = (this.storage.state.stats.bonusWordsFound || 0) + 1;
-          this.storage.addCoins(5); // Щедрая награда: +5 монет за найденное скрытое слово!
+          this.storage.addCoins(5);
           this.storage.addXp(5);
           this.storage.checkAchievements();
           this.updateCoinsDisplay();
-          this.playSound("combo");
-          this.vibrate([20, 40]);
+
+          this.playSound("found");
+          this.vibrate([25, 40, 25]);
           if (this.storage.getSetting("voiceSpeechEnabled") !== false) {
-            this.speakWord(word);
+            this.speakWord(bonusWord);
           }
-          this.showFloatingMessage(`🌟 Слово-бонус: ${word} (+5 🪙 в Копилку, +5 XP)!`, "bonus");
+          this.showFloatingMessage(`🌟 Слово-бонус: ${bonusWord} (+5 🪙 в Копилку, +5 XP)!`, "bonus");
         } else {
           this.showFloatingMessage("Это бонусное слово уже собрано на этом уровне!", "info");
         }
@@ -704,8 +720,8 @@ class WordRamGame {
     path.forEach(([r, c]) => {
       const cell = this.getCellElement(r, c);
       if (cell) {
-        cell.classList.add("cell-shake");
-        setTimeout(() => cell.classList.remove("cell-shake"), 400);
+        cell.classList.add("cell-error-shake");
+        setTimeout(() => cell.classList.remove("cell-error-shake"), 450);
       }
     });
   }
@@ -742,150 +758,195 @@ class WordRamGame {
         setTimeout(() => cell.classList.remove("cell-hint-pulse"), 1200);
       }
 
-      this.showFloatingMessage(`Подсказка: буква ${currentStep + 1} (${unsolvedWord[currentStep]})`, "info");
       this.refreshCellStates();
       this.saveCurrentGameState();
+      this.showFloatingMessage(`💡 Подсказка: буква №${currentStep + 1} для ненайденного слова!`, "info");
     }
   }
 
   refreshCellStates() {
     if (!this.gridElement || !this.levelData) return;
 
-    const allCells = this.gridElement.querySelectorAll(".grid-cell");
-    allCells.forEach(cell => {
-      cell.classList.remove("selected", "path-head", "hinted", "found-cell");
-      cell.style.backgroundColor = "";
-      cell.style.borderColor = "";
-      cell.style.color = "";
-      const badge = cell.querySelector(".hint-badge");
-      if (badge) badge.textContent = "";
-    });
+    const size = this.levelData.gridSize || 5;
 
-    this.selectedPath.forEach(([r, c], idx) => {
-      const cell = this.getCellElement(r, c);
-      if (cell) {
-        cell.classList.add("selected");
-        if (idx === this.selectedPath.length - 1) {
-          cell.classList.add("path-head");
-        }
-      }
-    });
-
-    for (const word of this.levelData.words) {
-      if (this.foundWords.includes(word)) continue;
-      const count = this.revealedHints[word] || 0;
-      const route = this.levelData.routes[word];
-      for (let i = 0; i < count && i < route.length; i++) {
-        const [r, c] = route[i];
+    // Сброс классов у всех ячеек
+    for (let r = 0; r < size; r++) {
+      for (let c = 0; c < size; c++) {
         const cell = this.getCellElement(r, c);
-        if (cell) {
-          cell.classList.add("hinted");
-          const badge = cell.querySelector(".hint-badge");
-          if (badge) badge.textContent = `${i + 1}`;
+        if (!cell) continue;
+
+        cell.className = "grid-cell";
+        if (this.levelData.grid[r][c] && this.levelData.grid[r][c].length > 1) {
+          cell.classList.add("cell-multichar");
+        }
+
+        cell.style.backgroundColor = "";
+        cell.style.borderColor = "";
+        cell.style.color = "";
+
+        const badge = cell.querySelector(".hint-badge");
+        if (badge) {
+          badge.textContent = "";
+          badge.style.display = "none";
         }
       }
     }
 
-    this.levelData.words.forEach((word, wordIdx) => {
-      if (this.foundWords.includes(word)) {
-        const color = this.wordColors[wordIdx % this.wordColors.length];
-        const route = this.levelData.routes[word];
-        if (route) {
-          route.forEach(([r, c]) => {
-            const cell = this.getCellElement(r, c);
-            if (cell) {
-              cell.classList.add("found-cell");
-              cell.style.backgroundColor = color.bg;
-              cell.style.borderColor = color.border;
-              cell.style.color = color.text;
+    // Подсветка найденных слов
+    this.foundWords.forEach((word, wordIdx) => {
+      const route = this.levelData.routes[word];
+      const color = this.wordColors[wordIdx % this.wordColors.length];
+      if (route) {
+        route.forEach(([r, c]) => {
+          const cell = this.getCellElement(r, c);
+          if (cell) {
+            cell.classList.add("cell-found");
+            cell.style.backgroundColor = color.bg;
+            cell.style.borderColor = color.border;
+            cell.style.color = color.text;
+          }
+        });
+      }
+    });
+
+    // Подсветка подсказок
+    for (const [w, revealedCount] of Object.entries(this.revealedHints)) {
+      if (this.foundWords.includes(w)) continue;
+      const route = this.levelData.routes[w];
+      if (route && revealedCount > 0) {
+        for (let i = 0; i < revealedCount && i < route.length; i++) {
+          const [r, c] = route[i];
+          const cell = this.getCellElement(r, c);
+          if (cell && !cell.classList.contains("cell-found")) {
+            cell.classList.add("cell-hint-revealed");
+            const badge = cell.querySelector(".hint-badge");
+            if (badge) {
+              badge.textContent = `${i + 1}`;
+              badge.style.display = "flex";
             }
-          });
+          }
         }
+      }
+    }
+
+    // Подсветка текущего выбора
+    this.selectedPath.forEach(([r, c], idx) => {
+      const cell = this.getCellElement(r, c);
+      if (cell) {
+        cell.classList.add("cell-selected");
+        if (idx === 0) cell.classList.add("cell-selected-first");
+        if (idx === this.selectedPath.length - 1) cell.classList.add("cell-selected-head");
       }
     });
   }
 
   showFloatingMessage(text, type = "info") {
-    const midToast = document.getElementById("game-floating-toast");
-    if (midToast && !this.isGameOver) {
-      midToast.textContent = text;
-      midToast.className = `game-mid-toast toast-${type} show`;
-      if (this.midToastTimer) clearTimeout(this.midToastTimer);
-      this.midToastTimer = setTimeout(() => {
-        midToast.className = `game-mid-toast toast-${type}`;
-      }, 1600);
-      return;
-    }
+    const existing = document.querySelector(".floating-toast");
+    if (existing) existing.remove();
 
     const toast = document.createElement("div");
-    toast.className = `game-toast toast-${type}`;
+    toast.className = `floating-toast toast-${type}`;
     toast.textContent = text;
     document.body.appendChild(toast);
 
-    setTimeout(() => toast.classList.add("show"), 20);
+    setTimeout(() => toast.classList.add("show"), 10);
     setTimeout(() => {
       toast.classList.remove("show");
       setTimeout(() => toast.remove(), 300);
-    }, 1800);
+    }, 2400);
   }
 
   handleLevelWin() {
-    if (this.isGameOver) return;
-    if (!this.foundWords || this.foundWords.length === 0) return;
-
     this.isGameOver = true;
     this.playSound("win");
-    this.vibrate([100, 50, 100, 50, 150]);
+    this.vibrate([40, 60, 100, 60, 40]);
 
-    const rewardCoins = this.levelData.coinsReward || 20;
-    let completeRes = null;
+    const currentLang = (this.levelData && this.levelData.language) || (this.storage.getLanguage ? this.storage.getLanguage() : "english");
 
+    const stars = this.hintsUsedInLevel === 0 ? 3 : (this.hintsUsedInLevel <= 2 ? 2 : 1);
+    const score = 100 + (this.foundBonusWordsInLevel.length * 20);
+    const rewardCoins = this.levelData.coinsReward || 15;
+
+    let winResult = null;
     if (this.isDailyMode) {
       this.storage.completeDailyChallenge();
+      winResult = {
+        level: "Сегодня",
+        stars: 3,
+        coinsEarned: 50,
+        xpEarned: 150,
+        words: this.levelData.words,
+        bonusWords: this.foundBonusWordsInLevel,
+        isDaily: true,
+        language: currentLang
+      };
     } else {
-      completeRes = this.storage.completeLevel(
+      const res = this.storage.completeLevel(
         this.currentLevel,
-        3,
-        500,
+        stars,
+        score,
         rewardCoins,
         this.hintsUsedInLevel,
-        this.levelData.gridSize
+        this.levelData.gridSize,
+        currentLang
       );
+      winResult = {
+        level: this.currentLevel,
+        stars: stars,
+        coinsEarned: rewardCoins,
+        xpEarned: res.xpResult ? res.xpResult.xpAdded : 30,
+        words: this.levelData.words,
+        bonusWords: this.foundBonusWordsInLevel,
+        isDaily: false,
+        language: currentLang
+      };
     }
 
     this.updateCoinsDisplay();
 
     if (typeof this.onLevelCompleted === "function") {
-      this.onLevelCompleted({
-        level: this.currentLevel,
-        isDaily: this.isDailyMode,
-        words: this.levelData.words,
-        gridSize: this.levelData.gridSize,
-        totalCells: this.levelData.totalCells,
-        rewardCoins: rewardCoins,
-        completeResult: completeRes
-      });
+      this.onLevelCompleted(winResult);
     }
   }
 
   saveCurrentGameState() {
-    if (this.isGameOver) return;
-    this.storage.saveActiveGame({
+    if (this.isGameOver || !this.levelData) return;
+    const currentLang = (this.levelData && this.levelData.language) || (this.storage.getLanguage ? this.storage.getLanguage() : "english");
+
+    const state = {
       level: this.currentLevel,
       isDaily: this.isDailyMode,
+      language: currentLang,
       levelData: this.levelData,
       foundWords: this.foundWords,
+      foundBonusWordsInLevel: this.foundBonusWordsInLevel,
       revealedHints: this.revealedHints,
-      hintsUsedInLevel: this.hintsUsedInLevel
-    });
+      hintsUsedInLevel: this.hintsUsedInLevel,
+      date: new Date().toISOString().slice(0, 10)
+    };
+    this.storage.saveActiveGame(state);
   }
 
-  restoreGameState(saved) {
+  restoreGameState() {
+    const saved = this.storage.getActiveSavedGame();
     if (!saved || !saved.levelData) return false;
+
+    const currentLang = this.storage.getLanguage ? this.storage.getLanguage() : "english";
+    if (saved.language && saved.language !== currentLang) {
+      return false;
+    }
+
+    const todayStr = new Date().toISOString().slice(0, 10);
+    if (saved.isDaily && saved.date !== todayStr) {
+      this.storage.clearActiveSavedGame();
+      return false;
+    }
+
     this.currentLevel = saved.level;
-    this.isDailyMode = saved.isDaily;
+    this.isDailyMode = saved.isDaily || false;
     this.levelData = saved.levelData;
     this.foundWords = saved.foundWords || [];
+    this.foundBonusWordsInLevel = saved.foundBonusWordsInLevel || [];
     this.revealedHints = saved.revealedHints || {};
     this.hintsUsedInLevel = saved.hintsUsedInLevel || 0;
     this.isGameOver = false;
