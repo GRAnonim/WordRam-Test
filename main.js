@@ -470,10 +470,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (btnApplyPlacement) {
     btnApplyPlacement.addEventListener("click", () => {
-      if (evaluatedResult) {
-        storage.setEnglishLevel(evaluatedResult.code);
-        updateProfileUI();
-      }
       closePlacementTest();
       game.startLevel(1, false);
       switchTab("game");
@@ -1193,6 +1189,14 @@ document.addEventListener("DOMContentLoaded", () => {
   const btnShareGame = document.getElementById("btn-share-game");
   if (btnShareGame) {
     btnShareGame.addEventListener("click", () => {
+      openShareGameModal();
+    });
+  }
+
+  // Кнопка: Поделиться своим прогрессом и титулом (+30 монет)
+  const btnShareProgressCard = document.getElementById("btn-share-progress-card");
+  if (btnShareProgressCard) {
+    btnShareProgressCard.addEventListener("click", () => {
       openShareProgressModal();
     });
   }
@@ -1312,20 +1316,13 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
 
-  // Модальные окна шеринга
+  // Модальное окно: Поделиться игрой (Пригласить друзей)
   const modalShareGame = document.getElementById("modal-share-game");
   const btnCloseShareGame = document.getElementById("btn-close-share-game");
-  const btnShareAppLink = document.getElementById("btn-share-app-link");
-  const btnShareProgressCard = document.getElementById("btn-share-progress-card");
-
   const btnGameShareTg = document.getElementById("btn-game-share-tg");
   const btnGameShareWa = document.getElementById("btn-game-share-wa");
   const btnGameShareCopy = document.getElementById("btn-game-share-copy");
   const btnGameShareNative = document.getElementById("btn-game-share-native");
-
-  function getGameInviteText() {
-    return "WordRam — Увлекательная игра в слова (Английский и Чеченский языки)! Собирай слова-змейки, изучай словари и соревнуйся в лигах! Играй онлайн: https://granonim.github.io/WordRam/";
-  }
 
   function openShareGameModal() {
     showModal(modalShareGame);
@@ -1333,24 +1330,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (btnCloseShareGame) {
     btnCloseShareGame.addEventListener("click", () => hideAllModals());
-  }
-
-  const btnShareGameEl = document.getElementById("btn-share-game");
-  if (btnShareGameEl) {
-    btnShareGameEl.addEventListener("click", () => {
-      openShareGameModal();
-    });
-  }
-  if (btnShareAppLink) {
-    btnShareAppLink.addEventListener("click", () => {
-      openShareGameModal();
-    });
-  }
-
-  if (btnShareProgressCard) {
-    btnShareProgressCard.addEventListener("click", () => {
-      openShareProgressModal();
-    });
   }
 
   if (btnGameShareTg) {
