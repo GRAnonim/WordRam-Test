@@ -106,6 +106,13 @@ document.addEventListener("DOMContentLoaded", () => {
     currentActiveWord = details.word;
     if (defWordRibbon) defWordRibbon.textContent = details.word;
 
+    const currentLang = storage.getLanguage();
+    const btnSpeakDefEl = document.getElementById("btn-speak-def") || document.querySelector("#modal-word-definition .speak-btn");
+    if (btnSpeakDefEl) {
+      // Прячем кнопку озвучки для чеченских слов
+      btnSpeakDefEl.style.display = (currentLang === "chechen" || /[А-ЯЁӀ]/i.test(details.word)) ? "none" : "flex";
+    }
+
     if (defPhonetic) {
       if (details.ph && details.ph.trim()) {
         defPhonetic.textContent = details.ph;
@@ -830,16 +837,33 @@ document.addEventListener("DOMContentLoaded", () => {
         const qState = dq.quests[t.id] || { current: 0, target: t.target, completed: false, claimed: false };
         if (qState.completed) completedCount++;
 
+        const isReadyToClaim = qState.completed && !qState.claimed;
+        const isClaimed = qState.claimed;
+
+        let btnText = `${qState.current}/${t.target}`;
+        let btnClass = "small-btn locked-btn";
+
+        if (isClaimed) {
+          btnText = "✔ Забрано";
+          btnClass = "small-btn claimed-btn";
+        } else if (isReadyToClaim) {
+          btnText = "✔ Забрать";
+          btnClass = "small-btn claim-ready-btn pulse-ready";
+        }
+
         const qCard = document.createElement("div");
         qCard.className = `quest-item-card ${qState.completed ? "completed" : ""}`;
         qCard.innerHTML = `
           <div class="quest-item-info">
-            <strong>${t.title}</strong>
+            <div class="quest-title-row">
+              <strong>${t.title}</strong>
+              ${qState.completed ? '<span class="quest-check-badge">✔</span>' : ''}
+            </div>
             <div class="quest-sub">${t.desc} (${qState.current}/${t.target})</div>
             <div class="quest-reward">+${t.rewardCoins} 🪙, +${t.rewardXp} XP</div>
           </div>
-          <button class="small-btn ${qState.claimed ? "claimed-btn" : (qState.completed ? "claim-ready-btn" : "locked-btn")}" ${(!qState.completed || qState.claimed) ? "disabled" : ""}>
-            ${qState.claimed ? "✔" : (qState.completed ? "Забрать" : `${qState.current}/${t.target}`)}
+          <button class="${btnClass}" ${(!qState.completed || qState.claimed) ? "disabled" : ""}>
+            ${btnText}
           </button>
         `;
 

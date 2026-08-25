@@ -82,21 +82,14 @@ class WordRamGame {
 
   speakWord(word) {
     if (!window.speechSynthesis || !word) return;
+    const currentLang = (this.levelData && this.levelData.language) || (this.storage.getLanguage ? this.storage.getLanguage() : "english");
+    
+    // Полное отключение синтезатора для чеченского языка
+    if (currentLang === "chechen") return;
+
     try {
       window.speechSynthesis.cancel();
       window.speechSynthesis.resume();
-
-      const currentLang = (this.levelData && this.levelData.language) || (this.storage.getLanguage ? this.storage.getLanguage() : "english");
-      
-      if (currentLang === "chechen") {
-        // Чеченский язык в SpeechSynthesis (если браузер поддерживает ru или ce)
-        const utterance = new SpeechSynthesisUtterance(word);
-        utterance.lang = "ru-RU";
-        utterance.rate = 0.85;
-        utterance.volume = 0.9;
-        window.speechSynthesis.speak(utterance);
-        return;
-      }
 
       const utterance = new SpeechSynthesisUtterance(word);
       utterance.lang = "en-US";
@@ -135,84 +128,106 @@ class WordRamGame {
     const now = this.audioCtx.currentTime;
 
     if (type === "drag") {
+      // Мягкий, кристальный щелчок маримбы при выборе буквы
       const osc = this.audioCtx.createOscillator();
       const gain = this.audioCtx.createGain();
-      const baseFreq = 260 + (this.selectedPath.length * 40);
+      const baseFreq = 340 + (Math.min(this.selectedPath.length, 10) * 35);
       osc.type = "sine";
       osc.frequency.setValueAtTime(baseFreq, now);
-      osc.frequency.exponentialRampToValueAtTime(baseFreq + 20, now + 0.04);
-      gain.gain.setValueAtTime(0.04, now);
-      gain.gain.linearRampToValueAtTime(0.001, now + 0.04);
+      osc.frequency.exponentialRampToValueAtTime(baseFreq * 1.05, now + 0.05);
+
+      gain.gain.setValueAtTime(0.035, now);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.05);
+
       osc.connect(gain);
       gain.connect(this.audioCtx.destination);
       osc.start(now);
-      osc.stop(now + 0.04);
+      osc.stop(now + 0.05);
     } else if (type === "found") {
+      // Гармоничный искрящийся мажорный аккорд (C5 - E5 - G5 - C6) с мягкой атакой
       const notes = [523.25, 659.25, 783.99, 1046.50];
       notes.forEach((freq, idx) => {
         const osc = this.audioCtx.createOscillator();
         const gain = this.audioCtx.createGain();
-        osc.type = "triangle";
-        osc.frequency.setValueAtTime(freq, now + idx * 0.07);
-        gain.gain.setValueAtTime(0.09, now + idx * 0.07);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.07 + 0.28);
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(freq, now + idx * 0.055);
+
+        gain.gain.setValueAtTime(0.0001, now + idx * 0.055);
+        gain.gain.linearRampToValueAtTime(0.08, now + idx * 0.055 + 0.015);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + idx * 0.055 + 0.35);
+
         osc.connect(gain);
         gain.connect(this.audioCtx.destination);
-        osc.start(now + idx * 0.07);
-        osc.stop(now + idx * 0.07 + 0.28);
+        osc.start(now + idx * 0.055);
+        osc.stop(now + idx * 0.055 + 0.35);
       });
     } else if (type === "combo") {
-      const chord = [440, 554.37, 659.25, 880];
+      // Изящный колокольчик-арпеджио
+      const chord = [587.33, 739.99, 880.00, 1174.66];
       chord.forEach((freq, idx) => {
         const osc = this.audioCtx.createOscillator();
         const gain = this.audioCtx.createGain();
         osc.type = "sine";
-        osc.frequency.setValueAtTime(freq * 1.25, now + idx * 0.04);
-        gain.gain.setValueAtTime(0.12, now + idx * 0.04);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.04 + 0.4);
+        osc.frequency.setValueAtTime(freq, now + idx * 0.04);
+
+        gain.gain.setValueAtTime(0.0001, now + idx * 0.04);
+        gain.gain.linearRampToValueAtTime(0.09, now + idx * 0.04 + 0.01);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + idx * 0.04 + 0.45);
+
         osc.connect(gain);
         gain.connect(this.audioCtx.destination);
         osc.start(now + idx * 0.04);
-        osc.stop(now + idx * 0.04 + 0.4);
+        osc.stop(now + idx * 0.04 + 0.45);
       });
     } else if (type === "win") {
+      // Праздничный теплый победный аккорд
       const victoryChords = [523.25, 659.25, 783.99, 1046.50, 1318.51];
       victoryChords.forEach((freq, idx) => {
         const osc = this.audioCtx.createOscillator();
         const gain = this.audioCtx.createGain();
         osc.type = "sine";
-        osc.frequency.setValueAtTime(freq, now + idx * 0.1);
-        gain.gain.setValueAtTime(0.12, now + idx * 0.1);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.1 + 0.6);
+        osc.frequency.setValueAtTime(freq, now + idx * 0.08);
+
+        gain.gain.setValueAtTime(0.0001, now + idx * 0.08);
+        gain.gain.linearRampToValueAtTime(0.10, now + idx * 0.08 + 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + idx * 0.08 + 0.7);
+
         osc.connect(gain);
         gain.connect(this.audioCtx.destination);
-        osc.start(now + idx * 0.1);
-        osc.stop(now + idx * 0.1 + 0.6);
+        osc.start(now + idx * 0.08);
+        osc.stop(now + idx * 0.08 + 0.7);
       });
     } else if (type === "error") {
-      const osc = this.audioCtx.createOscillator();
-      const gain = this.audioCtx.createGain();
-      osc.type = "sawtooth";
-      osc.frequency.setValueAtTime(140, now);
-      osc.frequency.linearRampToValueAtTime(90, now + 0.18);
-      gain.gain.setValueAtTime(0.08, now);
-      gain.gain.linearRampToValueAtTime(0.001, now + 0.18);
-      osc.connect(gain);
-      gain.connect(this.audioCtx.destination);
-      osc.start(now);
-      osc.stop(now + 0.18);
-    } else if (type === "hint") {
+      // Деликатный мягкий глухой стук без резкого жужжания
       const osc = this.audioCtx.createOscillator();
       const gain = this.audioCtx.createGain();
       osc.type = "sine";
-      osc.frequency.setValueAtTime(880, now);
-      osc.frequency.exponentialRampToValueAtTime(1760, now + 0.2);
-      gain.gain.setValueAtTime(0.1, now);
-      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+      osc.frequency.setValueAtTime(150, now);
+      osc.frequency.exponentialRampToValueAtTime(80, now + 0.12);
+
+      gain.gain.setValueAtTime(0.06, now);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.12);
+
       osc.connect(gain);
       gain.connect(this.audioCtx.destination);
       osc.start(now);
-      osc.stop(now + 0.25);
+      osc.stop(now + 0.12);
+    } else if (type === "hint") {
+      // Эфирный стеклянный колокольчик
+      const osc = this.audioCtx.createOscillator();
+      const gain = this.audioCtx.createGain();
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(1046.50, now);
+      osc.frequency.exponentialRampToValueAtTime(1318.51, now + 0.22);
+
+      gain.gain.setValueAtTime(0.0001, now);
+      gain.gain.linearRampToValueAtTime(0.08, now + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.3);
+
+      osc.connect(gain);
+      gain.connect(this.audioCtx.destination);
+      osc.start(now);
+      osc.stop(now + 0.3);
     }
   }
 
@@ -460,6 +475,11 @@ class WordRamGame {
     if (this.coinsDisplay) {
       this.coinsDisplay.textContent = this.storage.getCoins();
     }
+    const badge = document.querySelector(".coins-badge");
+    if (badge) {
+      badge.classList.add("coin-pop-anim");
+      setTimeout(() => badge.classList.remove("coin-pop-anim"), 350);
+    }
   }
 
   updatePreview(text = "") {
@@ -614,17 +634,13 @@ class WordRamGame {
     const currentLang = (this.levelData && this.levelData.language) || (this.storage.getLanguage ? this.storage.getLanguage() : "english");
     const selectedTiles = this.selectedPath.map(([r, c]) => this.levelData.grid[r][c]);
     const forwardWord = (typeof WordRamTokenizer !== "undefined") ? WordRamTokenizer.reconstruct(selectedTiles, currentLang) : selectedTiles.join("");
-    const reverseTiles = [...selectedTiles].reverse();
-    const reverseWord = (typeof WordRamTokenizer !== "undefined") ? WordRamTokenizer.reconstruct(reverseTiles, currentLang) : reverseTiles.join("");
 
     let word = null;
     let matchedPath = this.selectedPath;
 
+    // СТРОГО прямое направление от первой буквы к последней!
     if (this.levelData.words.includes(forwardWord)) {
       word = forwardWord;
-    } else if (this.levelData.words.includes(reverseWord)) {
-      word = reverseWord;
-      matchedPath = [...this.selectedPath].reverse();
     }
 
     if (word) {
@@ -683,8 +699,7 @@ class WordRamGame {
     } else {
       // Проверяем: может быть, это реальное слово активного языка (Слово-бонус!)
       const isForwardBonus = WordRamData.isValidWord(forwardWord, currentLang);
-      const isReverseBonus = !isForwardBonus && WordRamData.isValidWord(reverseWord, currentLang);
-      const bonusWord = isForwardBonus ? forwardWord : (isReverseBonus ? reverseWord : null);
+      const bonusWord = isForwardBonus ? forwardWord : null;
 
       if (bonusWord) {
         if (!this.foundBonusWordsInLevel.includes(bonusWord)) {
