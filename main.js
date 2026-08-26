@@ -6,6 +6,8 @@
 
 document.addEventListener("DOMContentLoaded", () => {
   const storage = new WordRamStorage();
+  if (typeof window !== "undefined") { window.storage = storage; }
+
   const generator = new WordRamGenerator(WordRamData);
 
   // Модальные окна
@@ -574,7 +576,14 @@ document.addEventListener("DOMContentLoaded", () => {
   let activeVocabFilter = "ALL";
   let vocabSearchQuery = "";
 
-  function renderVocabScreen() {
+    function findCefrLevel(word, lang = storage.getLanguage()) {
+    if (!word) return "A1";
+    const details = WordRamData.getWordDetails(word, lang);
+    if (details && details.level) return details.level;
+    return "A1";
+  }
+
+function renderVocabScreen() {
     if (!vocabCardsGrid) return;
     vocabCardsGrid.innerHTML = "";
 
