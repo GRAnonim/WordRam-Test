@@ -7,7 +7,6 @@
 document.addEventListener("DOMContentLoaded", () => {
   const storage = new WordRamStorage();
   if (typeof window !== "undefined") { window.storage = storage; }
-
   const generator = new WordRamGenerator(WordRamData);
 
   // Модальные окна
@@ -56,12 +55,10 @@ document.addEventListener("DOMContentLoaded", () => {
   const blitzScoreCounter = document.getElementById("blitz-score-counter");
 
   function hideAllModals() {
-    const infoModalEl = document.getElementById("modal-info-dialog");
-    [winModal, defModal, placementModal,  blitzModal, infoModalEl].forEach(m => {
-      if (m) {
-        m.style.setProperty("display", "none", "important");
-        m.classList.remove("open");
-      }
+    const allModals = document.querySelectorAll(".modal-overlay, .modal-backdrop");
+    allModals.forEach(m => {
+      m.style.setProperty("display", "none", "important");
+      m.classList.remove("open");
     });
   }
 
@@ -470,6 +467,14 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
+
+  // Универсальное закрытие всех модальных окон
+  document.querySelectorAll(".modal-close-icon, .close-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      hideAllModals();
+    });
+  });
+
   if (btnApplyPlacement) {
     btnApplyPlacement.addEventListener("click", () => {
       closePlacementTest();
@@ -615,7 +620,7 @@ function renderVocabScreen() {
       if (cefrCounts[lvl] !== undefined) cefrCounts[lvl]++;
     });
 
-    // Отрисовка детализации прогресса по уровням (как на скриншоте)
+    // Отрисовка детализации прогресса по уровням (как на скриншоте 45)
     const vocabBreakdownCard = document.getElementById("vocab-cefr-breakdown-card");
     if (vocabBreakdownCard) {
       let rowsHtml = "";
@@ -691,19 +696,19 @@ function renderVocabScreen() {
       const info = collected[word] || { count: 1, mastery: 1 };
       const details = WordRamData.getWordDetails(word, currentLang);
       const lvl = findCefrLevel(word, currentLang);
+      const masteryStars = "★".repeat(info.mastery || 1);
 
       const card = document.createElement("div");
-      card.className = "vocab-word-card";
+      card.className = "vocab-card";
       card.innerHTML = `
-        <div class="card-left">
-          <div class="card-word-title">
-            <strong>${word}</strong>
-            <span class="mastery-stars">★</span>
-          </div>
-          <div class="card-translation">${details ? details.tr : word}</div>
+        <div class="vocab-card-left">
+          <div class="vocab-word-title">${word} <span class="mastery-stars">${masteryStars}</span></div>
+          <div class="vocab-word-tr">${details ? details.tr : word}</div>
+          <div class="vocab-word-ph">${details && details.ph ? details.ph : ""}</div>
         </div>
-        <div class="card-right">
-          <span class="cefr-badge-mini ${lvl}">${lvl} ➔</span>
+        <div class="vocab-card-right">
+          <span class="vocab-tag">${lvl}</span>
+          <span style="font-size: 1.1rem; color: #a855f7;">➔</span>
         </div>
       `;
 
@@ -714,8 +719,6 @@ function renderVocabScreen() {
       vocabCardsGrid.appendChild(card);
     });
   }
-
-
   if (vocabSearchInput) {
     vocabSearchInput.addEventListener("input", (e) => {
       vocabSearchQuery = e.target.value.trim();

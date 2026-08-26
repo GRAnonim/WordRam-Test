@@ -18872,6 +18872,21 @@ const WordRamDataEN = {
 },
 
 
+
+  placementTestWords: [
+    { word: "FAMILY", level: "A1" },
+    { word: "WATER", level: "A1" },
+    { word: "BEAUTIFUL", level: "A2" },
+    { word: "DECIDE", level: "A2" },
+    { word: "OPPORTUNITY", level: "B1" },
+    { word: "CONFIDENT", level: "B1" },
+    { word: "SUBSTANTIAL", level: "B2" },
+    { word: "INEVITABLE", level: "B2" },
+    { word: "METICULOUS", level: "C1" },
+    { word: "UBIQUITOUS", level: "C1" },
+    { word: "EPITOME", level: "C1" }
+  ],
+
   masteryRanks: [
     { threshold: 50, title: "Новичок", desc: "Первые шаги в словаре" },
     { threshold: 100, title: "Любознательный", desc: "Активный старт" },
