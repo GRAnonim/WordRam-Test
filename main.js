@@ -72,13 +72,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const btnOkInfoDialog = document.getElementById("btn-ok-info-dialog");
 
   function showCustomInfoDialog(icon, title, messageHtml) {
-    if (infoDialogIcon) {
-      if (typeof icon === "string" && icon.trim().startsWith("<svg")) {
-        infoDialogIcon.innerHTML = icon;
-      } else {
-        infoDialogIcon.textContent = icon || "ℹ️";
-      }
-    }
+    if (infoDialogIcon) infoDialogIcon.textContent = icon || "ℹ️";
     if (infoDialogTitle) infoDialogTitle.textContent = title || "Информация";
     if (infoDialogMessage) infoDialogMessage.innerHTML = messageHtml || "";
     showModal(infoModal);
@@ -201,71 +195,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (btnHeaderCefr) {
     btnHeaderCefr.addEventListener("click", () => {
-      const currentLang = storage.getLanguage();
-      if (currentLang === "chechen") {
-        const lvl = storage.getLanguageLevel("chechen");
-        const levelNames = {
-          A1: "Начальный (A1)",
-          A2: "Базовый (A2)",
-          B1: "Средний (B1)",
-          B2: "Продвинутый (B2)",
-          C1: "Высокий (C1)",
-          C2: "Мастер слова (C2)"
-        };
-        const titleName = levelNames[lvl] || lvl;
-
-        // Официальный государственный флаг Чеченской Республики (зеленый-белый-красный с орнаментом)
-        const chechenFlagSvg = `
-          <svg class="chechen-flag-icon" viewBox="0 0 60 40" width="56" height="36" style="border-radius: 6px; box-shadow: 0 4px 10px rgba(0,0,0,0.35); display: inline-block;">
-            <rect x="0" y="0" width="60" height="24" fill="#007a3d"/>
-            <rect x="0" y="24" width="60" height="3" fill="#ffffff"/>
-            <rect x="0" y="27" width="60" height="13" fill="#d32f2f"/>
-            <rect x="0" y="0" width="10" height="40" fill="#ffffff"/>
-            <path d="M5,3 L8,7 L5,11 L2,7 Z M5,13 L8,17 L5,21 L2,17 Z M5,23 L8,27 L5,31 L2,27 Z M5,33 L8,37 L5,40 L2,37 Z" fill="#d32f2f"/>
-          </svg>
-        `;
-
-        showCustomInfoDialog(
-          chechenFlagSvg,
-          `Уровень: ${titleName}`,
-          `<p>Ваш текущий ранг: <strong>${lvl} — Нохчийн мотт</strong>.</p>
-           <p class='mt-2'>Шкала сложности WordRam для чеченского языка определяет словарный запас (1500 аутентичных слов) и сложность генерируемых уровней: от базовой лексики (A1) до литературного языка и традиций (C2).</p>
-           <p class='mt-2'>Зарабатывайте опыт (XP) на уровнях и в Блиц-повторении, чтобы повышать свой ранг!</p>`
-        );
-      } else {
-        const lvl = storage.getEnglishLevel();
-        const rank = (typeof WordRamData !== "undefined" && WordRamData.xpRanks)
-          ? WordRamData.xpRanks.find(r => r.code === lvl)
-          : null;
-        const rankTitle = rank ? rank.title : "Базовый (A2)";
-        const rankBadge = rank ? rank.badge : "A2 — Pre-Intermediate";
-        showCustomInfoDialog(
-          "🇬🇧",
-          "Уровень: " + rankTitle,
-          `<p>Ваш текущий ранг: <strong>${rankBadge}</strong>.</p>
-           <p class='mt-2'>Шкала CEFR определяет сложность и словарный запас генерируемых уровней. Зарабатывайте опыт (XP) на уровнях и в Блиц-повторении, чтобы повысить ранг!</p>`
-        );
-      }
+      const lvl = storage.getEnglishLevel();
+      const rank = WordRamData.xpRanks.find(r => r.code === lvl) || WordRamData.xpRanks[0];
+      showCustomInfoDialog(
+        "🇬🇧",
+        "Уровень: " + rank.title,
+        "<p>Ваш текущий ранг: <strong>" + rank.badge + "</strong>.</p><p class='mt-2'>Он определяет сложность и словарный запас генерируемых уровней. Зарабатывайте опыт (XP) на уровнях и в Блиц-повторении, чтобы повысить ранг!</p>"
+      );
     });
   }
-
-  
-  // Клик по Копилке эрудита на карте уровней
-  const piggyBankCards = document.querySelectorAll(".piggy-bank-card, #btn-show-bonus-words");
-  piggyBankCards.forEach(card => {
-    card.style.cursor = "pointer";
-    card.addEventListener("click", () => {
-      const currentLang = storage.getLanguage();
-      const bonusWords = storage.state.stats.bonusWordsFound || 0;
-      const langName = currentLang === "chechen" ? "чеченские" : "английские";
-      const msgHtml = `
-        <p>Собрано бонусных слов: <strong>${bonusWords}</strong> (+${bonusWords * 5} 🪙 монет получено).</p>
-        <p class='mt-2'>Сюда попадают реальные ${langName} слова, найденные вами на игровом поле вне обязательного списка уровня.</p>
-        <p class='mt-2'>За каждое найденное слово-бонус начисляется <strong>+5 🪙 монет</strong> и <strong>+5 XP</strong> опыта!</p>
-      `;
-      showCustomInfoDialog("🐷", "Копилка эрудита", msgHtml);
-    });
-  });
 
   if (btnHeaderCoins) {
     btnHeaderCoins.addEventListener("click", () => {
@@ -831,19 +769,9 @@ function renderVocabScreen() {
   }
 
   function renderLevelsScreen() {
-    const currentLang = storage.getLanguage();
-    const curLvl = storage.getUnlockedLevel(currentLang) || 1;
-    const stages = WordRamData.getStages(currentLang);
-    const activeStage = stages.find(s => curLvl >= s.startLevel && curLvl <= s.endLevel) || stages[stages.length - 1] || stages[0];
-
-    const screenHeaderTitle = document.querySelector("#screen-levels .screen-header h2");
-    const screenHeaderSub = document.querySelector("#screen-levels .screen-header .subtitle");
-    if (screenHeaderTitle) {
-      screenHeaderTitle.textContent = currentLang === "chechen" ? "Карта уровней (Нохчийн мотт)" : "Карта монстриков";
-    }
-    if (screenHeaderSub) {
-      screenHeaderSub.textContent = currentLang === "chechen" ? "Исследуйте локации и открывайте награды" : "Побеждайте монстров и собирайте сундуки";
-    }
+    const curLvl = storage.getSetting("unlockedLevel") || 1;
+    const stages = WordRamData.monstersStages;
+    const activeStage = stages.find(s => curLvl >= s.startLevel && curLvl <= s.endLevel) || stages[0];
 
     // 1. Аватар монстрика и имя
     if (stageMonsterAvatar) stageMonsterAvatar.textContent = activeStage.icon;
@@ -892,7 +820,7 @@ function renderVocabScreen() {
     if (levelsGrid) {
       levelsGrid.innerHTML = "";
       const totalLevels = 60;
-      const unlocked = storage.getUnlockedLevel(currentLang) || 1;
+      const unlocked = storage.getSetting("unlockedLevel") || 1;
 
       for (let lvl = 1; lvl <= totalLevels; lvl++) {
         const isUnlocked = lvl <= unlocked;
@@ -1466,7 +1394,6 @@ function renderVocabScreen() {
       }
     });
   }
-
 
   if (toggleVoice) {
     toggleVoice.addEventListener("change", (e) => {

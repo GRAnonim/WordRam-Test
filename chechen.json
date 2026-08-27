@@ -2014,14 +2014,14 @@
     "tileCount": 4
   },
   {
-    "word": "ДУГА",
-    "translation": "Рис / Крупа",
+    "word": "ДУЬГА",
+    "translation": "Рис",
     "languageLevel": "A1",
     "gameDifficulty": 2,
     "partOfSpeech": "noun",
     "tiles": [
       "Д",
-      "У",
+      "УЬ",
       "Г",
       "А"
     ],

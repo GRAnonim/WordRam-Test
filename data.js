@@ -149,14 +149,6 @@ const WordRamData = {
   ],
 
 
-
-  getStages(lang = "english") {
-    if (lang === "chechen" && typeof WordRamDataCE !== "undefined" && WordRamDataCE.stages) {
-      return WordRamDataCE.stages;
-    }
-    return this.monstersStages;
-  },
-
   get cefrDictionary() {
     return (typeof WordRamDataEN !== "undefined") ? WordRamDataEN.cefrDictionary : {};
   },
@@ -213,14 +205,6 @@ const WordRamData = {
   },
 
 
-
-
-  getStages(lang = "english") {
-    if (lang === "chechen" && typeof WordRamDataCE !== "undefined" && WordRamDataCE.stages) {
-      return WordRamDataCE.stages;
-    }
-    return this.monstersStages;
-  },
 
   getLevelPackingConfig(levelNumber, userCefr = "A2") {
     let gridSize = 5;
@@ -364,54 +348,69 @@ const WordRamData = {
 
   getWordForCefrAndLength(cefrLevel, targetLen, exclude = [], themeKey = null, lang = "english") {
     if (lang === "chechen" && typeof WordRamDataCE !== "undefined") {
+      const rankOrder = ["A1", "A2", "B1", "B2", "C1", "C2"];
+      const userRankIdx = Math.max(0, rankOrder.indexOf(cefrLevel));
       const strLen = String(targetLen);
 
-      // 1. Приоритет 1: СТРОГО слова заявленной ТЕМЫ точной длины targetLen
+      // 1. Theme words
       if (themeKey && WordRamDataCE.themes && WordRamDataCE.themes[themeKey]) {
         const themeWords = WordRamDataCE.themes[themeKey].words;
-        const themedExact = themeWords.filter(w => {
+        const themedAvailable = themeWords.filter(w => {
           if (exclude.includes(w)) return false;
           const tCount = (typeof WordRamTokenizer !== "undefined") ? WordRamTokenizer.getTileCount(w, "chechen") : w.length;
           return tCount === targetLen;
         });
-        if (themedExact.length > 0) {
-          return themedExact[Math.floor(Math.random() * themedExact.length)];
+        if (themedAvailable.length > 0) {
+          return themedAvailable[Math.floor(Math.random() * themedAvailable.length)];
         }
       }
 
-      // 2. Текущий уровень словаря точной длины targetLen
+      // 2. Current level
       if (WordRamDataCE.dictionary[cefrLevel] && WordRamDataCE.dictionary[cefrLevel][strLen]) {
         const available = WordRamDataCE.dictionary[cefrLevel][strLen].filter(w => !exclude.includes(w));
         if (available.length > 0) return available[Math.floor(Math.random() * available.length)];
       }
 
-      // 3. Любой уровень словаря точной длины targetLen (без повторений)
-      for (const lvl of ["A1", "A2", "B1", "B2", "C1", "C2"]) {
-        if (WordRamDataCE.dictionary[lvl] && WordRamDataCE.dictionary[lvl][strLen]) {
-          const available = WordRamDataCE.dictionary[lvl][strLen].filter(w => !exclude.includes(w));
+      // 3. Lower levels
+      for (let i = userRankIdx - 1; i >= 0; i--) {
+        const lowerLvl = rankOrder[i];
+        if (WordRamDataCE.dictionary[lowerLvl] && WordRamDataCE.dictionary[lowerLvl][strLen]) {
+          const available = WordRamDataCE.dictionary[lowerLvl][strLen].filter(w => !exclude.includes(w));
           if (available.length > 0) return available[Math.floor(Math.random() * available.length)];
         }
       }
 
-      // 4. Любой уровень словаря точной длины targetLen (с повторением)
-      for (const lvl of ["A1", "A2", "B1", "B2", "C1", "C2"]) {
+      // 4. Higher levels
+      for (let i = userRankIdx + 1; i < rankOrder.length; i++) {
+        const higherLvl = rankOrder[i];
+        if (WordRamDataCE.dictionary[higherLvl] && WordRamDataCE.dictionary[higherLvl][strLen]) {
+          const available = WordRamDataCE.dictionary[higherLvl][strLen].filter(w => !exclude.includes(w));
+          if (available.length > 0) return available[Math.floor(Math.random() * available.length)];
+        }
+      }
+
+      // 5. Any level
+      for (const lvl of rankOrder) {
         if (WordRamDataCE.dictionary[lvl] && WordRamDataCE.dictionary[lvl][strLen]) {
-          const list = WordRamDataCE.dictionary[lvl][strLen];
-          if (list && list.length > 0) return list[Math.floor(Math.random() * list.length)];
+          const words = WordRamDataCE.dictionary[lvl][strLen];
+          if (words.length > 0) return words[Math.floor(Math.random() * words.length)];
         }
       }
 
-      // 5. Поиск по полному списку 1500 слов точной длины targetLen
-      if (WordRamDataCE.wordsList) {
-        const matching = WordRamDataCE.wordsList.filter(item => {
-          const tCount = item.tileCount || ((typeof WordRamTokenizer !== "undefined") ? WordRamTokenizer.getTileCount(item.word, "chechen") : item.word.length);
-          return tCount === targetLen;
-        });
-        if (matching.length > 0) {
-          return matching[Math.floor(Math.random() * matching.length)].word;
+      // Fallback for Chechen if exact length is not found
+      for (const lvl of ["C2", "C1", "B2", "B1", "A2", "A1"]) {
+        if (WordRamDataCE.dictionary[lvl]) {
+          for (const k in WordRamDataCE.dictionary[lvl]) {
+            const list = WordRamDataCE.dictionary[lvl][k];
+            if (list && list.length > 0) {
+              for (const w of list) {
+                const tCount = (typeof WordRamTokenizer !== "undefined") ? WordRamTokenizer.getTileCount(w, "chechen") : w.length;
+                if (tCount === targetLen && !exclude.includes(w)) return w;
+              }
+            }
+          }
         }
       }
-
       return "ДАХАР".padEnd(targetLen, "А").slice(0, targetLen);
     }
 
@@ -450,14 +449,13 @@ const WordRamData = {
       }
     }
 
-    // 4. Any level
+    // 4. Any level with targetLen ignoring exclude if exhausted
     for (const lvl of ["A1", "A2", "B1", "B2", "C1"]) {
       if (WordRamDataEN.cefrDictionary[lvl] && WordRamDataEN.cefrDictionary[lvl][targetLen]) {
         const available = WordRamDataEN.cefrDictionary[lvl][targetLen].filter(w => !exclude.includes(w) && w.length === targetLen);
         if (available.length > 0) return available[Math.floor(Math.random() * available.length)];
       }
     }
-
     for (const lvl of ["A1", "A2", "B1", "B2", "C1"]) {
       if (WordRamDataEN.cefrDictionary[lvl] && WordRamDataEN.cefrDictionary[lvl][targetLen] && WordRamDataEN.cefrDictionary[lvl][targetLen].length > 0) {
         const list = WordRamDataEN.cefrDictionary[lvl][targetLen];
@@ -465,7 +463,19 @@ const WordRamData = {
       }
     }
 
-    return "WORD".padEnd(targetLen, "S").slice(0, targetLen);
+    for (const lvl of ["C1", "B2", "B1", "A2", "A1"]) {
+      if (WordRamDataEN.cefrDictionary[lvl]) {
+        for (const k in WordRamDataEN.cefrDictionary[lvl]) {
+          const list = WordRamDataEN.cefrDictionary[lvl][k];
+          if (list && list.length > 0) {
+            for (const w of list) {
+              if (w.length === targetLen && !exclude.includes(w)) return w;
+            }
+          }
+        }
+      }
+    }
+    return "DICTIONARY".slice(0, targetLen).padEnd(targetLen, "S");
   },
 
   isValidWord(word, lang = null) {
