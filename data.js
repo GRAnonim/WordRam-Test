@@ -364,62 +364,55 @@ const WordRamData = {
 
   getWordForCefrAndLength(cefrLevel, targetLen, exclude = [], themeKey = null, lang = "english") {
     if (lang === "chechen" && typeof WordRamDataCE !== "undefined") {
-      const rankOrder = ["A1", "A2", "B1", "B2", "C1", "C2"];
-      const userRankIdx = Math.max(0, rankOrder.indexOf(cefrLevel));
       const strLen = String(targetLen);
 
-      // 1. Приоритет 1: СТРОГО слова заявленной ТЕМЫ
+      // 1. Приоритет 1: СТРОГО слова заявленной ТЕМЫ точной длины targetLen
       if (themeKey && WordRamDataCE.themes && WordRamDataCE.themes[themeKey]) {
         const themeWords = WordRamDataCE.themes[themeKey].words;
-        const themedAvailable = themeWords.filter(w => {
+        const themedExact = themeWords.filter(w => {
           if (exclude.includes(w)) return false;
           const tCount = (typeof WordRamTokenizer !== "undefined") ? WordRamTokenizer.getTileCount(w, "chechen") : w.length;
           return tCount === targetLen;
         });
-        if (themedAvailable.length > 0) {
-          return themedAvailable[Math.floor(Math.random() * themedAvailable.length)];
+        if (themedExact.length > 0) {
+          return themedExact[Math.floor(Math.random() * themedExact.length)];
         }
       }
 
-      // 2. Если в теме нет слова точной длины, но тема задана — берем любое свободное слово из ТЕМЫ
-      if (themeKey && WordRamDataCE.themes && WordRamDataCE.themes[themeKey]) {
-        const themeWords = WordRamDataCE.themes[themeKey].words.filter(w => !exclude.includes(w));
-        if (themeWords.length > 0) {
-          // Ищем слово с максимально близкой длиной
-          const sorted = [...themeWords].sort((a, b) => {
-            const lA = (typeof WordRamTokenizer !== "undefined") ? WordRamTokenizer.getTileCount(a, "chechen") : a.length;
-            const lB = (typeof WordRamTokenizer !== "undefined") ? WordRamTokenizer.getTileCount(b, "chechen") : b.length;
-            return Math.abs(lA - targetLen) - Math.abs(lB - targetLen);
-          });
-          const best = sorted[0];
-          const bestLen = (typeof WordRamTokenizer !== "undefined") ? WordRamTokenizer.getTileCount(best, "chechen") : best.length;
-          if (bestLen === targetLen) return best;
-        }
-      }
-
-      // 3. Current level
+      // 2. Текущий уровень словаря точной длины targetLen
       if (WordRamDataCE.dictionary[cefrLevel] && WordRamDataCE.dictionary[cefrLevel][strLen]) {
         const available = WordRamDataCE.dictionary[cefrLevel][strLen].filter(w => !exclude.includes(w));
         if (available.length > 0) return available[Math.floor(Math.random() * available.length)];
       }
 
-      // 4. All levels
-      for (const lvl of rankOrder) {
+      // 3. Любой уровень словаря точной длины targetLen (без повторений)
+      for (const lvl of ["A1", "A2", "B1", "B2", "C1", "C2"]) {
         if (WordRamDataCE.dictionary[lvl] && WordRamDataCE.dictionary[lvl][strLen]) {
           const available = WordRamDataCE.dictionary[lvl][strLen].filter(w => !exclude.includes(w));
           if (available.length > 0) return available[Math.floor(Math.random() * available.length)];
         }
       }
 
-      // 5. Any level
-      for (const lvl of rankOrder) {
+      // 4. Любой уровень словаря точной длины targetLen (с повторением)
+      for (const lvl of ["A1", "A2", "B1", "B2", "C1", "C2"]) {
         if (WordRamDataCE.dictionary[lvl] && WordRamDataCE.dictionary[lvl][strLen]) {
-          const words = WordRamDataCE.dictionary[lvl][strLen];
-          if (words.length > 0) return words[Math.floor(Math.random() * words.length)];
+          const list = WordRamDataCE.dictionary[lvl][strLen];
+          if (list && list.length > 0) return list[Math.floor(Math.random() * list.length)];
         }
       }
 
-      return "БЕПИГ";
+      // 5. Поиск по полному списку 1500 слов точной длины targetLen
+      if (WordRamDataCE.wordsList) {
+        const matching = WordRamDataCE.wordsList.filter(item => {
+          const tCount = item.tileCount || ((typeof WordRamTokenizer !== "undefined") ? WordRamTokenizer.getTileCount(item.word, "chechen") : item.word.length);
+          return tCount === targetLen;
+        });
+        if (matching.length > 0) {
+          return matching[Math.floor(Math.random() * matching.length)].word;
+        }
+      }
+
+      return "ДАХАР".padEnd(targetLen, "А").slice(0, targetLen);
     }
 
     // English logic
