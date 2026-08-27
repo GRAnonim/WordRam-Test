@@ -41,9 +41,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const btnCloseDefinition = document.getElementById("btn-close-definition");
   const btnOkDefinition = document.getElementById("btn-ok-definition");
 
-  // Модалка Колеса Фортуны
-  
-  
   // Модалка Блиц-повторения
   const blitzModal = document.getElementById("modal-blitz-quiz");
   const btnCloseBlitz = document.getElementById("btn-close-blitz");
