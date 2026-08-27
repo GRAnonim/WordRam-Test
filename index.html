@@ -35,10 +35,10 @@
   <meta property="og:image" content="https://granonim.github.io/WordRam/og-image.png">
 
   <!-- Icons & Styles -->
-  <link rel="manifest" href="manifest.webmanifest?v=57">
-  <link rel="icon" type="image/svg+xml" href="favicon.svg?v=57">
-  <link rel="apple-touch-icon" href="icon-192.png?v=57">
-  <link rel="stylesheet" href="styles.css?v=57">
+  <link rel="manifest" href="manifest.webmanifest?v=58">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg?v=58">
+  <link rel="apple-touch-icon" href="icon-192.png?v=58">
+  <link rel="stylesheet" href="styles.css?v=58">
 </head>
 <body>
   <div id="app">
@@ -124,47 +124,50 @@
       </section>
 
       <!-- ЭКРАН 3: КАРТА И УРОВНИ -->
+            <!-- ЭКРАН 3: КАРТА И УРОВНИ -->
       <section id="screen-levels" class="screen-view stage-screen-view" style="display: none;">
-        <div class="screen-header">
-          <h2>Карта монстриков</h2>
-          <p class="subtitle">Побеждайте монстров и собирайте сундуки</p>
+        <div class="stage-top-row full-width">
+          <div class="stage-app-title">WordRam</div>
+          <div class="bonus-vault-badge" id="btn-show-bonus-words" title="Копилка эрудита">
+            <span class="vault-icon">💰</span>
+            <span id="bonus-words-counter" class="vault-count">0 🪙</span>
+          </div>
         </div>
 
-        <!-- Карточка текущего монстрика -->
-        <div class="stage-boss-card" id="stage-boss-card">
-          <div class="stage-boss-header">
-            <span class="stage-boss-avatar" id="stage-monster-avatar">🌱</span>
-            <div class="stage-boss-info">
-              <h3 id="stage-monster-name" class="stage-boss-name">Лилипут Росток</h3>
-              <div class="stage-boss-sub">Прогресс локации: <strong id="stage-percent-display">0.00%</strong></div>
-            </div>
+        <!-- Центральная колба с монстриком этапа -->
+        <div class="stage-monster-container">
+          <div class="monster-flask-ring">
+            <div id="stage-monster-avatar" class="monster-avatar">🧽</div>
           </div>
-          <div class="stage-milestones-track mt-3">
-            <div class="stage-milestones-line-bg">
-              <div id="stage-milestone-fill" class="stage-milestones-line-fill" style="width: 0%;"></div>
-            </div>
-            <div class="stage-milestones-points" id="stage-milestones-points"></div>
+          <h2 id="stage-monster-name" class="stage-monster-name">Морская губка</h2>
+          <div id="stage-percent-display" class="stage-percent-text">0,00%</div>
+        </div>
+
+        <!-- Линия прогресса этапа с вехами/сундуками -->
+        <div class="stage-milestone-track-wrap full-width">
+          <div class="milestone-track-bg">
+            <div id="stage-milestone-fill" class="milestone-track-fill" style="width: 0%;"></div>
           </div>
-          <button id="btn-stage-play-current" class="primary-btn full-width mt-3">
+          <div id="stage-milestones-points" class="stage-milestones-points-row"></div>
+        </div>
+
+        <!-- Большая зеленая 3D кнопка запуска УРОВЕНЬ N -->
+        <div class="stage-play-btn-wrap full-width mt-3">
+          <button id="btn-stage-play-current" class="stage-green-play-btn pulse-glow full-width">
             УРОВЕНЬ 1
           </button>
         </div>
 
-        <!-- Свинья-копилка бонусных слов -->
-        <div class="piggy-bank-card mt-3">
-          <div class="piggy-left">
-            <span class="piggy-icon">🐷</span>
-            <div>
-              <strong>Копилка редких слов</strong>
-              <div class="piggy-sub">Найдено бонусных слов: <span id="bonus-words-counter">0 🪙</span></div>
-            </div>
-          </div>
-          <div class="piggy-rate">+5 🪙 / слово</div>
+        <!-- Переключатель сетки всех уровней -->
+        <div class="stage-toggle-grid-row full-width mt-2">
+          <button id="btn-toggle-levels-grid" class="secondary-btn small-btn">
+            📋 Все уровни со звездами
+          </button>
         </div>
 
-        <!-- Сетка всех уровней -->
-        <div class="levels-scroll-wrapper mt-3">
-          <div id="levels-grid" class="levels-grid"></div>
+        <!-- Раскрывающаяся сетка всех уровней -->
+        <div id="levels-grid-wrapper" class="levels-grid-collapsible mt-2" style="display: none;">
+          <div id="levels-grid" class="levels-scroll-grid"></div>
         </div>
       </section>
 
@@ -224,18 +227,7 @@
           <div id="daily-rewards-calendar" class="daily-calendar-grid mt-3"></div>
         </div>
 
-        <div class="lucky-wheel-banner mt-3">
-          <div class="wheel-banner-left">
-            <span class="wheel-banner-icon">🎡</span>
-            <div>
-              <strong>Колесо фортуны</strong>
-              <div class="wheel-sub">Крутите каждый день и выигрывайте призы!</div>
-            </div>
-          </div>
-          <button id="btn-open-wheel" class="primary-btn small-btn">
-            Крутить
-          </button>
-        </div>
+        
       </section>
 
       <!-- ЭКРАН 5: ПРОФИЛЬ И НАСТРОЙКИ -->
@@ -346,7 +338,7 @@
           </p>
           <div style="display:flex; gap:8px;">
             <button id="btn-export-backup" class="secondary-btn full-width" style="font-size:0.85rem;">
-              💾 Скопировать код
+              💾 Ссылка код
             </button>
             <button id="btn-import-backup" class="secondary-btn full-width" style="font-size:0.85rem;">
               📥 Восстановить
@@ -386,22 +378,6 @@
   </div>
 
   <!-- МОДАЛЬНЫЕ ОКНА -->
-
-  <!-- 1. Модальное окно: Колесо Фортуны -->
-  <div id="modal-lucky-wheel" class="modal-overlay" style="display: none;">
-    <div class="modal-card wheel-modal-card">
-      <button id="btn-close-wheel" class="modal-close-icon" aria-label="Закрыть">✕</button>
-      <h2 class="modal-title">🎡 Колесо фортуны</h2>
-      <p class="modal-subtitle">Испытайте удачу и заберите ежедневный приз!</p>
-      <div class="wheel-outer-wrapper">
-        <div class="wheel-pointer">▼</div>
-        <canvas id="wheel-canvas" width="280" height="280"></canvas>
-      </div>
-      <button id="btn-spin-wheel" class="primary-btn modal-action-btn mt-3">
-        Вращать колесо!
-      </button>
-    </div>
-  </div>
 
   <!-- 2. Модальное окно: Блиц-повторение -->
   <div id="modal-blitz-quiz" class="modal-overlay" style="display: none;">
@@ -499,85 +475,85 @@
     </div>
   </div>
 
-  <!-- 6. Модальное окно: Поделиться игрой (Пригласить друзей) -->
+    <!-- Модальное окно: Поделиться игрой (Пригласить друзей) -->
   <div id="modal-share-game" class="modal-overlay" style="display: none;">
-    <div class="modal-card">
-      <button id="btn-close-share-game" class="modal-close-icon" aria-label="Закрыть">✕</button>
-      <div class="modal-header">
-        <h2>📤 Поделиться игрой WordRam</h2>
+    <div class="modal-card share-white-modal-card">
+      <button id="btn-close-share-game" class="modal-close-icon-fixed" aria-label="Закрыть">✕</button>
+      <div class="modal-header-safe">
+        <h2>📩 Поделиться игрой WordRam</h2>
       </div>
-      <div class="modal-body text-center">
-        <p class="mb-3" style="color: var(--text-muted); font-size: 0.9rem;">Пригласите друзей в WordRam и получайте бонусные монеты!</p>
-        <div class="share-actions-container mt-3">
-          <button id="btn-game-share-tg" class="social-share-btn tg-btn">
+      <div class="modal-body-safe text-center">
+        <p class="share-sub-text">Пригласите друзей в WordRam и получайте бонусные монеты!</p>
+        <div class="share-actions-grid-3 mt-3">
+          <button id="btn-game-share-tg" class="social-share-pill tg-btn">
             <span class="share-icon">💬</span> Telegram
           </button>
-          <button id="btn-game-share-wa" class="social-share-btn wa-btn">
+          <button id="btn-game-share-wa" class="social-share-pill wa-btn">
             <span class="share-icon">🟢</span> WhatsApp
           </button>
-          <button id="btn-game-share-copy" class="social-share-btn copy-btn">
-            <span class="share-icon">📋</span> Скопировать
+          <button id="btn-game-share-copy" class="social-share-pill copy-btn">
+            <span class="share-icon">📋</span> Ссылка
           </button>
         </div>
         <button id="btn-game-share-native" class="primary-btn full-width mt-3">
-          📱 Открыть меню «Поделиться»
+          📱 Меню «Поделиться»
         </button>
       </div>
     </div>
   </div>
 
-  <!-- 7. Модальное окно: Поделиться прогрессом -->
+  <!-- Модальное окно: Поделиться прогрессом -->
   <div id="modal-share-progress" class="modal-overlay" style="display: none;">
-    <div class="modal-card">
-      <button id="btn-close-share-progress" class="modal-close-icon" aria-label="Закрыть">✕</button>
-      <div class="modal-header">
+    <div class="modal-card share-white-modal-card">
+      <button id="btn-close-share-progress" class="modal-close-icon-fixed" aria-label="Закрыть">✕</button>
+      <div class="modal-header-safe">
         <h2>🏆 Мой прогресс в WordRam</h2>
       </div>
-      <div class="modal-body">
-        <div class="share-preview-card" id="share-preview-card">
-          <div class="share-card-header">
-            <span class="share-card-logo">✨ WordRam</span>
-            <span id="share-card-lang-badge" class="share-card-badge">🟢 Чеченский</span>
+      <div class="modal-body-safe">
+        <div class="share-preview-card-inner" id="share-preview-card">
+          <div class="share-card-header-inner">
+            <span class="share-card-logo-inner">✨ WordRam</span>
+            <span id="share-card-lang-badge" class="share-card-badge-inner">🟢 Чеченский</span>
           </div>
-          <div class="share-card-main">
-            <div class="share-mastery-title" id="share-mastery-title">Къонах</div>
-            <div class="share-mastery-desc" id="share-mastery-desc">Благородный муж слова</div>
-            <div class="share-stats-grid mt-3">
-              <div class="share-stat-box">
-                <span class="stat-num" id="share-stat-words">0 / 1500</span>
-                <span class="stat-lbl">Слов выучено</span>
+          <div class="share-card-main-inner">
+            <div class="share-mastery-title-inner" id="share-mastery-title">Къонах</div>
+            <div class="share-mastery-desc-inner" id="share-mastery-desc">Благородный муж слова</div>
+            <div class="share-stats-grid-inner mt-2">
+              <div class="share-stat-box-inner">
+                <span class="stat-num-inner" id="share-stat-words">0 / 1500</span>
+                <span class="stat-lbl-inner">Слов</span>
               </div>
-              <div class="share-stat-box">
-                <span class="stat-num" id="share-stat-level">1</span>
-                <span class="stat-lbl">Уровень</span>
+              <div class="share-stat-box-inner">
+                <span class="stat-num-inner" id="share-stat-level">1</span>
+                <span class="stat-lbl-inner">Уровень</span>
               </div>
-              <div class="share-stat-box">
-                <span class="stat-num" id="share-stat-stars">0 ⭐</span>
-                <span class="stat-lbl">Звезды</span>
+              <div class="share-stat-box-inner">
+                <span class="stat-num-inner" id="share-stat-stars">0 ⭐</span>
+                <span class="stat-lbl-inner">Звезды</span>
               </div>
             </div>
           </div>
         </div>
 
-        <div class="share-actions-container mt-3">
-          <button id="btn-share-tg" class="social-share-btn tg-btn">
+        <div class="share-actions-grid-3 mt-3">
+          <button id="btn-share-tg" class="social-share-pill tg-btn">
             <span class="share-icon">💬</span> Telegram
           </button>
-          <button id="btn-share-wa" class="social-share-btn wa-btn">
+          <button id="btn-share-wa" class="social-share-pill wa-btn">
             <span class="share-icon">🟢</span> WhatsApp
           </button>
-          <button id="btn-share-copy" class="social-share-btn copy-btn">
-            <span class="share-icon">📋</span> Скопировать
+          <button id="btn-share-copy" class="social-share-pill copy-btn">
+            <span class="share-icon">📋</span> Ссылка
           </button>
         </div>
         <button id="btn-share-native" class="primary-btn full-width mt-3">
-          📱 Другие соцсети (Меню «Поделиться»)
+          📱 Меню «Поделиться»
         </button>
       </div>
     </div>
   </div>
 
-  <!-- 8. Кастомное модальное окно информации -->
+<!-- 8. Кастомное модальное окно информации -->
   <div id="modal-info-dialog" class="modal-overlay" style="display: none;">
     <div class="modal-card info-dialog-card">
       <button id="btn-close-info-dialog" class="modal-close-icon" aria-label="Закрыть">✕</button>
@@ -589,12 +565,12 @@
   </div>
 
   <!-- Подключение скриптов -->
-  <script src="data-ce.js?v=57"></script>
-  <script src="data-en.js?v=57"></script>
-  <script src="data.js?v=57"></script>
-  <script src="storage.js?v=57"></script>
-  <script src="generator.js?v=57"></script>
-  <script src="game.js?v=57"></script>
-  <script src="main.js?v=57"></script>
+  <script src="data-ce.js?v=58"></script>
+  <script src="data-en.js?v=58"></script>
+  <script src="data.js?v=58"></script>
+  <script src="storage.js?v=58"></script>
+  <script src="generator.js?v=58"></script>
+  <script src="game.js?v=58"></script>
+  <script src="main.js?v=58"></script>
 </body>
 </html>

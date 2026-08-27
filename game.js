@@ -652,9 +652,20 @@ class WordRamGame {
     let word = null;
     let matchedPath = this.selectedPath;
 
-    // СТРОГО прямое направление от первой буквы к последней!
-    if (this.levelData.words.includes(forwardWord)) {
-      word = forwardWord;
+    // СТРОГО прямое направление с надежной нормализацией регистра и палочки!
+    const normForward = (currentLang === "chechen" && typeof WordRamTokenizer !== "undefined")
+      ? WordRamTokenizer.normalizeChechen(forwardWord)
+      : forwardWord.toUpperCase();
+
+    const matchedWord = this.levelData.words.find(w => {
+      const normTarget = (currentLang === "chechen" && typeof WordRamTokenizer !== "undefined")
+        ? WordRamTokenizer.normalizeChechen(w)
+        : w.toUpperCase();
+      return normTarget === normForward;
+    });
+
+    if (matchedWord) {
+      word = matchedWord;
     }
 
     if (word) {

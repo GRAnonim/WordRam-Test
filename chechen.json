@@ -672,13 +672,12 @@
     "gameDifficulty": 3,
     "partOfSpeech": "noun",
     "tiles": [
-      "Б",
-      "Ӏ",
+      "БӀ",
       "АЬ",
       "Р",
       "Г"
     ],
-    "tileCount": 5
+    "tileCount": 4
   },
   {
     "word": "ЛЕРГ",
@@ -949,13 +948,12 @@
     "gameDifficulty": 3,
     "partOfSpeech": "noun",
     "tiles": [
-      "М",
-      "Ӏ",
+      "МӀ",
       "А",
       "Р",
       "А"
     ],
-    "tileCount": 5
+    "tileCount": 4
   },
   {
     "word": "ЦӀИЙ",
@@ -2014,14 +2012,14 @@
     "tileCount": 4
   },
   {
-    "word": "ДУЬГА",
-    "translation": "Рис",
+    "word": "ДУГА",
+    "translation": "Рис / Крупа",
     "languageLevel": "A1",
     "gameDifficulty": 2,
     "partOfSpeech": "noun",
     "tiles": [
       "Д",
-      "УЬ",
+      "У",
       "Г",
       "А"
     ],
@@ -2895,14 +2893,13 @@
     "gameDifficulty": 4,
     "partOfSpeech": "noun",
     "tiles": [
-      "Б",
-      "Ӏ",
+      "БӀ",
       "АЬ",
       "С",
       "Т",
       "Е"
     ],
-    "tileCount": 6
+    "tileCount": 5
   },
   {
     "word": "АЬХКА",
@@ -5430,7 +5427,7 @@
   },
   {
     "word": "ЖӀОВ",
-    "translation": "Молот / молоток",
+    "translation": "Кувалда / Молот / Молоток",
     "languageLevel": "A2",
     "gameDifficulty": 1,
     "partOfSpeech": "noun",
@@ -7316,8 +7313,7 @@
     "gameDifficulty": 5,
     "partOfSpeech": "noun",
     "tiles": [
-      "Д",
-      "Ӏ",
+      "ДӀ",
       "А",
       "Д",
       "А",
@@ -7325,7 +7321,7 @@
       "А",
       "Р"
     ],
-    "tileCount": 8
+    "tileCount": 7
   },
   {
     "word": "ЦХЬАБОССА",
@@ -7593,12 +7589,11 @@
     "gameDifficulty": 1,
     "partOfSpeech": "noun",
     "tiles": [
-      "Б",
-      "Ӏ",
+      "БӀ",
       "О",
       "В"
     ],
-    "tileCount": 4
+    "tileCount": 3
   },
   {
     "word": "ГӀАЛАБӀОВ",
@@ -7611,12 +7606,11 @@
       "А",
       "Л",
       "А",
-      "Б",
-      "Ӏ",
+      "БӀ",
       "О",
       "В"
     ],
-    "tileCount": 8
+    "tileCount": 7
   },
   {
     "word": "ЧОЬТА",
@@ -8507,11 +8501,10 @@
     "gameDifficulty": 1,
     "partOfSpeech": "adverb",
     "tiles": [
-      "Д",
-      "Ӏ",
+      "ДӀ",
       "А"
     ],
-    "tileCount": 3
+    "tileCount": 2
   },
   {
     "word": "СХЬА",
@@ -8533,8 +8526,7 @@
     "gameDifficulty": 5,
     "partOfSpeech": "verb",
     "tiles": [
-      "Д",
-      "Ӏ",
+      "ДӀ",
       "А",
       "С",
       "А",
@@ -8544,7 +8536,7 @@
       "А",
       "Р"
     ],
-    "tileCount": 10
+    "tileCount": 9
   },
   {
     "word": "ХИЙЦАР",
@@ -8641,8 +8633,7 @@
     "gameDifficulty": 5,
     "partOfSpeech": "noun",
     "tiles": [
-      "Д",
-      "Ӏ",
+      "ДӀ",
       "А",
       "Й",
       "А",
@@ -8651,7 +8642,7 @@
       "А",
       "Р"
     ],
-    "tileCount": 9
+    "tileCount": 8
   },
   {
     "word": "ДЕЛЕКХАЧАР",
@@ -11525,14 +11516,13 @@
     "gameDifficulty": 4,
     "partOfSpeech": "noun",
     "tiles": [
-      "Б",
-      "Ӏ",
+      "БӀ",
       "А",
       "Р",
       "А",
       "Ш"
     ],
-    "tileCount": 6
+    "tileCount": 5
   },
   {
     "word": "ХЬУЬНАН",
@@ -11974,15 +11964,14 @@
     "gameDifficulty": 5,
     "partOfSpeech": "adjective",
     "tiles": [
-      "Б",
-      "Ӏ",
+      "БӀ",
       "АЬ",
       "С",
       "Т",
       "А",
       "Н"
     ],
-    "tileCount": 7
+    "tileCount": 6
   },
   {
     "word": "ГУЬЙРАН",
@@ -13759,14 +13748,13 @@
     "gameDifficulty": 4,
     "partOfSpeech": "adverb",
     "tiles": [
-      "Б",
-      "Ӏ",
+      "БӀ",
       "АЬ",
       "С",
       "Т",
       "А"
     ],
-    "tileCount": 6
+    "tileCount": 5
   },
   {
     "word": "АЬХКАХЬ",

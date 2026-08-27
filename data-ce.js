@@ -5,13 +5,13 @@
  */
 
 class WordRamTokenizer {
-  static MULTI_GRAPHEMES_CHECHEN = ["АЬ", "ОЬ", "УЬ", "ГӀ", "ЖӀ", "КХ", "КЪ", "КӀ", "ПӀ", "ТӀ", "ХЬ", "ХӀ", "ЦӀ", "ЧӀ"];
+  static MULTI_GRAPHEMES_CHECHEN = ["АЬ", "ОЬ", "УЬ", "БӀ", "ГӀ", "ДӀ", "ЖӀ", "КХ", "КЪ", "КӀ", "МӀ", "ПӀ", "ТӀ", "ХЬ", "ХӀ", "ЦӀ", "ЧӀ"];
   static CYRILLIC_LETTERS_CHECHEN = new Set("АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯӀ");
 
   static normalizeChechen(word) {
     if (!word) return "";
     let w = String(word).trim().toUpperCase();
-    w = w.replace(/[\u04CF\u04C0IlL1|]/g, "\u04C0");
+    w = w.replace(/[\u04CF\u04C0Il1|]/g, "\u04C0");
     w = w.replace(/ъ/g, "Ъ").replace(/ь/g, "Ь");
     return w;
   }
@@ -108,6 +108,7 @@ const WordRamDataCE = {
       "МИЛА",
       "МУХА",
       "ХЬАША",
+      "БӀАЬРГ",
       "ЛЕРГ",
       "МЕРА",
       "БАГА",
@@ -117,6 +118,7 @@ const WordRamDataCE = {
       "СИНО",
       "ПХЬИД",
       "ПӀЕЛГ",
+      "МӀАРА",
       "ТӀОГӀА",
       "ГОЛА",
       "ХОНА",
@@ -145,7 +147,7 @@ const WordRamDataCE = {
       "ШУРА",
       "КХАЧА",
       "БАЛЛ",
-      "ДУЬГА",
+      "ДУГА",
       "ДУЬРА",
       "КЪАЬХЬА",
       "ТУЬХА",
@@ -265,10 +267,8 @@ const WordRamDataCE = {
       "ХӀАНХӀА",
       "МАРША",
       "КОРТА",
-      "БӀАЬРГ",
       "КИЙРА",
       "ПХЬАРС",
-      "МӀАРА",
       "КХЕРАР",
       "МАРЗО",
       "ЛАТТА",
@@ -307,6 +307,7 @@ const WordRamDataCE = {
       "БУЬЙСА",
       "ӀУЙРЕ",
       "СУЬЙРЕ",
+      "БӀАЬСТЕ",
       "ГУЬЙРЕ",
       "ШОЛДА",
       "ВАХАР",
@@ -362,7 +363,6 @@ const WordRamDataCE = {
       "ТЕКХАРГ",
       "ЗИНГАТ",
       "СТИГАЛ",
-      "БӀАЬСТЕ",
       "МАРХАШ",
       "ЙАЗДАР",
       "ДИЙЦАР",
@@ -440,7 +440,6 @@ const WordRamDataCE = {
       "ТХЬАН",
       "ДЕШИ",
       "ГӀАЛИ",
-      "БӀОВ",
       "ЧОЬТА",
       "ХОАМ",
       "ИЛЛИ",
@@ -479,6 +478,7 @@ const WordRamDataCE = {
       "ХАН",
       "ЦКЪА",
       "ТУР",
+      "БӀОВ",
       "ЖОП",
       "ТОЙ",
       "ДОШ",
@@ -489,7 +489,6 @@ const WordRamDataCE = {
       "ХЬАЛ",
       "ОХЬА",
       "АРА",
-      "ДӀА",
       "СХЬА",
       "СИЙ"
     ],
@@ -591,7 +590,9 @@ const WordRamDataCE = {
       "КӀЕЗИГХО",
       "ТӀЕКХОЧУШ",
       "ТӀЕКХАЧАР",
+      "ДӀАДАХАР",
       "ЭТКИНАШ",
+      "ГӀАЛАБӀОВ",
       "АЛФАВИТ",
       "КЪОНАХИЙ",
       "ОЬЗДАНГА",
@@ -666,9 +667,7 @@ const WordRamDataCE = {
       "СУЬЙРЕНЦА",
       "БУЬЙСАНЦА",
       "БЕТТАНАШ",
-      "ДӀАДАХАР",
       "ЦХЬАБОССА",
-      "ГӀАЛАБӀОВ",
       "СИНКЪЕРАМ",
       "НУЦВАХАР",
       "МАРШАЛЛА",
@@ -678,6 +677,7 @@ const WordRamDataCE = {
       "ТӀОМАДАЛА",
       "НОХЧАЛЛА",
       "КХОЧУШДАР",
+      "ДӀАЙАЗДАР",
       "ДОГДАХАР",
       "ТАМБАХАР",
       "ДУТКЪАЛЛА",
@@ -688,7 +688,6 @@ const WordRamDataCE = {
       "ХЬАЛАГӀАТТАР",
       "ХӀОРАДИЙНАХЬ",
       "БЕХКБАККХАР",
-      "ДӀАСАХЬАЖАР",
       "ХЬАЛАХАТТАР"
     ],
     "11": [
@@ -702,15 +701,16 @@ const WordRamDataCE = {
       "ЗУДАЙАЛОР",
       "ХЬУЬНАРАЛЛА",
       "НЕНАНМОТТ",
+      "ДӀАСАХЬАЖАР",
       "ЧЕКХДАККХАР",
-      "ДӀАЙАЗДАР",
       "ДЕЛЕКХАЧАР",
       "СТОММАЛЛА"
     ],
     "2": [
       "ЭХЬ",
       "ЯХЬ",
-      "ЧУ"
+      "ЧУ",
+      "ДӀА"
     ],
     "13": [
       "КЪИНТХЕРАВАЛАР"
@@ -858,13 +858,13 @@ const WordRamDataCE = {
       "ХӀОРДАН",
       "БАЬЦНАШ",
       "ДИТТАШ",
-      "БӀАРАШ",
       "ХЬАЬТТАШ",
       "МОХКАН",
       "ЛООРАН",
       "КОСМОС",
       "СЕРЛАХЬ",
       "САНХАХЬ",
+      "БӀАЬСТАН",
       "ГУЬЙРАН",
       "ХАЛКЪАН",
       "КЪАЬМНАШ",
@@ -895,7 +895,6 @@ const WordRamDataCE = {
       "КӀОШТАШ",
       "ХЬОСТАШ",
       "ТӀУЛГАШ",
-      "БӀАЬСТА",
       "ГУЬЙРАХЬ",
       "ХӀОРДХО",
       "КЕМАХО",
@@ -944,7 +943,6 @@ const WordRamDataCE = {
       "ПЛАНЕТА",
       "БОДАЛЛА",
       "БОДАНЦА",
-      "БӀАЬСТАН",
       "ПАЧХЬАЛКХ",
       "ЭСКАРАН",
       "КХЕЛАХОЙ",
@@ -1002,6 +1000,7 @@ const WordRamDataCE = {
       "АРГУН",
       "КЪУХАШ",
       "ЗЕЗАГ",
+      "БӀАРАШ",
       "ХЬУЬНАН",
       "ГУРАШ",
       "ДОГӀАН",
@@ -1020,6 +1019,7 @@ const WordRamDataCE = {
       "СПОРТ",
       "КУБОК",
       "НЕКЪАШ",
+      "БӀАЬСТА",
       "АЬХКАХЬ"
     ],
     "13": [
@@ -2348,13 +2348,12 @@ const WordRamDataCE = {
     "level": "A1",
     "difficulty": 3,
     "tiles": [
-      "Б",
-      "Ӏ",
+      "БӀ",
       "АЬ",
       "Р",
       "Г"
     ],
-    "tileCount": 5
+    "tileCount": 4
   },
   "ЛЕРГ": {
     "tr": "Ухо",
@@ -2605,13 +2604,12 @@ const WordRamDataCE = {
     "level": "A1",
     "difficulty": 3,
     "tiles": [
-      "М",
-      "Ӏ",
+      "МӀ",
       "А",
       "Р",
       "А"
     ],
-    "tileCount": 5
+    "tileCount": 4
   },
   "ЦӀИЙ": {
     "tr": "Кровь",
@@ -3594,14 +3592,14 @@ const WordRamDataCE = {
     ],
     "tileCount": 4
   },
-  "ДУЬГА": {
-    "tr": "Рис",
+  "ДУГА": {
+    "tr": "Рис / Крупа",
     "pos": "noun",
     "level": "A1",
     "difficulty": 2,
     "tiles": [
       "Д",
-      "УЬ",
+      "У",
       "Г",
       "А"
     ],
@@ -4415,14 +4413,13 @@ const WordRamDataCE = {
     "level": "A1",
     "difficulty": 4,
     "tiles": [
-      "Б",
-      "Ӏ",
+      "БӀ",
       "АЬ",
       "С",
       "Т",
       "Е"
     ],
-    "tileCount": 6
+    "tileCount": 5
   },
   "АЬХКА": {
     "tr": "Лето / Летом",
@@ -6778,7 +6775,7 @@ const WordRamDataCE = {
     "tileCount": 6
   },
   "ЖӀОВ": {
-    "tr": "Молот / молоток",
+    "tr": "Кувалда / Молот / Молоток",
     "pos": "noun",
     "level": "A2",
     "difficulty": 1,
@@ -8544,8 +8541,7 @@ const WordRamDataCE = {
     "level": "A2",
     "difficulty": 5,
     "tiles": [
-      "Д",
-      "Ӏ",
+      "ДӀ",
       "А",
       "Д",
       "А",
@@ -8553,7 +8549,7 @@ const WordRamDataCE = {
       "А",
       "Р"
     ],
-    "tileCount": 8
+    "tileCount": 7
   },
   "ЦХЬАБОССА": {
     "tr": "Одинаково / вровень",
@@ -8803,12 +8799,11 @@ const WordRamDataCE = {
     "level": "A2",
     "difficulty": 1,
     "tiles": [
-      "Б",
-      "Ӏ",
+      "БӀ",
       "О",
       "В"
     ],
-    "tileCount": 4
+    "tileCount": 3
   },
   "ГӀАЛАБӀОВ": {
     "tr": "Башенный замок",
@@ -8820,12 +8815,11 @@ const WordRamDataCE = {
       "А",
       "Л",
       "А",
-      "Б",
-      "Ӏ",
+      "БӀ",
       "О",
       "В"
     ],
-    "tileCount": 8
+    "tileCount": 7
   },
   "ЧОЬТА": {
     "tr": "Счет / расчет / отчет",
@@ -9658,11 +9652,10 @@ const WordRamDataCE = {
     "level": "A2",
     "difficulty": 1,
     "tiles": [
-      "Д",
-      "Ӏ",
+      "ДӀ",
       "А"
     ],
-    "tileCount": 3
+    "tileCount": 2
   },
   "СХЬА": {
     "tr": "Сюда",
@@ -9682,8 +9675,7 @@ const WordRamDataCE = {
     "level": "A2",
     "difficulty": 5,
     "tiles": [
-      "Д",
-      "Ӏ",
+      "ДӀ",
       "А",
       "С",
       "А",
@@ -9693,7 +9685,7 @@ const WordRamDataCE = {
       "А",
       "Р"
     ],
-    "tileCount": 10
+    "tileCount": 9
   },
   "ХИЙЦАР": {
     "tr": "Менять / изменение",
@@ -9784,8 +9776,7 @@ const WordRamDataCE = {
     "level": "A2",
     "difficulty": 5,
     "tiles": [
-      "Д",
-      "Ӏ",
+      "ДӀ",
       "А",
       "Й",
       "А",
@@ -9794,7 +9785,7 @@ const WordRamDataCE = {
       "А",
       "Р"
     ],
-    "tileCount": 9
+    "tileCount": 8
   },
   "ДЕЛЕКХАЧАР": {
     "tr": "Богобоязненность",
@@ -12497,14 +12488,13 @@ const WordRamDataCE = {
     "level": "B1",
     "difficulty": 4,
     "tiles": [
-      "Б",
-      "Ӏ",
+      "БӀ",
       "А",
       "Р",
       "А",
       "Ш"
     ],
-    "tileCount": 6
+    "tileCount": 5
   },
   "ХЬУЬНАН": {
     "tr": "Лесной",
@@ -12918,15 +12908,14 @@ const WordRamDataCE = {
     "level": "B1",
     "difficulty": 5,
     "tiles": [
-      "Б",
-      "Ӏ",
+      "БӀ",
       "АЬ",
       "С",
       "Т",
       "А",
       "Н"
     ],
-    "tileCount": 7
+    "tileCount": 6
   },
   "ГУЬЙРАН": {
     "tr": "Осенний",
@@ -14597,14 +14586,13 @@ const WordRamDataCE = {
     "level": "B1",
     "difficulty": 4,
     "tiles": [
-      "Б",
-      "Ӏ",
+      "БӀ",
       "АЬ",
       "С",
       "Т",
       "А"
     ],
-    "tileCount": 6
+    "tileCount": 5
   },
   "АЬХКАХЬ": {
     "tr": "Летом",
@@ -27002,13 +26990,12 @@ const WordRamDataCE = {
     "gameDifficulty": 3,
     "partOfSpeech": "noun",
     "tiles": [
-      "Б",
-      "Ӏ",
+      "БӀ",
       "АЬ",
       "Р",
       "Г"
     ],
-    "tileCount": 5
+    "tileCount": 4
   },
   {
     "word": "ЛЕРГ",
@@ -27279,13 +27266,12 @@ const WordRamDataCE = {
     "gameDifficulty": 3,
     "partOfSpeech": "noun",
     "tiles": [
-      "М",
-      "Ӏ",
+      "МӀ",
       "А",
       "Р",
       "А"
     ],
-    "tileCount": 5
+    "tileCount": 4
   },
   {
     "word": "ЦӀИЙ",
@@ -28344,14 +28330,14 @@ const WordRamDataCE = {
     "tileCount": 4
   },
   {
-    "word": "ДУЬГА",
-    "translation": "Рис",
+    "word": "ДУГА",
+    "translation": "Рис / Крупа",
     "languageLevel": "A1",
     "gameDifficulty": 2,
     "partOfSpeech": "noun",
     "tiles": [
       "Д",
-      "УЬ",
+      "У",
       "Г",
       "А"
     ],
@@ -29225,14 +29211,13 @@ const WordRamDataCE = {
     "gameDifficulty": 4,
     "partOfSpeech": "noun",
     "tiles": [
-      "Б",
-      "Ӏ",
+      "БӀ",
       "АЬ",
       "С",
       "Т",
       "Е"
     ],
-    "tileCount": 6
+    "tileCount": 5
   },
   {
     "word": "АЬХКА",
@@ -31760,7 +31745,7 @@ const WordRamDataCE = {
   },
   {
     "word": "ЖӀОВ",
-    "translation": "Молот / молоток",
+    "translation": "Кувалда / Молот / Молоток",
     "languageLevel": "A2",
     "gameDifficulty": 1,
     "partOfSpeech": "noun",
@@ -33646,8 +33631,7 @@ const WordRamDataCE = {
     "gameDifficulty": 5,
     "partOfSpeech": "noun",
     "tiles": [
-      "Д",
-      "Ӏ",
+      "ДӀ",
       "А",
       "Д",
       "А",
@@ -33655,7 +33639,7 @@ const WordRamDataCE = {
       "А",
       "Р"
     ],
-    "tileCount": 8
+    "tileCount": 7
   },
   {
     "word": "ЦХЬАБОССА",
@@ -33923,12 +33907,11 @@ const WordRamDataCE = {
     "gameDifficulty": 1,
     "partOfSpeech": "noun",
     "tiles": [
-      "Б",
-      "Ӏ",
+      "БӀ",
       "О",
       "В"
     ],
-    "tileCount": 4
+    "tileCount": 3
   },
   {
     "word": "ГӀАЛАБӀОВ",
@@ -33941,12 +33924,11 @@ const WordRamDataCE = {
       "А",
       "Л",
       "А",
-      "Б",
-      "Ӏ",
+      "БӀ",
       "О",
       "В"
     ],
-    "tileCount": 8
+    "tileCount": 7
   },
   {
     "word": "ЧОЬТА",
@@ -34837,11 +34819,10 @@ const WordRamDataCE = {
     "gameDifficulty": 1,
     "partOfSpeech": "adverb",
     "tiles": [
-      "Д",
-      "Ӏ",
+      "ДӀ",
       "А"
     ],
-    "tileCount": 3
+    "tileCount": 2
   },
   {
     "word": "СХЬА",
@@ -34863,8 +34844,7 @@ const WordRamDataCE = {
     "gameDifficulty": 5,
     "partOfSpeech": "verb",
     "tiles": [
-      "Д",
-      "Ӏ",
+      "ДӀ",
       "А",
       "С",
       "А",
@@ -34874,7 +34854,7 @@ const WordRamDataCE = {
       "А",
       "Р"
     ],
-    "tileCount": 10
+    "tileCount": 9
   },
   {
     "word": "ХИЙЦАР",
@@ -34971,8 +34951,7 @@ const WordRamDataCE = {
     "gameDifficulty": 5,
     "partOfSpeech": "noun",
     "tiles": [
-      "Д",
-      "Ӏ",
+      "ДӀ",
       "А",
       "Й",
       "А",
@@ -34981,7 +34960,7 @@ const WordRamDataCE = {
       "А",
       "Р"
     ],
-    "tileCount": 9
+    "tileCount": 8
   },
   {
     "word": "ДЕЛЕКХАЧАР",
@@ -37855,14 +37834,13 @@ const WordRamDataCE = {
     "gameDifficulty": 4,
     "partOfSpeech": "noun",
     "tiles": [
-      "Б",
-      "Ӏ",
+      "БӀ",
       "А",
       "Р",
       "А",
       "Ш"
     ],
-    "tileCount": 6
+    "tileCount": 5
   },
   {
     "word": "ХЬУЬНАН",
@@ -38304,15 +38282,14 @@ const WordRamDataCE = {
     "gameDifficulty": 5,
     "partOfSpeech": "adjective",
     "tiles": [
-      "Б",
-      "Ӏ",
+      "БӀ",
       "АЬ",
       "С",
       "Т",
       "А",
       "Н"
     ],
-    "tileCount": 7
+    "tileCount": 6
   },
   {
     "word": "ГУЬЙРАН",
@@ -40089,14 +40066,13 @@ const WordRamDataCE = {
     "gameDifficulty": 4,
     "partOfSpeech": "adverb",
     "tiles": [
-      "Б",
-      "Ӏ",
+      "БӀ",
       "АЬ",
       "С",
       "Т",
       "А"
     ],
-    "tileCount": 6
+    "tileCount": 5
   },
   {
     "word": "АЬХКАХЬ",
@@ -52439,14 +52415,7 @@ const WordRamDataCE = {
     food: {
       title: "Еда и напитки",
       icon: "☕",
-      words: [
-        "ХИ", "КӀА",
-        "ЧАЙ", "ХОХ", "ӀАЖ", "КХОР", "БАЛЛ", "ХӀОА", "БОДА", "НУХ", "МУКХ", "ТОП", "НАН",
-        "БЕПИГ", "ШУРА", "ЖИЖИГ", "ДАЬТТА", "КХАЧА", "ДУЬГА", "КХОЬШ", "ЧУЬРПА", "СИСКАЛ", "НЕХЧА", "ТУЬХА", "МАРХА", "ХОМА", "МАЖА", "ТОПХА", "МЕРЗА", "ДУЬРА", "МУЬСТА",
-        "ХИНГАЛ", "ЧЕПАЛГ", "ШЕКАР", "ГӀАБАКХ", "КОМАСТ", "КХОЛЛАРГ", "ХЬОЖОЛГ", "ХЬАЖКӀА",
-        "САРАМСАКХ", "ХЬАЛХАРХА", "КЪАЬХЬА",
-        "МЕРЗАХОМА", "ХИНГАЛШ", "ЧЕПАЛГАШ", "КХАЧАКХОЛЛАР"
-      ]
+      words: ["ХИ", "ЧАЙ", "ХОХ", "ӀАЖ", "КХОР", "БАЛЛ", "ХӀОА", "БОДА", "НУХ", "МУКХ", "БЕПИГ", "ШУРА", "ЖИЖИГ", "ДАЬТТА", "КХАЧА", "ДУЬГА", "КХОЬШ", "ЧУЬРПА", "СИСКАЛ", "НЕХЧА", "ТУЬХА", "МАРХА", "ХОМА", "МАЖА", "ТОПХА", "МЕРЗА", "ДУЬРА", "МУЬСТА", "ХИНГАЛ", "ЧЕПАЛГ", "ШЕКАР", "ГӀАБАКХ", "КОМАСТ", "КХОЛЛАРГ", "ХЬОЖОЛГ", "ХЬАЖКӀА", "САРАМСАКХ", "ХЬАЛХАРХА", "КЪАЬХЬА"]
     },
     nature: {
       title: "Природа и погода",
@@ -52540,6 +52509,74 @@ const WordRamDataCE = {
     { threshold: 1450, title: "Бача", desc: "Предводитель мудрецов" },
     { threshold: 1500, title: "Меттан Эла", desc: "Владыка и Мастер родного слова (1500 слов C2)" }
   ],
+  stages: [
+    {
+      id: "stage_kherch",
+      startLevel: 1,
+      endLevel: 10,
+      name: "Кхерч (Семейный очаг)",
+      icon: "🏡",
+      desc: "Начало пути: базовая лексика дома, семьи и быта (A1)",
+      milestones: [
+        { level: 3, icon: "🎁", label: "3 ур.", reward: { coins: 30, xp: 50 }, title: "Сундук новичка" },
+        { level: 6, icon: "📜", label: "6 ур.", reward: { coins: 50, xp: 80 }, title: "Свиток знаний" },
+        { level: 10, icon: "🏆", label: "10 ур.", reward: { coins: 100, xp: 150 }, title: "Кубок домашнего очага" }
+      ]
+    },
+    {
+      id: "stage_ghala",
+      startLevel: 11,
+      endLevel: 25,
+      name: "ГӀала (Город и башни)",
+      icon: "🏰",
+      desc: "Городская жизнь, ремесла, профессии и транспорт (A2)",
+      milestones: [
+        { level: 15, icon: "🎁", label: "15 ур.", reward: { coins: 60, xp: 100 }, title: "Сундук мастера" },
+        { level: 20, icon: "📜", label: "20 ур.", reward: { coins: 80, xp: 120 }, title: "Грамота зодчего" },
+        { level: 25, icon: "🏆", label: "25 ур.", reward: { coins: 150, xp: 200 }, title: "Орден Башни" }
+      ]
+    },
+    {
+      id: "stage_daymokhk",
+      startLevel: 26,
+      endLevel: 45,
+      name: "Даймохк (Земля предков)",
+      icon: "🏔️",
+      desc: "Природа Кавказа, традиции, этикет и народный эпос (B1)",
+      milestones: [
+        { level: 30, icon: "🎁", label: "30 ур.", reward: { coins: 80, xp: 120 }, title: "Горный тайник" },
+        { level: 38, icon: "📜", label: "38 ур.", reward: { coins: 120, xp: 180 }, title: "Сказание предков" },
+        { level: 45, icon: "🏆", label: "45 ур.", reward: { coins: 200, xp: 300 }, title: "Клинок чести" }
+      ]
+    },
+    {
+      id: "stage_nokhchalla",
+      startLevel: 46,
+      endLevel: 70,
+      name: "Нохчалла (Кодекс достоинства)",
+      icon: "⚔️",
+      desc: "Высокая культура, общественное право и философия (B2)",
+      milestones: [
+        { level: 52, icon: "🎁", label: "52 ур.", reward: { coins: 120, xp: 200 }, title: "Сундук мудрости" },
+        { level: 60, icon: "📜", label: "60 ур.", reward: { coins: 160, xp: 250 }, title: "Трактат справедливости" },
+        { level: 70, icon: "🏆", label: "70 ур.", reward: { coins: 300, xp: 450 }, title: "Щит Нохчалла" }
+      ]
+    },
+    {
+      id: "stage_bacha",
+      startLevel: 71,
+      endLevel: 100,
+      name: "Меттан Бача (Вершина родного слова)",
+      icon: "👑",
+      desc: "Сокровищница языка, академическая речь и поэтическое наследие (C1–C2)",
+      milestones: [
+        { level: 80, icon: "🎁", label: "80 ур.", reward: { coins: 200, xp: 300 }, title: "Драгоценный ларец" },
+        { level: 90, icon: "📜", label: "90 ур.", reward: { coins: 250, xp: 400 }, title: "Золотая летопись" },
+        { level: 100, icon: "🌟", label: "100 ур.", reward: { coins: 500, xp: 1000 }, title: "Корона Меттан Эла" }
+      ]
+    }
+  ],
+
   evaluatePlacementTest(answers) {
     const levelWeights = { A1: 0, A2: 0, B1: 0, B2: 0, C1: 0, C2: 0 };
     const levelCounts = { A1: 0, A2: 0, B1: 0, B2: 0, C1: 0, C2: 0 };
