@@ -2503,13 +2503,12 @@
     "gameDifficulty": 3,
     "partOfSpeech": "noun",
     "tiles": [
-      "Ж",
-      "Ӏ",
+      "ЖӀ",
       "АЬ",
       "Л",
       "А"
     ],
-    "tileCount": 5
+    "tileCount": 4
   },
   {
     "word": "ЦИЦИГ",
@@ -5151,14 +5150,13 @@
     "gameDifficulty": 4,
     "partOfSpeech": "noun",
     "tiles": [
-      "Ж",
-      "Ӏ",
+      "ЖӀ",
       "А",
       "Р",
       "Х",
       "О"
     ],
-    "tileCount": 6
+    "tileCount": 5
   },
   {
     "word": "ЭПСАР",
@@ -5437,12 +5435,11 @@
     "gameDifficulty": 1,
     "partOfSpeech": "noun",
     "tiles": [
-      "Ж",
-      "Ӏ",
+      "ЖӀ",
       "О",
       "В"
     ],
-    "tileCount": 4
+    "tileCount": 3
   },
   {
     "word": "КХОМА",
