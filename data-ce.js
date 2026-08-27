@@ -5,13 +5,13 @@
  */
 
 class WordRamTokenizer {
-  static MULTI_GRAPHEMES_CHECHEN = ["АЬ", "ОЬ", "УЬ", "ГӀ", "ЖӀ", "КХ", "КЪ", "КӀ", "ПӀ", "ТӀ", "ХЬ", "ХӀ", "ЦӀ", "ЧӀ"];
+  static MULTI_GRAPHEMES_CHECHEN = ["АЬ", "ОЬ", "УЬ", "ГӀ", "КХ", "КЪ", "КӀ", "ПӀ", "ТӀ", "ХЬ", "ХӀ", "ЦӀ", "ЧӀ"];
   static CYRILLIC_LETTERS_CHECHEN = new Set("АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯӀ");
 
   static normalizeChechen(word) {
     if (!word) return "";
     let w = String(word).trim().toUpperCase();
-    w = w.replace(/[\u04CF\u04C0IlL1|]/g, "\u04C0");
+    w = w.replace(/[\u04CF\u04C0Il1|]/g, "\u04C0");
     w = w.replace(/ъ/g, "Ъ").replace(/ь/g, "Ь");
     return w;
   }
@@ -154,7 +154,6 @@ const WordRamDataCE = {
       "БОДА",
       "ГОВР",
       "ГАЗА",
-      "ЖӀАЬЛА",
       "БОРЗ",
       "КХОКХА",
       "БУХӀА",
@@ -299,6 +298,7 @@ const WordRamDataCE = {
       "ХЬАЖКӀА",
       "БЕЖАН",
       "УЬСТАГӀ",
+      "ЖӀАЬЛА",
       "ЦИЦИГ",
       "ТУЬРЛИ",
       "ГАРГО",
@@ -411,6 +411,7 @@ const WordRamDataCE = {
       "ПХЬАР",
       "ЖАӀУ",
       "МУКЪА",
+      "ЖӀОВ",
       "КХОМА",
       "БЕЛА",
       "МАРС",
@@ -471,7 +472,6 @@ const WordRamDataCE = {
       "БЕШ",
       "ПХЬА",
       "КЪУХ",
-      "ЖӀОВ",
       "ЗЕН",
       "КХЕЛ",
       "ПУЬЧ",
@@ -506,7 +506,6 @@ const WordRamDataCE = {
       "КХОЧУШ",
       "УСТАЗ",
       "ТУРХО",
-      "ЖӀАРХО",
       "ЭПСАР",
       "САЛТИ",
       "АРТАР",
@@ -610,6 +609,7 @@ const WordRamDataCE = {
       "ТАЛХОР",
       "ВАГЗАЛ",
       "ЛОХТУР",
+      "ЖӀАРХО",
       "АХАРХО",
       "БАЛХАХЬ",
       "ПХЬАЛГӀА",
@@ -4050,12 +4050,13 @@ const WordRamDataCE = {
     "level": "A1",
     "difficulty": 3,
     "tiles": [
-      "ЖӀ",
+      "Ж",
+      "Ӏ",
       "АЬ",
       "Л",
       "А"
     ],
-    "tileCount": 4
+    "tileCount": 5
   },
   "ЦИЦИГ": {
     "tr": "Кошка / кот",
@@ -6516,13 +6517,14 @@ const WordRamDataCE = {
     "level": "A2",
     "difficulty": 4,
     "tiles": [
-      "ЖӀ",
+      "Ж",
+      "Ӏ",
       "А",
       "Р",
       "Х",
       "О"
     ],
-    "tileCount": 5
+    "tileCount": 6
   },
   "ЭПСАР": {
     "tr": "Офицер",
@@ -6783,11 +6785,12 @@ const WordRamDataCE = {
     "level": "A2",
     "difficulty": 1,
     "tiles": [
-      "ЖӀ",
+      "Ж",
+      "Ӏ",
       "О",
       "В"
     ],
-    "tileCount": 3
+    "tileCount": 4
   },
   "КХОМА": {
     "tr": "Лопата",
@@ -28833,12 +28836,13 @@ const WordRamDataCE = {
     "gameDifficulty": 3,
     "partOfSpeech": "noun",
     "tiles": [
-      "ЖӀ",
+      "Ж",
+      "Ӏ",
       "АЬ",
       "Л",
       "А"
     ],
-    "tileCount": 4
+    "tileCount": 5
   },
   {
     "word": "ЦИЦИГ",
@@ -31480,13 +31484,14 @@ const WordRamDataCE = {
     "gameDifficulty": 4,
     "partOfSpeech": "noun",
     "tiles": [
-      "ЖӀ",
+      "Ж",
+      "Ӏ",
       "А",
       "Р",
       "Х",
       "О"
     ],
-    "tileCount": 5
+    "tileCount": 6
   },
   {
     "word": "ЭПСАР",
@@ -31765,11 +31770,12 @@ const WordRamDataCE = {
     "gameDifficulty": 1,
     "partOfSpeech": "noun",
     "tiles": [
-      "ЖӀ",
+      "Ж",
+      "Ӏ",
       "О",
       "В"
     ],
-    "tileCount": 3
+    "tileCount": 4
   },
   {
     "word": "КХОМА",
@@ -52476,7 +52482,7 @@ const WordRamDataCE = {
     work: {
       title: "Работа и ремесло",
       icon: "⚒️",
-      words: ["БОЛХ", "ХЬЕХАРХО", "ЛОХТУР", "УСТАЗ", "ПХЬАР", "ТУРХО", "ЖӀАРХО", "ЭПСАР", "САЛТИ", "БАХАМХО", "ЖАӀУ", "АХАРХО", "ДЕШАРХО", "ХЬУЬНХО", "ЙОХКАРХО", "ГӀИШЛОХО", "ПХЬАЛГӀА", "ЖӀОВ", "КХОМА", "БЕЛА", "МАРС", "МАНГАЛ", "ТАЛЛАМХО", "ПАЙДА"]
+      words: ["БОЛХ", "ХЬЕХАРХО", "ЛОХТУР", "УСТАЗ", "ПХЬАР", "ТУРХО", "ЖӀАРХО", "ЭПСАР", "САЛТИ", "БАХАМХО", "ЖАӀУ", "АХАРХО", "ДЕШАРХО", "ХЬУЬНХО", "ЙОХКАРХО", "ГӀИШЛОХО", "ПХЬАЛГӀА", "ЖӀоВ", "КХОМА", "БЕЛА", "МАРС", "МАНГАЛ", "ТАЛЛАМХО", "ПАЙДА"]
     },
     culture: {
       title: "Культура и традиции",
