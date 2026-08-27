@@ -15,7 +15,7 @@ console.log("==================================================\n");
 // TEST 1 & 2: Tokenizer, Unknown Graphemes & Reconstruction
 // ----------------------------------------------------
 console.log("--- TEST 1 & 2: Chechen Dictionary & Tokenizer (1500 words) ---");
-const rawChechenWords = JSON.parse(fs.readFileSync("/working_dir/c_cd95815beb830034/wordram/chechen.json", "utf8"));
+const rawChechenWords = JSON.parse(fs.readFileSync("./chechen.json", "utf8"));
 console.log(`Loaded ${rawChechenWords.length} words from chechen.json.`);
 
 let tokenizedCount = 0;
