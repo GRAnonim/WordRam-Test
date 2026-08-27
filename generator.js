@@ -291,7 +291,7 @@ class WordRamGenerator {
 
       if (!tiles || tiles.length !== len) {
         if (lang === "chechen") {
-          word = this.data.getWordForCefrAndLength("A1", len, usedWords, null, "chechen");
+          word = this.data.getWordForCefrAndLength(userCefr, len, usedWords, config.themeKey, "chechen");
           tiles = tokenizer ? tokenizer.tokenize(word, "chechen") : word.split("");
         } else {
           word = (word || "WORD").padEnd(len, "S").slice(0, len);

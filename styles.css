@@ -3577,3 +3577,343 @@ html, body {
   cursor: pointer !important;
   z-index: 30 !important;
 }
+
+
+/* ==================================================== */
+/* v54 UI REFINEMENTS: WHITE SHARE MODALS & CLASSIC MAP */
+/* ==================================================== */
+
+/* 1. White Share Modal Cards */
+.share-white-modal-card {
+  max-width: 360px !important;
+  width: 90% !important;
+  background: #ffffff !important;
+  border: none !important;
+  border-radius: 24px !important;
+  padding: 22px 18px 20px 18px !important;
+  color: #1e293b !important;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6) !important;
+  position: relative !important;
+  box-sizing: border-box !important;
+}
+
+.modal-header-safe {
+  padding-right: 36px !important;
+  margin-bottom: 8px !important;
+  text-align: left !important;
+}
+
+.modal-header-safe h2 {
+  font-size: 1.18rem !important;
+  font-weight: 900 !important;
+  color: #7c3aed !important;
+  margin: 0 !important;
+  line-height: 1.25 !important;
+}
+
+.modal-close-icon-fixed {
+  position: absolute !important;
+  top: 14px !important;
+  right: 14px !important;
+  width: 32px !important;
+  height: 32px !important;
+  border-radius: 50% !important;
+  background: #f1f5f9 !important;
+  border: 1px solid #cbd5e1 !important;
+  color: #475569 !important;
+  font-size: 16px !important;
+  font-weight: 900 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+  z-index: 50 !important;
+  transition: transform 0.15s, background 0.15s !important;
+}
+
+.modal-close-icon-fixed:active {
+  transform: scale(0.92) !important;
+  background: #e2e8f0 !important;
+}
+
+.share-sub-text {
+  font-size: 0.88rem !important;
+  color: #64748b !important;
+  margin-bottom: 12px !important;
+  line-height: 1.35 !important;
+}
+
+.share-actions-grid-3 {
+  display: grid !important;
+  grid-template-columns: repeat(3, 1fr) !important;
+  gap: 6px !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.social-share-pill {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 4px !important;
+  padding: 10px 2px !important;
+  border-radius: 12px !important;
+  font-size: 0.78rem !important;
+  font-weight: 700 !important;
+  border: none !important;
+  cursor: pointer !important;
+  white-space: nowrap !important;
+  box-sizing: border-box !important;
+}
+
+.social-share-pill.tg-btn {
+  background: #229ED9 !important;
+  color: #ffffff !important;
+}
+
+.social-share-pill.wa-btn {
+  background: #25D366 !important;
+  color: #ffffff !important;
+}
+
+.social-share-pill.copy-btn {
+  background: #f1f5f9 !important;
+  color: #334155 !important;
+  border: 1px solid #cbd5e1 !important;
+}
+
+/* Inner preview card inside Share Progress */
+.share-preview-card-inner {
+  background: linear-gradient(135deg, #2d1838, #1c1024) !important;
+  border: 2px solid #a855f7 !important;
+  border-radius: 16px !important;
+  padding: 14px 12px !important;
+  box-shadow: 0 6px 16px rgba(168, 85, 247, 0.25) !important;
+  text-align: center !important;
+  margin-bottom: 12px !important;
+}
+
+.share-card-header-inner {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  margin-bottom: 8px !important;
+}
+
+.share-card-logo-inner {
+  font-weight: 900 !important;
+  font-size: 0.95rem !important;
+  color: #c084fc !important;
+}
+
+.share-card-badge-inner {
+  background: rgba(168, 85, 247, 0.25) !important;
+  border: 1px solid #a855f7 !important;
+  border-radius: 10px !important;
+  padding: 2px 6px !important;
+  font-size: 0.7rem !important;
+  font-weight: 700 !important;
+  color: #e9d5ff !important;
+}
+
+.share-mastery-title-inner {
+  font-size: 1.45rem !important;
+  font-weight: 900 !important;
+  color: #fef08a !important;
+  text-shadow: 0 0 10px rgba(250, 204, 21, 0.5) !important;
+}
+
+.share-mastery-desc-inner {
+  font-size: 0.8rem !important;
+  color: #d8b4fe !important;
+  margin-bottom: 8px !important;
+}
+
+.share-stats-grid-inner {
+  display: grid !important;
+  grid-template-columns: repeat(3, 1fr) !important;
+  gap: 4px !important;
+}
+
+.share-stat-box-inner {
+  background: rgba(0, 0, 0, 0.35) !important;
+  border-radius: 8px !important;
+  padding: 6px 2px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+}
+
+.stat-num-inner {
+  font-size: 0.92rem !important;
+  font-weight: 900 !important;
+  color: #ffffff !important;
+  white-space: nowrap !important;
+}
+
+.stat-lbl-inner {
+  font-size: 0.62rem !important;
+  color: #9ca3af !important;
+  margin-top: 1px !important;
+}
+
+/* 2. Classic Map (Screen: Levels) Styles from v39 */
+.stage-screen-view {
+  padding-top: 12px !important;
+  width: 100% !important;
+  max-width: 440px !important;
+  margin: 0 auto !important;
+}
+
+.stage-top-row {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  margin-bottom: 12px !important;
+  width: 100% !important;
+}
+
+.stage-app-title {
+  font-size: 1.5rem !important;
+  font-weight: 900 !important;
+  color: #ffffff !important;
+}
+
+.bonus-piggy-badge {
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  background: rgba(245, 158, 11, 0.25) !important;
+  border: 1px solid rgba(245, 158, 11, 0.5) !important;
+  padding: 4px 12px !important;
+  border-radius: 18px !important;
+  cursor: pointer !important;
+}
+
+.stage-monster-container {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  margin: 8px 0 14px 0 !important;
+}
+
+.monster-flask-ring {
+  width: 130px !important;
+  height: 130px !important;
+  border-radius: 50% !important;
+  background: radial-gradient(circle, #3d2c39 0%, #20171e 100%) !important;
+  border: 6px solid #5c4756 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), inset 0 0 20px rgba(168, 85, 247, 0.25) !important;
+}
+
+.monster-avatar {
+  font-size: 4.2rem !important;
+  filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.4)) !important;
+  animation: floatMonster 3s infinite ease-in-out !important;
+}
+
+.stage-monster-name {
+  font-size: 1.35rem !important;
+  font-weight: 900 !important;
+  color: #ffffff !important;
+  margin-top: 8px !important;
+}
+
+.stage-percent-text {
+  font-size: 1.45rem !important;
+  font-weight: 900 !important;
+  color: #ffffff !important;
+  margin-top: 2px !important;
+}
+
+.stage-milestone-track-wrap {
+  position: relative !important;
+  margin: 14px 0 10px 0 !important;
+  width: 100% !important;
+}
+
+.milestone-track-bg {
+  width: 100% !important;
+  height: 10px !important;
+  background: #382c35 !important;
+  border-radius: 5px !important;
+  overflow: hidden !important;
+}
+
+.milestone-track-fill {
+  height: 100% !important;
+  background: linear-gradient(90deg, #eab308 0%, #fde047 100%) !important;
+  border-radius: 5px !important;
+  transition: width 0.5s ease !important;
+  box-shadow: 0 0 10px rgba(253, 224, 71, 0.7) !important;
+}
+
+.stage-milestones-points-row {
+  display: flex !important;
+  justify-content: space-between !important;
+  margin-top: -18px !important;
+  position: relative !important;
+  z-index: 2 !important;
+  width: 100% !important;
+}
+
+.milestone-point-item {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  gap: 3px !important;
+}
+
+.milestone-icon-bubble {
+  width: 32px !important;
+  height: 32px !important;
+  border-radius: 50% !important;
+  background: #2b2029 !important;
+  border: 2px solid #5c4756 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 1rem !important;
+}
+
+.milestone-point-item.reached .milestone-icon-bubble {
+  border-color: #fde047 !important;
+  background: #43333f !important;
+  box-shadow: 0 0 10px rgba(253, 224, 71, 0.6) !important;
+}
+
+.milestone-lbl {
+  font-size: 0.72rem !important;
+  font-weight: 800 !important;
+  color: var(--text-muted) !important;
+}
+
+.stage-green-play-btn {
+  background: #22c55e !important;
+  border: none !important;
+  color: #ffffff !important;
+  font-size: 1.4rem !important;
+  font-weight: 900 !important;
+  letter-spacing: 1px !important;
+  padding: 16px 20px !important;
+  border-radius: 20px !important;
+  box-shadow: 0 6px 0 #15803d, 0 12px 24px rgba(34, 197, 94, 0.45) !important;
+  cursor: pointer !important;
+  width: 100% !important;
+}
+
+.stage-green-play-btn:active {
+  transform: translateY(4px) !important;
+  box-shadow: 0 2px 0 #15803d, 0 6px 12px rgba(34, 197, 94, 0.45) !important;
+}
+
+.levels-scroll-grid {
+  display: grid !important;
+  grid-template-columns: repeat(5, 1fr) !important;
+  gap: 8px !important;
+  width: 100% !important;
+  padding: 10px 0 !important;
+}

@@ -1405,6 +1405,7 @@ function renderVocabScreen() {
     });
   }
 
+
   if (toggleVoice) {
     toggleVoice.addEventListener("change", (e) => {
       storage.setSetting("voiceSpeechEnabled", e.target.checked);
