@@ -149,6 +149,14 @@ const WordRamData = {
   ],
 
 
+
+  getStages(lang = "english") {
+    if (lang === "chechen" && typeof WordRamDataCE !== "undefined" && WordRamDataCE.stages) {
+      return WordRamDataCE.stages;
+    }
+    return this.monstersStages;
+  },
+
   get cefrDictionary() {
     return (typeof WordRamDataEN !== "undefined") ? WordRamDataEN.cefrDictionary : {};
   },
@@ -205,6 +213,14 @@ const WordRamData = {
   },
 
 
+
+
+  getStages(lang = "english") {
+    if (lang === "chechen" && typeof WordRamDataCE !== "undefined" && WordRamDataCE.stages) {
+      return WordRamDataCE.stages;
+    }
+    return this.monstersStages;
+  },
 
   getLevelPackingConfig(levelNumber, userCefr = "A2") {
     let gridSize = 5;
@@ -352,7 +368,7 @@ const WordRamData = {
       const userRankIdx = Math.max(0, rankOrder.indexOf(cefrLevel));
       const strLen = String(targetLen);
 
-      // 1. Theme words
+      // 1. Приоритет 1: СТРОГО слова заявленной ТЕМЫ
       if (themeKey && WordRamDataCE.themes && WordRamDataCE.themes[themeKey]) {
         const themeWords = WordRamDataCE.themes[themeKey].words;
         const themedAvailable = themeWords.filter(w => {
@@ -365,26 +381,32 @@ const WordRamData = {
         }
       }
 
-      // 2. Current level
+      // 2. Если в теме нет слова точной длины, но тема задана — берем любое свободное слово из ТЕМЫ
+      if (themeKey && WordRamDataCE.themes && WordRamDataCE.themes[themeKey]) {
+        const themeWords = WordRamDataCE.themes[themeKey].words.filter(w => !exclude.includes(w));
+        if (themeWords.length > 0) {
+          // Ищем слово с максимально близкой длиной
+          const sorted = [...themeWords].sort((a, b) => {
+            const lA = (typeof WordRamTokenizer !== "undefined") ? WordRamTokenizer.getTileCount(a, "chechen") : a.length;
+            const lB = (typeof WordRamTokenizer !== "undefined") ? WordRamTokenizer.getTileCount(b, "chechen") : b.length;
+            return Math.abs(lA - targetLen) - Math.abs(lB - targetLen);
+          });
+          const best = sorted[0];
+          const bestLen = (typeof WordRamTokenizer !== "undefined") ? WordRamTokenizer.getTileCount(best, "chechen") : best.length;
+          if (bestLen === targetLen) return best;
+        }
+      }
+
+      // 3. Current level
       if (WordRamDataCE.dictionary[cefrLevel] && WordRamDataCE.dictionary[cefrLevel][strLen]) {
         const available = WordRamDataCE.dictionary[cefrLevel][strLen].filter(w => !exclude.includes(w));
         if (available.length > 0) return available[Math.floor(Math.random() * available.length)];
       }
 
-      // 3. Lower levels
-      for (let i = userRankIdx - 1; i >= 0; i--) {
-        const lowerLvl = rankOrder[i];
-        if (WordRamDataCE.dictionary[lowerLvl] && WordRamDataCE.dictionary[lowerLvl][strLen]) {
-          const available = WordRamDataCE.dictionary[lowerLvl][strLen].filter(w => !exclude.includes(w));
-          if (available.length > 0) return available[Math.floor(Math.random() * available.length)];
-        }
-      }
-
-      // 4. Higher levels
-      for (let i = userRankIdx + 1; i < rankOrder.length; i++) {
-        const higherLvl = rankOrder[i];
-        if (WordRamDataCE.dictionary[higherLvl] && WordRamDataCE.dictionary[higherLvl][strLen]) {
-          const available = WordRamDataCE.dictionary[higherLvl][strLen].filter(w => !exclude.includes(w));
+      // 4. All levels
+      for (const lvl of rankOrder) {
+        if (WordRamDataCE.dictionary[lvl] && WordRamDataCE.dictionary[lvl][strLen]) {
+          const available = WordRamDataCE.dictionary[lvl][strLen].filter(w => !exclude.includes(w));
           if (available.length > 0) return available[Math.floor(Math.random() * available.length)];
         }
       }
@@ -397,21 +419,7 @@ const WordRamData = {
         }
       }
 
-      // Fallback for Chechen if exact length is not found
-      for (const lvl of ["C2", "C1", "B2", "B1", "A2", "A1"]) {
-        if (WordRamDataCE.dictionary[lvl]) {
-          for (const k in WordRamDataCE.dictionary[lvl]) {
-            const list = WordRamDataCE.dictionary[lvl][k];
-            if (list && list.length > 0) {
-              for (const w of list) {
-                const tCount = (typeof WordRamTokenizer !== "undefined") ? WordRamTokenizer.getTileCount(w, "chechen") : w.length;
-                if (tCount === targetLen && !exclude.includes(w)) return w;
-              }
-            }
-          }
-        }
-      }
-      return "ДАХАР".padEnd(targetLen, "А").slice(0, targetLen);
+      return "БЕПИГ";
     }
 
     // English logic
@@ -449,13 +457,14 @@ const WordRamData = {
       }
     }
 
-    // 4. Any level with targetLen ignoring exclude if exhausted
+    // 4. Any level
     for (const lvl of ["A1", "A2", "B1", "B2", "C1"]) {
       if (WordRamDataEN.cefrDictionary[lvl] && WordRamDataEN.cefrDictionary[lvl][targetLen]) {
         const available = WordRamDataEN.cefrDictionary[lvl][targetLen].filter(w => !exclude.includes(w) && w.length === targetLen);
         if (available.length > 0) return available[Math.floor(Math.random() * available.length)];
       }
     }
+
     for (const lvl of ["A1", "A2", "B1", "B2", "C1"]) {
       if (WordRamDataEN.cefrDictionary[lvl] && WordRamDataEN.cefrDictionary[lvl][targetLen] && WordRamDataEN.cefrDictionary[lvl][targetLen].length > 0) {
         const list = WordRamDataEN.cefrDictionary[lvl][targetLen];
@@ -463,19 +472,7 @@ const WordRamData = {
       }
     }
 
-    for (const lvl of ["C1", "B2", "B1", "A2", "A1"]) {
-      if (WordRamDataEN.cefrDictionary[lvl]) {
-        for (const k in WordRamDataEN.cefrDictionary[lvl]) {
-          const list = WordRamDataEN.cefrDictionary[lvl][k];
-          if (list && list.length > 0) {
-            for (const w of list) {
-              if (w.length === targetLen && !exclude.includes(w)) return w;
-            }
-          }
-        }
-      }
-    }
-    return "DICTIONARY".slice(0, targetLen).padEnd(targetLen, "S");
+    return "WORD".padEnd(targetLen, "S").slice(0, targetLen);
   },
 
   isValidWord(word, lang = null) {

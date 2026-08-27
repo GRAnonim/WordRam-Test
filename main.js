@@ -769,9 +769,19 @@ function renderVocabScreen() {
   }
 
   function renderLevelsScreen() {
-    const curLvl = storage.getSetting("unlockedLevel") || 1;
-    const stages = WordRamData.monstersStages;
-    const activeStage = stages.find(s => curLvl >= s.startLevel && curLvl <= s.endLevel) || stages[0];
+    const currentLang = storage.getLanguage();
+    const curLvl = storage.getUnlockedLevel(currentLang) || 1;
+    const stages = WordRamData.getStages(currentLang);
+    const activeStage = stages.find(s => curLvl >= s.startLevel && curLvl <= s.endLevel) || stages[stages.length - 1] || stages[0];
+
+    const screenHeaderTitle = document.querySelector("#screen-levels .screen-header h2");
+    const screenHeaderSub = document.querySelector("#screen-levels .screen-header .subtitle");
+    if (screenHeaderTitle) {
+      screenHeaderTitle.textContent = currentLang === "chechen" ? "Карта уровней (Нохчийн мотт)" : "Карта монстриков";
+    }
+    if (screenHeaderSub) {
+      screenHeaderSub.textContent = currentLang === "chechen" ? "Исследуйте локации и открывайте награды" : "Побеждайте монстров и собирайте сундуки";
+    }
 
     // 1. Аватар монстрика и имя
     if (stageMonsterAvatar) stageMonsterAvatar.textContent = activeStage.icon;
@@ -820,7 +830,7 @@ function renderVocabScreen() {
     if (levelsGrid) {
       levelsGrid.innerHTML = "";
       const totalLevels = 60;
-      const unlocked = storage.getSetting("unlockedLevel") || 1;
+      const unlocked = storage.getUnlockedLevel(currentLang) || 1;
 
       for (let lvl = 1; lvl <= totalLevels; lvl++) {
         const isUnlocked = lvl <= unlocked;

@@ -3601,7 +3601,7 @@ const WordRamDataCE = {
     "difficulty": 2,
     "tiles": [
       "Д",
-      "УЬ",
+      "У",
       "Г",
       "А"
     ],
@@ -28354,7 +28354,7 @@ const WordRamDataCE = {
     "partOfSpeech": "noun",
     "tiles": [
       "Д",
-      "УЬ",
+      "У",
       "Г",
       "А"
     ],
@@ -52441,11 +52441,81 @@ const WordRamDataCE = {
     "tileCount": 8
   }
 ],
+
+  stages: [
+    {
+      id: 1,
+      name: "ХьошалгӀа (Дом и Гостеприимство)",
+      icon: "🏡",
+      startLevel: 1,
+      endLevel: 10,
+      milestones: [
+        { level: 5, rewardCoins: 30, icon: "🎁", label: "5 ур." },
+        { level: 10, rewardCoins: 60, icon: "📜", label: "10 ур." }
+      ]
+    },
+    {
+      id: 2,
+      name: "Ӏалам (Родная природа и горы)",
+      icon: "🌲",
+      startLevel: 11,
+      endLevel: 20,
+      milestones: [
+        { level: 15, rewardCoins: 40, icon: "🎁", label: "15 ур." },
+        { level: 20, rewardCoins: 80, icon: "🏔️", label: "20 ур." }
+      ]
+    },
+    {
+      id: 3,
+      name: "ГӀала (Город и созидательный труд)",
+      icon: "🏙️",
+      startLevel: 21,
+      endLevel: 30,
+      milestones: [
+        { level: 25, rewardCoins: 50, icon: "🎁", label: "25 ур." },
+        { level: 30, rewardCoins: 100, icon: "⚒️", label: "30 ур." }
+      ]
+    },
+    {
+      id: 4,
+      name: "ГӀиллакх (Обычаи и народный этикет)",
+      icon: "🎭",
+      startLevel: 31,
+      endLevel: 40,
+      milestones: [
+        { level: 35, rewardCoins: 60, icon: "🎁", label: "35 ур." },
+        { level: 40, rewardCoins: 120, icon: "📜", label: "40 ур." }
+      ]
+    },
+    {
+      id: 5,
+      name: "Къонахалла (Мужество и доблесть)",
+      icon: "🐺",
+      startLevel: 41,
+      endLevel: 50,
+      milestones: [
+        { level: 45, rewardCoins: 70, icon: "🎁", label: "45 ур." },
+        { level: 50, rewardCoins: 150, icon: "⚔️", label: "50 ур." }
+      ]
+    },
+    {
+      id: 6,
+      name: "Нохчалла (Вершина родного слова)",
+      icon: "👑",
+      startLevel: 51,
+      endLevel: 60,
+      milestones: [
+        { level: 55, rewardCoins: 80, icon: "🎁", label: "55 ур." },
+        { level: 60, rewardCoins: 200, icon: "🏆", label: "60 ур." }
+      ]
+    }
+  ],
+
   themes: {
     food: {
       title: "Еда и напитки",
       icon: "☕",
-      words: ["БЕПИГ", "ШУРА", "ЖИЖИГ", "ДАЬТТА", "КХАЧА", "ХОХ", "САРАМСАКХ", "ӀАЖ", "КХОР", "БАЛЛ", "ДУЬГА", "КХОЬШ", "ЧУЬРПА", "ХЬАЛХАРХА", "МЕРЗА", "ДУЬРА", "КЪАЬХЬА", "МУЬСТА", "ХЬОЖОЛГ", "СИСКАЛ", "ХИНГАЛ", "ЧЕПАЛГ", "ТОПХА", "НЕХЧА", "ШЕКАР", "ТУЬХА", "МАРХА", "КХОЛЛАРГ", "ХОМА", "НУХ", "МАЖА", "ХӀОА", "БОДА", "ГӀАБАКХ", "КӀА", "МУКХ", "ХЬАЖКӀА", "КОМАСТ", "ЧАЙ", "ХИ"]
+      words: ["БЕПИГ", "ШУРА", "ЖИЖИГ", "ДАЬТТА", "КХАЧА", "ХОХ", "САРАМСАКХ", "ӀАЖ", "КХОР", "БАЛЛ", "ДУЬГА", "КХОЬШ", "ЧУЬРПА", "ХЬАЛХАРХА", "МЕРЗА", "ДУЬРА", "КЪАЬХЬА", "МУЬСТА", "ХЬОЖОЛГ", "СИСКАЛ", "ХИНГАЛ", "ЧЕПАЛГ", "ТОПХА", "НЕХЧА", "ШЕКАР", "ТУЬХА", "МАРХА", "КХОЛЛАРГ", "ХОМА", "НУХ", "МАЖА", "ХӀОА", "БОДА", "ГӀАБАКХ", "КӀА", "МУКХ", "ХЬАЖКӀА", "КОМАСТ", "ЧАЙ", "ХИ", "КХАЧАХО", "ХИНГАЛАШ", "ЧЕПАЛГАШ", "МЕРЗАХОМА", "ЧУЬРПАШ", "ДАЬТТАН"]
     },
     nature: {
       title: "Природа и погода",
@@ -52539,6 +52609,74 @@ const WordRamDataCE = {
     { threshold: 1450, title: "Бача", desc: "Предводитель мудрецов" },
     { threshold: 1500, title: "Меттан Эла", desc: "Владыка и Мастер родного слова (1500 слов C2)" }
   ],
+  stages: [
+    {
+      id: "stage_kherch",
+      startLevel: 1,
+      endLevel: 10,
+      name: "Кхерч (Семейный очаг)",
+      icon: "🏡",
+      desc: "Начало пути: базовая лексика дома, семьи и быта (A1)",
+      milestones: [
+        { level: 3, icon: "🎁", label: "3 ур.", reward: { coins: 30, xp: 50 }, title: "Сундук новичка" },
+        { level: 6, icon: "📜", label: "6 ур.", reward: { coins: 50, xp: 80 }, title: "Свиток знаний" },
+        { level: 10, icon: "🏆", label: "10 ур.", reward: { coins: 100, xp: 150 }, title: "Кубок домашнего очага" }
+      ]
+    },
+    {
+      id: "stage_ghala",
+      startLevel: 11,
+      endLevel: 25,
+      name: "ГӀала (Город и башни)",
+      icon: "🏰",
+      desc: "Городская жизнь, ремесла, профессии и транспорт (A2)",
+      milestones: [
+        { level: 15, icon: "🎁", label: "15 ур.", reward: { coins: 60, xp: 100 }, title: "Сундук мастера" },
+        { level: 20, icon: "📜", label: "20 ур.", reward: { coins: 80, xp: 120 }, title: "Грамота зодчего" },
+        { level: 25, icon: "🏆", label: "25 ур.", reward: { coins: 150, xp: 200 }, title: "Орден Башни" }
+      ]
+    },
+    {
+      id: "stage_daymokhk",
+      startLevel: 26,
+      endLevel: 45,
+      name: "Даймохк (Земля предков)",
+      icon: "🏔️",
+      desc: "Природа Кавказа, традиции, этикет и народный эпос (B1)",
+      milestones: [
+        { level: 30, icon: "🎁", label: "30 ур.", reward: { coins: 80, xp: 120 }, title: "Горный тайник" },
+        { level: 38, icon: "📜", label: "38 ур.", reward: { coins: 120, xp: 180 }, title: "Сказание предков" },
+        { level: 45, icon: "🏆", label: "45 ур.", reward: { coins: 200, xp: 300 }, title: "Клинок чести" }
+      ]
+    },
+    {
+      id: "stage_nokhchalla",
+      startLevel: 46,
+      endLevel: 70,
+      name: "Нохчалла (Кодекс достоинства)",
+      icon: "⚔️",
+      desc: "Высокая культура, общественное право и философия (B2)",
+      milestones: [
+        { level: 52, icon: "🎁", label: "52 ур.", reward: { coins: 120, xp: 200 }, title: "Сундук мудрости" },
+        { level: 60, icon: "📜", label: "60 ур.", reward: { coins: 160, xp: 250 }, title: "Трактат справедливости" },
+        { level: 70, icon: "🏆", label: "70 ур.", reward: { coins: 300, xp: 450 }, title: "Щит Нохчалла" }
+      ]
+    },
+    {
+      id: "stage_bacha",
+      startLevel: 71,
+      endLevel: 100,
+      name: "Меттан Бача (Вершина родного слова)",
+      icon: "👑",
+      desc: "Сокровищница языка, академическая речь и поэтическое наследие (C1–C2)",
+      milestones: [
+        { level: 80, icon: "🎁", label: "80 ур.", reward: { coins: 200, xp: 300 }, title: "Драгоценный ларец" },
+        { level: 90, icon: "📜", label: "90 ур.", reward: { coins: 250, xp: 400 }, title: "Золотая летопись" },
+        { level: 100, icon: "🌟", label: "100 ур.", reward: { coins: 500, xp: 1000 }, title: "Корона Меттан Эла" }
+      ]
+    }
+  ],
+
   evaluatePlacementTest(answers) {
     const levelWeights = { A1: 0, A2: 0, B1: 0, B2: 0, C1: 0, C2: 0 };
     const levelCounts = { A1: 0, A2: 0, B1: 0, B2: 0, C1: 0, C2: 0 };
