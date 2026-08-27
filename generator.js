@@ -309,19 +309,31 @@ class WordRamGenerator {
       }
     }
 
+    const themeKey = config.themeKey || "food";
+    let themeTitle = "Еда и напитки";
+    let themeIcon = "☕";
+
+    if (lang === "chechen" && this.data && this.data.chechenThemes && this.data.chechenThemes[themeKey]) {
+      themeTitle = this.data.chechenThemes[themeKey].title;
+      themeIcon = this.data.chechenThemes[themeKey].icon;
+    } else if (this.data && this.data.themes && this.data.themes[themeKey]) {
+      themeTitle = this.data.themes[themeKey].title;
+      themeIcon = this.data.themes[themeKey].icon;
+    }
+
     return {
       level: levelNumber,
       gridSize: config.gridSize,
-      totalCells: config.totalCells,
+      totalCells: config.gridSize * config.gridSize,
       words: words,
       routes: routesMap,
       tilesMap: tilesMap,
       grid: grid,
-      themeKey: config.themeKey,
-      themeTitle: config.themeTitle,
-      themeIcon: config.themeIcon,
-      coinsReward: config.coinsReward,
-      xpReward: config.xpReward,
+      themeKey: themeKey,
+      themeTitle: themeTitle,
+      themeIcon: themeIcon,
+      rewardCoins: config.rewardCoins || 15,
+      xpReward: 30 + levelNumber * 2,
       language: lang
     };
   }

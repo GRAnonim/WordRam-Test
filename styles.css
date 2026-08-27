@@ -2868,3 +2868,284 @@ html, body {
   background: rgba(255, 255, 255, 0.18) !important;
   border-color: rgba(255, 255, 255, 0.3) !important;
 }
+
+
+/* ==================================================== */
+/* v54 CLEAN WHITE SHARE MODALS & REFINED LAYOUT */
+/* ==================================================== */
+
+/* 1. White card for Share Game and Share Progress modals */
+#modal-share-game .modal-card,
+#modal-share-progress .modal-card,
+.share-modal-card {
+  background: #ffffff !important;
+  color: #1e293b !important;
+  border: none !important;
+  border-radius: 24px !important;
+  padding: 24px 18px !important;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6) !important;
+  max-width: 360px !important;
+  width: 90% !important;
+  box-sizing: border-box !important;
+  text-align: center !important;
+  position: relative !important;
+}
+
+#modal-share-game h2,
+#modal-share-progress h2 {
+  color: #7c3aed !important;
+  font-size: 1.25rem !important;
+  font-weight: 900 !important;
+  margin-bottom: 4px !important;
+}
+
+/* 2. Three share buttons: neat grid without text overflow */
+.share-actions-container {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr 1fr !important;
+  gap: 8px !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  margin-top: 12px !important;
+}
+
+.social-share-btn {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 4px !important;
+  padding: 10px 4px !important;
+  border-radius: 12px !important;
+  font-size: 0.78rem !important;
+  font-weight: 800 !important;
+  border: none !important;
+  cursor: pointer !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  box-sizing: border-box !important;
+}
+
+.social-share-btn.tg-btn {
+  background: #229ED9 !important;
+  color: #ffffff !important;
+}
+
+.social-share-btn.wa-btn {
+  background: #25D366 !important;
+  color: #ffffff !important;
+}
+
+.social-share-btn.copy-btn {
+  background: #f1f5f9 !important;
+  color: #334155 !important;
+  border: 1px solid #cbd5e1 !important;
+}
+
+.share-native-btn,
+#btn-game-share-native,
+#btn-share-native {
+  background: #7c3aed !important;
+  color: #ffffff !important;
+  border-radius: 16px !important;
+  font-weight: 800 !important;
+  padding: 12px 14px !important;
+  font-size: 0.88rem !important;
+  border: none !important;
+  cursor: pointer !important;
+  width: 100% !important;
+  margin-top: 10px !important;
+  white-space: nowrap !important;
+}
+
+/* 3. Clean light preview card for progress share */
+.share-preview-card {
+  background: #f8f5f8 !important;
+  border: 2px solid #e9d5ff !important;
+  border-radius: 18px !important;
+  padding: 14px 12px !important;
+  text-align: center !important;
+  margin-bottom: 12px !important;
+  box-sizing: border-box !important;
+}
+
+.share-card-header {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  margin-bottom: 8px !important;
+}
+
+.share-card-logo {
+  font-weight: 900 !important;
+  font-size: 1rem !important;
+  color: #7c3aed !important;
+}
+
+.share-card-badge {
+  background: #e9d5ff !important;
+  border-radius: 10px !important;
+  padding: 2px 8px !important;
+  font-size: 0.72rem !important;
+  font-weight: 800 !important;
+  color: #6b21a8 !important;
+}
+
+.share-mastery-title {
+  font-size: 1.5rem !important;
+  font-weight: 900 !important;
+  color: #7c3aed !important;
+  margin-bottom: 2px !important;
+}
+
+.share-mastery-desc {
+  font-size: 0.82rem !important;
+  color: #64748b !important;
+  margin-bottom: 10px !important;
+}
+
+.share-stats-grid {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr 1fr !important;
+  gap: 6px !important;
+}
+
+.share-stat-box {
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 10px !important;
+  padding: 6px 2px !important;
+}
+
+.share-stat-box .stat-num {
+  font-size: 0.95rem !important;
+  font-weight: 900 !important;
+  color: #1e293b !important;
+}
+
+.share-stat-box .stat-lbl {
+  font-size: 0.65rem !important;
+  color: #64748b !important;
+}
+
+/* 4. Level Map: 4-column level cards grid & horizontal milestones */
+#levels-grid,
+.levels-grid,
+.levels-scroll-grid {
+  display: grid !important;
+  grid-template-columns: repeat(4, 1fr) !important;
+  gap: 12px !important;
+  width: 100% !important;
+  max-width: 420px !important;
+  margin: 0 auto !important;
+  padding: 10px 0 20px 0 !important;
+}
+
+.level-card {
+  aspect-ratio: 1 / 1 !important;
+  background: var(--surface-color) !important;
+  border: 2px solid var(--surface-border) !important;
+  border-radius: 16px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+  transition: transform 0.15s, border-color 0.15s !important;
+}
+
+.level-card.unlocked {
+  border-color: #a855f7 !important;
+  color: #ffffff !important;
+}
+
+.level-card.current {
+  border-color: #fbbf24 !important;
+  box-shadow: 0 0 10px rgba(251, 191, 36, 0.6) !important;
+  background: rgba(168, 85, 247, 0.3) !important;
+}
+
+.level-card.locked {
+  opacity: 0.35 !important;
+  cursor: not-allowed !important;
+  background: rgba(255, 255, 255, 0.02) !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+.level-num {
+  font-size: 1.15rem !important;
+  font-weight: 900 !important;
+  color: #ffffff !important;
+}
+
+.level-stars {
+  font-size: 0.72rem !important;
+  color: #fde047 !important;
+  margin-top: 2px !important;
+}
+
+#stage-milestones-points,
+.stage-milestones-points,
+.stage-milestones-points-row {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: flex-start !important;
+  margin-top: -18px !important;
+  position: relative !important;
+  z-index: 2 !important;
+  width: 100% !important;
+}
+
+.milestone-point-item {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  gap: 3px !important;
+}
+
+.milestone-icon-bubble {
+  width: 32px !important;
+  height: 32px !important;
+  border-radius: 50% !important;
+  background: #2b2029 !important;
+  border: 2px solid #5c4756 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 1rem !important;
+}
+
+.milestone-point-item.reached .milestone-icon-bubble {
+  border-color: #fde047 !important;
+  background: #43333f !important;
+  box-shadow: 0 0 10px rgba(253, 224, 71, 0.6) !important;
+}
+
+.milestone-lbl {
+  font-size: 0.72rem !important;
+  font-weight: 800 !important;
+  color: var(--text-muted) !important;
+}
+
+/* 5. Daily Streak Calendar: clean 7-column row */
+.daily-calendar-grid {
+  display: grid !important;
+  grid-template-columns: repeat(7, 1fr) !important;
+  gap: 4px !important;
+  width: 100% !important;
+  margin-top: 10px !important;
+}
+
+.reward-day-item {
+  background: rgba(255, 255, 255, 0.07) !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  border-radius: 10px !important;
+  padding: 8px 2px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-align: center !important;
+  min-height: 64px !important;
+  gap: 2px !important;
+}
