@@ -1,7 +1,7 @@
 [
     {
         "word": "АЗ",
-        "translation": "Голос / Грамм. звук",
+        "translation": "Голос / Звук",
         "languageLevel": "A1",
         "gameDifficulty": 1,
         "partOfSpeech": "noun",
@@ -13,7 +13,7 @@
     },
     {
         "word": "ДА",
-        "translation": "Хозяин / Хозяйка / Староста",
+        "translation": "Отец / Хозяин",
         "languageLevel": "A1",
         "gameDifficulty": 1,
         "partOfSpeech": "noun",
@@ -189,7 +189,7 @@
     },
     {
         "word": "ШО",
-        "translation": "Сычуг / Сычужина",
+        "translation": "Год",
         "languageLevel": "A1",
         "gameDifficulty": 1,
         "partOfSpeech": "noun",
@@ -309,6 +309,19 @@
         "tileCount": 3
     },
     {
+        "word": "ДАА",
+        "translation": "Кушать",
+        "languageLevel": "A1",
+        "gameDifficulty": 1,
+        "partOfSpeech": "verb",
+        "tiles": [
+            "Д",
+            "А",
+            "А"
+        ],
+        "tileCount": 3
+    },
+    {
         "word": "ДИН",
         "translation": "Вера / Религия",
         "languageLevel": "A1",
@@ -350,8 +363,21 @@
         "ex": "Дог даьттӀа воьлху со — Я плачу от досады"
     },
     {
+        "word": "ЕТТ",
+        "translation": "Корова",
+        "languageLevel": "A1",
+        "gameDifficulty": 1,
+        "partOfSpeech": "noun",
+        "tiles": [
+            "Е",
+            "Т",
+            "Т"
+        ],
+        "tileCount": 3
+    },
+    {
         "word": "ИЗА",
-        "translation": "См. и",
+        "translation": "Он / Тот",
         "languageLevel": "A1",
         "gameDifficulty": 1,
         "partOfSpeech": "pronoun",
@@ -392,7 +418,7 @@
     },
     {
         "word": "КОГ",
-        "translation": "Нога / Перен. свая / Опора",
+        "translation": "Нога / Свая / Опора",
         "languageLevel": "A1",
         "gameDifficulty": 1,
         "partOfSpeech": "noun",
@@ -474,7 +500,7 @@
     },
     {
         "word": "КХИН",
-        "translation": "Невестка",
+        "translation": "Другой / Ещё / Невестка",
         "languageLevel": "A1",
         "gameDifficulty": 1,
         "partOfSpeech": "adjective",
@@ -744,7 +770,7 @@
     },
     {
         "word": "ХЬАЖ",
-        "translation": "Лоб",
+        "translation": "Лоб / Хадж",
         "languageLevel": "A1",
         "gameDifficulty": 1,
         "partOfSpeech": "noun",
@@ -976,6 +1002,20 @@
         ],
         "tileCount": 4,
         "ex": "Бага са а кхаьчна — Впопыхах"
+    },
+    {
+        "word": "БАЖА",
+        "translation": "Стадо скота",
+        "languageLevel": "A1",
+        "gameDifficulty": 2,
+        "partOfSpeech": "noun",
+        "tiles": [
+            "Б",
+            "А",
+            "Ж",
+            "А"
+        ],
+        "tileCount": 4
     },
     {
         "word": "БАЛА",
@@ -1214,7 +1254,7 @@
     },
     {
         "word": "ГОЛА",
-        "translation": "Локоть / Колено / Положив ногу на ногу",
+        "translation": "Локоть / Колено",
         "languageLevel": "A1",
         "gameDifficulty": 1,
         "partOfSpeech": "noun",
@@ -1677,6 +1717,20 @@
         "tileCount": 4
     },
     {
+        "word": "ЛАЬХЬА",
+        "translation": "Змея",
+        "languageLevel": "A1",
+        "gameDifficulty": 2,
+        "partOfSpeech": "noun",
+        "tiles": [
+            "Л",
+            "АЬ",
+            "ХЬ",
+            "А"
+        ],
+        "tileCount": 4
+    },
+    {
         "word": "ЛЕРГ",
         "translation": "Ухо",
         "languageLevel": "A1",
@@ -1705,20 +1759,6 @@
         ],
         "tileCount": 4,
         "ex": "Лоха стаг — Низкорослый человек, человек невысокого роста"
-    },
-    {
-        "word": "МАГА",
-        "translation": "Мочь",
-        "languageLevel": "A1",
-        "gameDifficulty": 1,
-        "partOfSpeech": "noun",
-        "tiles": [
-            "М",
-            "А",
-            "Г",
-            "А"
-        ],
-        "tileCount": 4
     },
     {
         "word": "МАЛХ",
@@ -1764,6 +1804,20 @@
         ],
         "tileCount": 4,
         "ex": "Мачаш дӀаяха — Разуться"
+    },
+    {
+        "word": "МЕГА",
+        "translation": "Можно",
+        "languageLevel": "A1",
+        "gameDifficulty": 1,
+        "partOfSpeech": "adverb",
+        "tiles": [
+            "М",
+            "Е",
+            "Г",
+            "А"
+        ],
+        "tileCount": 4
     },
     {
         "word": "МИЛА",
@@ -1967,7 +2021,7 @@
     },
     {
         "word": "СТАГ",
-        "translation": "Мужчина",
+        "translation": "Человек / Мужчина",
         "languageLevel": "A1",
         "gameDifficulty": 1,
         "partOfSpeech": "noun",
@@ -2201,7 +2255,7 @@
     },
     {
         "word": "ЦӀЕНА",
-        "translation": "Гречиха",
+        "translation": "Чистый / Гречиха",
         "languageLevel": "A1",
         "gameDifficulty": 2,
         "partOfSpeech": "adjective",
@@ -2244,7 +2298,7 @@
     },
     {
         "word": "ШУРА",
-        "translation": "Молока",
+        "translation": "Молоко",
         "languageLevel": "A1",
         "gameDifficulty": 1,
         "partOfSpeech": "noun",
@@ -2270,22 +2324,6 @@
             "Г"
         ],
         "tileCount": 4
-    },
-    {
-        "word": "БЕЖАН",
-        "translation": "Табунный",
-        "languageLevel": "A1",
-        "gameDifficulty": 3,
-        "partOfSpeech": "noun",
-        "tiles": [
-            "Б",
-            "Е",
-            "Ж",
-            "А",
-            "Н"
-        ],
-        "tileCount": 5,
-        "ex": "Бежан аренан — Пастбищный"
     },
     {
         "word": "БЕПИГ",
@@ -2691,7 +2729,7 @@
     },
     {
         "word": "КЪОНАХ",
-        "translation": "Молодец / Кто думал о последствии / Не стал молодцем",
+        "translation": "Молодец",
         "languageLevel": "A1",
         "gameDifficulty": 3,
         "partOfSpeech": "noun",
@@ -3524,22 +3562,6 @@
         "ex": "Тахана дуьйна — С сегодняшнего дня"
     },
     {
-        "word": "ТЕКХАРГ",
-        "translation": "Прич. ползающий / Ползучий / Перен. змея",
-        "languageLevel": "A1",
-        "gameDifficulty": 4,
-        "partOfSpeech": "noun",
-        "tiles": [
-            "Т",
-            "Е",
-            "КХ",
-            "А",
-            "Р",
-            "Г"
-        ],
-        "tileCount": 6
-    },
-    {
         "word": "ТӀОРКАЗ",
         "translation": "Сундук",
         "languageLevel": "A1",
@@ -3648,6 +3670,23 @@
             "АЬ",
             "Ц",
             "Ц",
+            "А",
+            "Р",
+            "А"
+        ],
+        "tileCount": 7
+    },
+    {
+        "word": "ГЕРГАРА",
+        "translation": "Близкий",
+        "languageLevel": "A1",
+        "gameDifficulty": 2,
+        "partOfSpeech": "adjective",
+        "tiles": [
+            "Г",
+            "Е",
+            "Р",
+            "Г",
             "А",
             "Р",
             "А"
@@ -3866,25 +3905,6 @@
         "tileCount": 8
     },
     {
-        "word": "ГЕРГАРНИГ",
-        "translation": "См. гергара",
-        "languageLevel": "A1",
-        "gameDifficulty": 5,
-        "partOfSpeech": "noun",
-        "tiles": [
-            "Г",
-            "Е",
-            "Р",
-            "Г",
-            "А",
-            "Р",
-            "Н",
-            "И",
-            "Г"
-        ],
-        "tileCount": 9
-    },
-    {
         "word": "ДАГАДАЛАР",
         "translation": "Консультация",
         "languageLevel": "A1",
@@ -4024,7 +4044,7 @@
     },
     {
         "word": "ДОШ",
-        "translation": "Слово / Перен. любое хорошее дело / Поступок",
+        "translation": "Слово / Поступок",
         "languageLevel": "A2",
         "gameDifficulty": 1,
         "partOfSpeech": "noun",
@@ -4337,19 +4357,6 @@
         "ex": "Хьал долуш хила — Разбогатеть, стать богатым"
     },
     {
-        "word": "ХЬАР",
-        "translation": "Раздражение / Шевеление",
-        "languageLevel": "A2",
-        "gameDifficulty": 2,
-        "partOfSpeech": "noun",
-        "tiles": [
-            "ХЬ",
-            "А",
-            "Р"
-        ],
-        "tileCount": 3
-    },
-    {
         "word": "ЦКЪА",
         "translation": "Однажды",
         "languageLevel": "A2",
@@ -4478,20 +4485,6 @@
         ],
         "tileCount": 4,
         "ex": "Барт цхьаъ берг — Дружный, единодушный"
-    },
-    {
-        "word": "БЕЛА",
-        "translation": "См. дела2",
-        "languageLevel": "A2",
-        "gameDifficulty": 1,
-        "partOfSpeech": "noun",
-        "tiles": [
-            "Б",
-            "Е",
-            "Л",
-            "А"
-        ],
-        "tileCount": 4
     },
     {
         "word": "БЕРД",
@@ -6582,23 +6575,6 @@
         "tileCount": 7
     },
     {
-        "word": "БОХАЛЛА",
-        "translation": "См. дохалла",
-        "languageLevel": "A2",
-        "gameDifficulty": 5,
-        "partOfSpeech": "noun",
-        "tiles": [
-            "Б",
-            "О",
-            "Х",
-            "А",
-            "Л",
-            "Л",
-            "А"
-        ],
-        "tileCount": 7
-    },
-    {
         "word": "ДАЙМОХК",
         "translation": "Родина / Отечество",
         "languageLevel": "A2",
@@ -6668,7 +6644,7 @@
     },
     {
         "word": "ДОЗАЛЛА",
-        "translation": "Вес / Тяжесть / Перен. гордость",
+        "translation": "Вес / Тяжесть / Гордость",
         "languageLevel": "A2",
         "gameDifficulty": 5,
         "partOfSpeech": "noun",
@@ -6676,6 +6652,23 @@
             "Д",
             "О",
             "З",
+            "А",
+            "Л",
+            "Л",
+            "А"
+        ],
+        "tileCount": 7
+    },
+    {
+        "word": "ДОХАЛЛА",
+        "translation": "Длина",
+        "languageLevel": "A2",
+        "gameDifficulty": 2,
+        "partOfSpeech": "noun",
+        "tiles": [
+            "Д",
+            "О",
+            "Х",
             "А",
             "Л",
             "Л",
@@ -6925,7 +6918,7 @@
     },
     {
         "word": "СИХАЛЛА",
-        "translation": "Спешка / Перен. горячность / Вспыльчивость",
+        "translation": "Спешка / Горячность / Вспыльчивость",
         "languageLevel": "A2",
         "gameDifficulty": 5,
         "partOfSpeech": "noun",
@@ -7528,7 +7521,7 @@
     },
     {
         "word": "АРЦ",
-        "translation": "Гора",
+        "translation": "Лесистый склон гор",
         "languageLevel": "B1",
         "gameDifficulty": 1,
         "partOfSpeech": "noun",
@@ -7540,21 +7533,8 @@
         "tileCount": 3
     },
     {
-        "word": "БАА",
-        "translation": "См. даа",
-        "languageLevel": "B1",
-        "gameDifficulty": 1,
-        "partOfSpeech": "noun",
-        "tiles": [
-            "Б",
-            "А",
-            "А"
-        ],
-        "tileCount": 3
-    },
-    {
         "word": "ДАКХ",
-        "translation": "Береза",
+        "translation": "Осина / Берёза",
         "languageLevel": "B1",
         "gameDifficulty": 1,
         "partOfSpeech": "noun",
@@ -7811,21 +7791,6 @@
             "А"
         ],
         "tileCount": 4
-    },
-    {
-        "word": "БАЙТА",
-        "translation": "Понуд. от бан3",
-        "languageLevel": "B1",
-        "gameDifficulty": 4,
-        "partOfSpeech": "noun",
-        "tiles": [
-            "Б",
-            "А",
-            "Й",
-            "Т",
-            "А"
-        ],
-        "tileCount": 5
     },
     {
         "word": "БЕХКЕ",
@@ -8223,7 +8188,7 @@
     },
     {
         "word": "СЕРЛО",
-        "translation": "Свет / Освещение / Перен. просвещение",
+        "translation": "Свет / Освещение / Просвещение",
         "languageLevel": "B1",
         "gameDifficulty": 3,
         "partOfSpeech": "noun",
@@ -8846,23 +8811,6 @@
         "tileCount": 7
     },
     {
-        "word": "БОЗАЛЛА",
-        "translation": "См. дозалла2",
-        "languageLevel": "B1",
-        "gameDifficulty": 5,
-        "partOfSpeech": "noun",
-        "tiles": [
-            "Б",
-            "О",
-            "З",
-            "А",
-            "Л",
-            "Л",
-            "А"
-        ],
-        "tileCount": 7
-    },
-    {
         "word": "ГРАМОТА",
         "translation": "Грамота",
         "languageLevel": "B1",
@@ -9202,23 +9150,6 @@
             "М",
             "Х",
             "О"
-        ],
-        "tileCount": 7
-    },
-    {
-        "word": "ТОХИЙТА",
-        "translation": "Понуд. от тоха",
-        "languageLevel": "B1",
-        "gameDifficulty": 5,
-        "partOfSpeech": "noun",
-        "tiles": [
-            "Т",
-            "О",
-            "Х",
-            "И",
-            "Й",
-            "Т",
-            "А"
         ],
         "tileCount": 7
     },
@@ -10128,7 +10059,7 @@
     },
     {
         "word": "СИНХААМАЛЛА",
-        "translation": "Дешнаш Бексултанов Мусан / Сан ойланаш а…)",
+        "translation": "Чувственность слова",
         "languageLevel": "B1",
         "gameDifficulty": 5,
         "partOfSpeech": "noun",

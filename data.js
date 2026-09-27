@@ -126,18 +126,32 @@ const WordRamData = {
     return h >>> 0;
   },
 
+  isPlayableWord(word, lang = "english") {
+    if (!word) return false;
+    if (lang !== "chechen") return true;
+    if (typeof WordRamDataCE === "undefined" || !WordRamDataCE.definitions) return false;
+    const raw = String(word).trim().toUpperCase();
+    const norm = (typeof WordRamTokenizer !== "undefined") ? WordRamTokenizer.normalizeChechen(raw) : raw;
+    const def = WordRamDataCE.definitions[norm];
+    if (!def || !def.tr) return false;
+    const tr = String(def.tr).trim();
+    if (/^см\.?\b/i.test(tr)) return false;
+    if (/\b(понуд|потенц|масд|прич)\b/i.test(tr)) return false;
+    return true;
+  },
+
   getWordOfTheDayPool(lang = "english") {
     const key = lang === "chechen" ? "chechen" : "english";
     if (this._wodPoolCache[key] && this._wodPoolCache[key].length) return this._wodPoolCache[key];
     const words = [];
-    if (key === "chechen") {
+      if (key === "chechen") {
       const dict = this.chechenDictionary || {};
       ["A1", "A2", "B1", "B2"].forEach((level) => {
         const byLen = dict[level] || {};
         Object.keys(byLen).forEach((lenStr) => {
           const n = parseInt(lenStr, 10);
           if (n < 3 || n > 8) return;
-          (byLen[lenStr] || []).forEach((w) => { if (w) words.push(w); });
+          (byLen[lenStr] || []).forEach((w) => { if (w && this.isPlayableWord(w, key)) words.push(w); });
         });
       });
     } else {
@@ -524,7 +538,8 @@ const WordRamData = {
         const n = Number(len);
         if (n < 3 || n > 10) return;
         (WordRamDataCE.dictionary[level][len] || []).forEach((word) => {
-          out.push({ word, level });
+          const def = WordRamDataCE.definitions && WordRamDataCE.definitions[word];
+          out.push({ word, level, tr: def && def.tr ? def.tr : "" });
         });
       });
       return out;

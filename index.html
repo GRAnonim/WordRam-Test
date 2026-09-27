@@ -29,16 +29,16 @@
 
   <!-- Open Graph / Previews -->
   <meta property="og:type" content="website">
-  <meta property="og:url" content="https://granonim.github.io/WordRam/">
+  <meta property="og:url" content="https://granonim.github.io/WordRam-Test/">
   <meta property="og:title" content="WordRam — игра в слова">
   <meta property="og:description" content="Увлекательная игра-головоломка. Находи слова, тренируй мозг и расширяй словарный запас!">
-  <meta property="og:image" content="https://granonim.github.io/WordRam/og-image.png">
+  <meta property="og:image" content="https://granonim.github.io/WordRam-Test/og-image.png">
 
   <!-- Icons & Styles -->
-  <link rel="manifest" href="manifest.webmanifest?v=109">
-  <link rel="icon" type="image/svg+xml" href="favicon.svg?v=109">
-  <link rel="apple-touch-icon" href="icon-192.png?v=109">
-  <link rel="stylesheet" href="styles.css?v=109">
+  <link rel="manifest" href="manifest.webmanifest?v=132">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg?v=132">
+  <link rel="apple-touch-icon" href="icon-192.png?v=132">
+  <link rel="stylesheet" href="styles.css?v=132">
 </head>
 <body>
   <div id="app" class="liquid-app">
@@ -130,13 +130,17 @@
             <!-- ЭКРАН 3: КАРТА И УРОВНИ -->
       <section id="screen-levels" class="screen-view stage-screen-view" style="display: none;">
         <div class="stage-top-row full-width">
-          <button type="button" id="btn-map-level-info" class="map-info-btn" title="Как устроена карта" aria-label="Как устроена карта">ℹ</button>
+          <button type="button" id="btn-map-level-info" class="map-help-btn" aria-expanded="false" aria-controls="map-help">Про карту</button>
           <div class="bonus-vault-badge" id="btn-show-bonus-words" title="Копилка эрудита">
             <span class="vault-icon">💰</span>
             <span id="bonus-words-counter" class="vault-count">0 <span class="coin-icon"></span></span>
           </div>
         </div>
-        <p class="map-simple-hint">Это карта. Внизу большая кнопка «УРОВЕНЬ» — нажми её, чтобы играть. Цифра с процентами показывает, сколько уровней ты уже прошёл.</p>
+        <div id="map-help" class="map-help" hidden>
+          <p>Внизу большая кнопка «УРОВЕНЬ». Нажми её — начнётся игра.</p>
+          <p>Цифра с процентами показывает, сколько уровней этого этапа уже пройдено.</p>
+          <p>Сложность слов зависит от уровня языка в профиле: A1 — самые лёгкие, дальше сложнее.</p>
+        </div>
 
         <!-- Центральная колба с монстриком этапа -->
         <div class="stage-monster-container">
@@ -237,6 +241,13 @@
 
         <div class="daily-banner event-card" id="card-daily-streak">
           <div class="streak-badge-big">🔥 <span id="daily-streak-count">0</span> дн. подряд</div>
+          <button type="button" id="btn-streak-help" class="streak-help-btn" aria-expanded="false" aria-controls="streak-help">Подробнее</button>
+          <div id="streak-help" class="streak-help" hidden>
+            <p>Серия растёт, когда за день пройден хотя бы один уровень. Пропуск без заморозки обнуляет счёт.</p>
+            <p>Заморозка закрывает один пропущенный день. Хранить можно до двух.</p>
+            <p>Неделя идёт с понедельника по воскресенье. Пропуск не стирает уже отмеченные дни. Семь дней дают печать и 40 монет.</p>
+            <p>Клетки внизу — награда за день серии. На седьмой день она больше, затем круг начинается снова.</p>
+          </div>
           <div class="streak-actions">
             <span class="freeze-info-pill" id="freeze-counter-badge">❄️ 0/2</span>
             <button id="btn-buy-freeze" class="secondary-btn small-btn" type="button">
@@ -287,15 +298,16 @@
         <div class="settings-group mt-3">
           <h3>Язык слов в игре</h3>
           <div class="lang-selector-group">
-            <button id="btn-lang-en" class="lang-btn active" data-lang="english">
+            <button id="btn-lang-en" class="lang-btn active" data-lang="english" aria-pressed="true">
               <span class="lang-flag">🇬🇧</span>
               <span class="lang-title">English</span>
             </button>
-            <button id="btn-lang-ce" class="lang-btn" data-lang="chechen">
+            <button id="btn-lang-ce" class="lang-btn" data-lang="chechen" aria-pressed="false">
               <span class="lang-flag flag-ce" title="Флаг Чеченской Республики"></span>
               <span class="lang-title">Чеченский</span>
             </button>
           </div>
+          <p id="lang-current-label" class="lang-current-label">Сейчас выбран: English</p>
           <div class="setting-hint-text">Интерфейс игры остаётся на русском языке. При смене языка генерируются слова выбранного словаря с независимым прогрессом.</div>
         </div>
 
@@ -350,33 +362,68 @@
 
         <div class="settings-group about-game-card mt-3">
           <h3>Об игре</h3>
-          <p class="about-game-version">WordRam 0.9</p>
+          <button type="button" id="btn-about-version" class="about-game-version" aria-expanded="false" aria-controls="about-changelog">
+            WordRam 0.10
+            <span class="about-version-hint">Что изменилось</span>
+          </button>
+          <div id="about-changelog" class="about-changelog" hidden>
+            <section class="about-changelog-release">
+              <p class="about-changelog-lead">0.10</p>
+              <ul>
+                <li>Поле со словами стало крупнее.</li>
+                <li>На карте объяснение открывается кнопкой «Про карту».</li>
+                <li>После уровня можно написать об ошибке в Telegram.</li>
+                <li>Поправлены чеченские переводы: шо — год, шура — молоко и другие.</li>
+                <li>«Поделиться» открывает эту игру.</li>
+              </ul>
+            </section>
+            <section class="about-changelog-release">
+              <p class="about-changelog-lead">0.9</p>
+              <ul>
+                <li>В начале выбирается язык слов, затем короткая инструкция.</li>
+                <li>При первом переходе на другой язык открывается его тест.</li>
+                <li>В профиле видно, какой язык сейчас выбран.</li>
+                <li>После уровня нажатие на слово показывает перевод.</li>
+                <li>Чеченские переводы сверены по ДикДошаму: убраны чужие заголовки и примеры, попавшие в значение.</li>
+              </ul>
+            </section>
+          </div>
           <p class="about-game-line">Автор: Газиев Рамзан</p>
           <p class="about-game-sources">Чеченские слова сверены с <a href="https://dikdosham.ru/" target="_blank" rel="noopener">ДикДошам</a> и «Нохчийн меттан нийсайаздаран йоккха дошам» (2021, однотомник 2023). Английские слова — учебный список A1–C1.</p>
         </div>
 
         <div class="settings-group mt-3">
-          <h3>Параметры</h3>
-          <div class="setting-item">
-            <label for="setting-voice">Авто-озвучка английских слов (Speech)</label>
-            <input type="checkbox" id="setting-voice" class="toggle-switch" checked>
-          </div>
-          <div class="setting-item">
-            <label for="setting-sound">Звуковые эффекты</label>
-            <input type="checkbox" id="setting-sound" class="toggle-switch" checked>
-          </div>
-          <div class="setting-item">
-            <label for="setting-vibration">Вибрация (Haptic)</label>
-            <input type="checkbox" id="setting-vibration" class="toggle-switch" checked>
+          <button type="button" id="btn-params-toggle" class="params-toggle" aria-expanded="false" aria-controls="params-panel">
+            <span>Параметры</span>
+            <span class="params-toggle-hint">Открыть</span>
+          </button>
+          <div id="params-panel" hidden>
+            <div class="setting-item">
+              <label for="setting-voice">Авто-озвучка английских слов (Speech)</label>
+              <input type="checkbox" id="setting-voice" class="toggle-switch" checked>
+            </div>
+            <div class="setting-item">
+              <label for="setting-sound">Звуковые эффекты</label>
+              <input type="checkbox" id="setting-sound" class="toggle-switch" checked>
+            </div>
+            <div class="setting-item">
+              <label for="setting-vibration">Вибрация (Haptic)</label>
+              <input type="checkbox" id="setting-vibration" class="toggle-switch" checked>
+            </div>
           </div>
         </div>
 
         <div class="settings-group mt-3">
-          <h3>Сохранение и перенос прогресса</h3>
-          <p class="subtitle about-save-note">Прогресс сохраняется на этом телефоне. Чтобы вернуть его после очистки браузера или открыть на другом устройстве, нажмите «Скопировать код» и сохраните его. На новом месте нажмите «Вставить код».</p>
-          <div class="backup-actions">
-            <button id="btn-export-backup" class="secondary-btn" type="button">Скопировать код</button>
-            <button id="btn-import-backup" class="secondary-btn" type="button">Вставить код</button>
+          <button type="button" id="btn-backup-toggle" class="params-toggle" aria-expanded="false" aria-controls="backup-panel">
+            <span>Сохранение и перенос прогресса</span>
+            <span class="params-toggle-hint">Открыть</span>
+          </button>
+          <div id="backup-panel" hidden>
+            <p class="subtitle about-save-note">Прогресс сохраняется на этом телефоне. Чтобы вернуть его после очистки браузера или открыть на другом устройстве, нажмите «Скопировать код» и сохраните его. На новом месте нажмите «Вставить код».</p>
+            <div class="backup-actions">
+              <button id="btn-export-backup" class="secondary-btn" type="button">Скопировать код</button>
+              <button id="btn-import-backup" class="secondary-btn" type="button">Вставить код</button>
+            </div>
           </div>
         </div>
 
@@ -433,6 +480,19 @@
         </button>
       </div>
       <p class="welcome-lang-hint">Язык можно сменить позже в <strong>Профиле</strong> — блок «Язык слов в игре». Прогресс по каждому языку сохраняется отдельно.</p>
+    </div>
+  </div>
+
+  <div id="modal-howto" class="modal-overlay welcome-lang-overlay" style="display: none;">
+    <div class="modal-card welcome-lang-card">
+      <div class="welcome-lang-logo">WordRam</div>
+      <h2 class="welcome-lang-title">Как играть</h2>
+      <ol class="howto-list">
+        <li>Проведи пальцем по буквам на поле и собери слово.</li>
+        <li>Найди все слова уровня. Они написаны над полем.</li>
+        <li>Когда уровень пройден, нажми на слово — появится перевод.</li>
+      </ol>
+      <button type="button" id="btn-howto-start" class="primary-btn full-width">Начать</button>
     </div>
   </div>
 
@@ -572,6 +632,7 @@
       <button id="btn-share-win" class="secondary-btn victory-share-btn full-width">
         🏆 Поделиться победой (+10 <span class="coin-icon"></span>)
       </button>
+      <a href="https://t.me/WordRamFeedbackBot" target="_blank" rel="noopener" class="victory-report-link">Нашли ошибку? Пожалуйста, напишите нам</a>
     </div>
   </div>
 
@@ -680,12 +741,12 @@
   </div>
 
   <!-- Подключение скриптов -->
-  <script src="data-ce.js?v=109"></script>
-  <script src="data-en.js?v=109"></script>
-  <script src="data.js?v=109"></script>
-  <script src="storage.js?v=109"></script>
-  <script src="generator.js?v=109"></script>
-  <script src="game.js?v=109"></script>
-  <script src="main.js?v=109"></script>
+  <script src="data-ce.js?v=132"></script>
+  <script src="data-en.js?v=132"></script>
+  <script src="data.js?v=132"></script>
+  <script src="storage.js?v=132"></script>
+  <script src="generator.js?v=132"></script>
+  <script src="game.js?v=132"></script>
+  <script src="main.js?v=132"></script>
 </body>
 </html>

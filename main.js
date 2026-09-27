@@ -281,14 +281,14 @@ document.addEventListener("DOMContentLoaded", () => {
   function getVictoryShareText(summary) {
     const s = summary || lastVictorySummary;
     if (!s) {
-      return "🏆 Я прохожу WordRam — игру в слова! Сыграй со мной: https://granonim.github.io/WordRam/";
+      return "🏆 Я прохожу WordRam — игру в слова! Сыграй со мной: https://granonim.github.io/WordRam-Test/";
     }
     const starsCount = Math.max(1, Math.min(3, s.stars || 3));
     const starsStr = "★".repeat(starsCount) + "☆".repeat(3 - starsCount);
     const levelPart = s.isDaily ? "ежедневный вызов" : `уровень ${s.level}`;
     const wordsPreview = (s.words || []).slice(0, 5).join(", ");
     const more = (s.words || []).length > 5 ? "…" : "";
-    return `🏆 Я прошёл ${levelPart} в WordRam! ${starsStr}\nСлова: ${wordsPreview}${more}\nСыграй со мной: https://granonim.github.io/WordRam/`;
+    return `🏆 Я прошёл ${levelPart} в WordRam! ${starsStr}\nСлова: ${wordsPreview}${more}\nСыграй со мной: https://granonim.github.io/WordRam-Test/`;
   }
 
   function claimVictoryShareReward() {
@@ -324,7 +324,7 @@ document.addEventListener("DOMContentLoaded", () => {
         await navigator.share({
           title: "WordRam",
           text: text,
-          url: "https://granonim.github.io/WordRam/"
+          url: "https://granonim.github.io/WordRam-Test/"
         });
         claimVictoryShareReward();
         return;
@@ -336,7 +336,7 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
       window.open(
-        `https://t.me/share/url?url=https://granonim.github.io/WordRam/&text=${encodeURIComponent(text)}`,
+        `https://t.me/share/url?url=https://granonim.github.io/WordRam-Test/&text=${encodeURIComponent(text)}`,
         "_blank"
       );
       claimVictoryShareReward();
@@ -497,16 +497,13 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   const btnMapLevelInfo = document.getElementById("btn-map-level-info");
-  if (btnMapLevelInfo) {
+  const mapHelp = document.getElementById("map-help");
+  if (btnMapLevelInfo && mapHelp) {
     btnMapLevelInfo.addEventListener("click", () => {
-      showCustomInfoDialog(
-        "ℹ",
-        "Как устроена карта",
-        "<p>Это карта твоего пути.</p>" +
-        "<p class='mt-2'>Внизу есть большая кнопка «УРОВЕНЬ». Нажми её — начнётся игра.</p>" +
-        "<p class='mt-2'>Цифра с процентами: сколько уровней на этом этапе ты уже прошёл.</p>" +
-        "<p class='mt-2'>Слова на поле бывают проще или сложнее. Это зависит от твоего уровня языка в профиле: A1 — самые лёгкие, дальше сложнее.</p>"
-      );
+      const open = mapHelp.hidden;
+      mapHelp.hidden = !open;
+      btnMapLevelInfo.textContent = open ? "Свернуть" : "Про карту";
+      btnMapLevelInfo.setAttribute("aria-expanded", open ? "true" : "false");
     });
   }
 
@@ -1493,8 +1490,18 @@ function renderVocabScreen() {
     const currentLang = storage.getLanguage();
 
     if (btnLangEn && btnLangCe) {
-      btnLangEn.classList.toggle("active", currentLang === "english");
-      btnLangCe.classList.toggle("active", currentLang === "chechen");
+      const englishOn = currentLang === "english";
+      btnLangEn.classList.toggle("active", englishOn);
+      btnLangCe.classList.toggle("active", !englishOn);
+      btnLangEn.setAttribute("aria-pressed", englishOn ? "true" : "false");
+      btnLangCe.setAttribute("aria-pressed", englishOn ? "false" : "true");
+    }
+
+    const langCurrentLabel = document.getElementById("lang-current-label");
+    if (langCurrentLabel) {
+      langCurrentLabel.textContent = currentLang === "chechen"
+        ? "Сейчас выбран: Чеченский"
+        : "Сейчас выбран: English";
     }
 
     const ease = storage.getWordEase();
@@ -1543,28 +1550,43 @@ function renderVocabScreen() {
   const btnLangEn = document.getElementById("btn-lang-en");
   const btnLangCe = document.getElementById("btn-lang-ce");
 
-  if (btnLangEn) {
-    btnLangEn.addEventListener("click", () => {
-      if (storage.getLanguage() !== "english") {
-        storage.setLanguage("english");
-        renderSettingsScreen();
-        updateDailyWordCard();
-        game.startLevel(storage.getCurrentLevel("english"), false);
-        game.showFloatingMessage("Язык слов переключен на English 🇬🇧", "success");
-      }
+  function placementDoneFor(lang) {
+    return lang === "chechen"
+      ? !!storage.getSetting("hasCompletedChechenPlacementTest")
+      : !!storage.getSetting("hasCompletedPlacementTest");
+  }
+
+  function switchGameLanguage(lang) {
+    if (storage.getLanguage() === lang) return;
+    storage.setLanguage(lang);
+    renderSettingsScreen();
+    updateDailyWordCard();
+    game.startLevel(storage.getCurrentLevel(lang), false);
+    game.showFloatingMessage(
+      lang === "chechen" ? "Язык слов переключен на чеченский" : "Язык слов переключен на English",
+      "success"
+    );
+    if (!placementDoneFor(lang)) {
+      setTimeout(() => openPlacementTest(), 400);
+    }
+  }
+
+  const btnAboutVersion = document.getElementById("btn-about-version");
+  const aboutChangelog = document.getElementById("about-changelog");
+  if (btnAboutVersion && aboutChangelog) {
+    btnAboutVersion.addEventListener("click", () => {
+      const open = aboutChangelog.hidden;
+      aboutChangelog.hidden = !open;
+      btnAboutVersion.setAttribute("aria-expanded", open ? "true" : "false");
     });
   }
 
+  if (btnLangEn) {
+    btnLangEn.addEventListener("click", () => switchGameLanguage("english"));
+  }
+
   if (btnLangCe) {
-    btnLangCe.addEventListener("click", () => {
-      if (storage.getLanguage() !== "chechen") {
-        storage.setLanguage("chechen");
-        renderSettingsScreen();
-        updateDailyWordCard();
-        game.startLevel(storage.getCurrentLevel("chechen"), false);
-        game.showFloatingMessage("Язык слов переключен на чеченский", "success");
-      }
-    });
+    btnLangCe.addEventListener("click", () => switchGameLanguage("chechen"));
   }
 
   document.querySelectorAll(".word-ease-btn").forEach((btn) => {
@@ -1717,7 +1739,7 @@ function renderVocabScreen() {
     const langName = currentLang === "chechen" ? "чеченском" : "английском";
 
     const lexiconTotal = WordRamData.getLexiconSize(currentLang);
-    return `🏆 Мой титул в WordRam: «${mastery.title}» (${mastery.desc})! Выучено слов: ${wordsCount}/${lexiconTotal} на ${langName} языке (Уровень ${curLvl}). Сыграй со мной: https://granonim.github.io/WordRam/`;
+    return `🏆 Мой титул в WordRam: «${mastery.title}» (${mastery.desc})! Выучено слов: ${wordsCount}/${lexiconTotal} на ${langName} языке (Уровень ${curLvl}). Сыграй со мной: https://granonim.github.io/WordRam-Test/`;
   }
 
   function onShareActionExecuted() {
@@ -1749,7 +1771,7 @@ function renderVocabScreen() {
   if (btnShareTg) {
     btnShareTg.addEventListener("click", () => {
       const textPayload = encodeURIComponent(getShareTextPayload());
-      window.open(`https://t.me/share/url?url=https://granonim.github.io/WordRam/&text=${textPayload}`, "_blank");
+      window.open(`https://t.me/share/url?url=https://granonim.github.io/WordRam-Test/&text=${textPayload}`, "_blank");
       onShareActionExecuted();
     });
   }
@@ -1781,7 +1803,7 @@ function renderVocabScreen() {
           await navigator.share({
             title: "WordRam",
             text: getShareTextPayload(),
-            url: "https://granonim.github.io/WordRam/"
+            url: "https://granonim.github.io/WordRam-Test/"
           });
           onShareActionExecuted();
         } else if (navigator.clipboard) {
@@ -1807,7 +1829,7 @@ function renderVocabScreen() {
   const btnGameShareNative = document.getElementById("btn-game-share-native");
 
   function getGameInviteText() {
-    return "Играю в WordRam — находи слова, учи язык, копи звания. Присоединяйся: https://granonim.github.io/WordRam/";
+    return "Играю в WordRam — находи слова, учи язык, копи звания. Присоединяйся: https://granonim.github.io/WordRam-Test/";
   }
 
   function openShareGameModal() {
@@ -1821,7 +1843,7 @@ function renderVocabScreen() {
   if (btnGameShareTg) {
     btnGameShareTg.addEventListener("click", () => {
       const textPayload = encodeURIComponent(getGameInviteText());
-      window.open(`https://t.me/share/url?url=https://granonim.github.io/WordRam/&text=${textPayload}`, "_blank");
+      window.open(`https://t.me/share/url?url=https://granonim.github.io/WordRam-Test/&text=${textPayload}`, "_blank");
       onShareActionExecuted();
     });
   }
@@ -1853,7 +1875,7 @@ function renderVocabScreen() {
           await navigator.share({
             title: "WordRam",
             text: getGameInviteText(),
-            url: "https://granonim.github.io/WordRam/"
+            url: "https://granonim.github.io/WordRam-Test/"
           });
           onShareActionExecuted();
         } else if (navigator.clipboard) {
@@ -1888,6 +1910,32 @@ function renderVocabScreen() {
     toggleVibration.addEventListener("change", (e) => {
       storage.setSetting("vibrationEnabled", e.target.checked);
       if (e.target.checked) game.vibrate(20);
+    });
+  }
+
+  function bindFold(buttonId, panelId) {
+    const button = document.getElementById(buttonId);
+    const panel = document.getElementById(panelId);
+    if (!button || !panel) return;
+    button.addEventListener("click", () => {
+      const open = panel.hidden;
+      panel.hidden = !open;
+      button.setAttribute("aria-expanded", open ? "true" : "false");
+      const hint = button.querySelector(".params-toggle-hint");
+      if (hint) hint.textContent = open ? "Свернуть" : "Открыть";
+    });
+  }
+  bindFold("btn-params-toggle", "params-panel");
+  bindFold("btn-backup-toggle", "backup-panel");
+
+  const btnStreakHelp = document.getElementById("btn-streak-help");
+  const streakHelp = document.getElementById("streak-help");
+  if (btnStreakHelp && streakHelp) {
+    btnStreakHelp.addEventListener("click", () => {
+      const open = streakHelp.hidden;
+      streakHelp.hidden = !open;
+      btnStreakHelp.textContent = open ? "Свернуть" : "Подробнее";
+      btnStreakHelp.setAttribute("aria-expanded", open ? "true" : "false");
     });
   }
 
@@ -1968,27 +2016,40 @@ function renderVocabScreen() {
     storage.state.hasChosenLanguage = true;
     storage.save();
     hideAllModals();
-    game.startLevel(1, false);
-    updateProfileUI();
-    renderSettingsScreen();
-    switchTab("game");
-    game.showFloatingMessage(
-      lang === "chechen" ? "Выбран чеченский язык слов" : "Выбран английский язык слов",
-      "success"
-    );
-    maybeOpenPlacementAfterWelcome();
+    showHowTo(() => {
+      game.startLevel(1, false);
+      updateProfileUI();
+      renderSettingsScreen();
+      switchTab("game");
+      game.showFloatingMessage(
+        lang === "chechen" ? "Выбран чеченский язык слов" : "Выбран английский язык слов",
+        "success"
+      );
+      maybeOpenPlacementAfterWelcome();
+    });
   }
 
-  if (btnWelcomeLangEn) {
-    btnWelcomeLangEn.addEventListener("click", () => applyWelcomeLanguage("english"));
-  }
-  if (btnWelcomeLangCe) {
-    btnWelcomeLangCe.addEventListener("click", () => applyWelcomeLanguage("chechen"));
+  function showHowTo(next) {
+    if (storage.state.hasSeenHowTo) {
+      next();
+      return;
+    }
+    const howtoModal = document.getElementById("modal-howto");
+    const btnHowToStart = document.getElementById("btn-howto-start");
+    showModal(howtoModal);
+    if (!btnHowToStart) {
+      next();
+      return;
+    }
+    btnHowToStart.onclick = () => {
+      storage.state.hasSeenHowTo = true;
+      storage.save();
+      hideAllModals();
+      next();
+    };
   }
 
-  if (!storage.state.hasChosenLanguage) {
-    showModal(welcomeLangModal);
-  } else {
+  function beginSavedSession() {
     const saved = storage.getActiveSavedGame();
     if (saved && saved.levelData && saved.foundWords && saved.foundWords.length < saved.levelData.words.length) {
       game.restoreGameState(saved);
@@ -2005,6 +2066,19 @@ function renderVocabScreen() {
     if (needsPlacement) {
       setTimeout(() => openPlacementTest(), 600);
     }
+  }
+
+  if (btnWelcomeLangEn) {
+    btnWelcomeLangEn.addEventListener("click", () => applyWelcomeLanguage("english"));
+  }
+  if (btnWelcomeLangCe) {
+    btnWelcomeLangCe.addEventListener("click", () => applyWelcomeLanguage("chechen"));
+  }
+
+  if (!storage.state.hasChosenLanguage) {
+    showModal(welcomeLangModal);
+  } else {
+    showHowTo(beginSavedSession);
   }
 
   if ("serviceWorker" in navigator) {

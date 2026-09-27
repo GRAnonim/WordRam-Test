@@ -57,6 +57,7 @@ class WordRamStorage {
       hasCompletedPlacementTest: false,
       hasCompletedChechenPlacementTest: false,
       hasChosenLanguage: false,
+      hasSeenHowTo: false,
       unlockedAchievements: [],
       claimedDailyRewards: {},
       coins: 60,
@@ -166,19 +167,10 @@ class WordRamStorage {
             state.progress.chechen.xp = 0;
           }
           if (!Object.prototype.hasOwnProperty.call(parsed, "hasChosenLanguage")) {
-            const en = state.progress.english || {};
-            const ce = state.progress.chechen || {};
-            const enWords = Object.keys(en.collectedWords || {}).length;
-            const ceWords = Object.keys(ce.collectedWords || {}).length;
-            state.hasChosenLanguage = !!(
-              parsed.hasCompletedPlacementTest ||
-              parsed.hasCompletedChechenPlacementTest ||
-              (en.unlockedLevel && en.unlockedLevel > 1) ||
-              (ce.unlockedLevel && ce.unlockedLevel > 1) ||
-              enWords > 0 ||
-              ceWords > 0 ||
-              (state.stats && state.stats.levelsCompleted > 0)
-            );
+            state.hasChosenLanguage = false;
+          }
+          if (!Object.prototype.hasOwnProperty.call(parsed, "hasSeenHowTo")) {
+            state.hasSeenHowTo = false;
           }
           return state;
         }
@@ -929,7 +921,8 @@ class WordRamStorage {
     }
     if (!this.state.wodAssign[key]) this.state.wodAssign[key] = { date: null, word: "", recent: [] };
     const slot = this.state.wodAssign[key];
-    if (slot.date === todayStr && slot.word) {
+    const savedIsPlayable = !slot.word || typeof WordRamData === "undefined" || typeof WordRamData.isPlayableWord !== "function" || WordRamData.isPlayableWord(slot.word, key);
+    if (slot.date === todayStr && slot.word && savedIsPlayable) {
       return (typeof WordRamData !== "undefined" && WordRamData.formatWordOfTheDay)
         ? WordRamData.formatWordOfTheDay(slot.word, key)
         : { word: slot.word, ph: "", tr: "", ex: "" };

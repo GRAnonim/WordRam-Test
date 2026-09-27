@@ -199,9 +199,11 @@ const WordRamDataCE = {
       "ВАЙ",
       "ВОН",
       "ГУР",
+      "ДАА",
       "ДИН",
       "ДИЪ",
       "ДОГ",
+      "ЕТТ",
       "ИЗА",
       "ЙОӀ",
       "КОВ",
@@ -250,6 +252,7 @@ const WordRamDataCE = {
       "АЬХКА",
       "БАБА",
       "БАГА",
+      "БАЖА",
       "БАЛА",
       "БАЛЛ",
       "БАРХӀ",
@@ -298,12 +301,13 @@ const WordRamDataCE = {
       "ЛААМ",
       "ЛААР",
       "ЛАКХА",
+      "ЛАЬХЬА",
       "ЛЕРГ",
       "ЛОХА",
-      "МАГА",
       "МАЛХ",
       "МАХА",
       "МАЧА",
+      "МЕГА",
       "МИЛА",
       "МОЖА",
       "МОЗА",
@@ -341,7 +345,6 @@ const WordRamDataCE = {
       "ӀАЙГ"
     ],
     "5": [
-      "БЕЖАН",
       "БЕПИГ",
       "БОХЧА",
       "БУЬЙСА",
@@ -423,7 +426,6 @@ const WordRamDataCE = {
       "СТИГАЛ",
       "СТОММА",
       "ТАХАНА",
-      "ТЕКХАРГ",
       "ТӀОРКАЗ",
       "ХИНГАЛ",
       "ХЬУЬНАРЕ",
@@ -433,6 +435,7 @@ const WordRamDataCE = {
     ],
     "7": [
       "БАЬЦЦАРА",
+      "ГЕРГАРА",
       "МАРНАНА",
       "МЕЛЛАША",
       "ОЛХАЗАР",
@@ -449,7 +452,6 @@ const WordRamDataCE = {
       "НЕНАЙИША"
     ],
     "9": [
-      "ГЕРГАРНИГ",
       "ДАГАДАЛАР"
     ]
   },
@@ -489,7 +491,6 @@ const WordRamDataCE = {
       "ТӀАЙ",
       "ХАН",
       "ХЬАЛ",
-      "ХЬАР",
       "ЦКЪА",
       "ӀАМ"
     ],
@@ -501,7 +502,6 @@ const WordRamDataCE = {
       "БАКЪО",
       "БАРЗ",
       "БАРТ",
-      "БЕЛА",
       "БЕРД",
       "БЕХК",
       "БОЛХ",
@@ -644,12 +644,12 @@ const WordRamDataCE = {
       "АЛФАВИТ",
       "БАКЪДЕРГ",
       "БАХАМХО",
-      "БОХАЛЛА",
       "ДАЙМОХК",
       "ДЕГАЛЛА",
       "ДЕШАРХО",
       "ДОГДИКА",
       "ДОЗАЛЛА",
+      "ДОХАЛЛА",
       "ДӀАДАХАР",
       "ЙОЗАЛЛА",
       "КУРАЛЛА",
@@ -708,7 +708,6 @@ const WordRamDataCE = {
   "B1": {
     "3": [
       "АРЦ",
-      "БАА",
       "ДАКХ",
       "ЗЕР",
       "ЛОР",
@@ -732,7 +731,6 @@ const WordRamDataCE = {
       "ЭЛЧА"
     ],
     "5": [
-      "БАЙТА",
       "БЕХКЕ",
       "БӀАЬСТА",
       "ГАЗЕТ",
@@ -802,7 +800,6 @@ const WordRamDataCE = {
       "БАЗАРХО",
       "БАХАМАН",
       "БЕХКАЗА",
-      "БОЗАЛЛА",
       "ГРАМОТА",
       "ДИКТАНТ",
       "ДОШАМАН",
@@ -823,7 +820,6 @@ const WordRamDataCE = {
       "ПЛАНЕТА",
       "СЕМИНАР",
       "ТОЛАМХО",
-      "ТОХИЙТА",
       "ТОЬШАЛЛА",
       "ТУЬКАНХО",
       "ХЬЕКЪАЛАН",
@@ -1132,7 +1128,7 @@ const WordRamDataCE = {
 },
   definitions: {
   "АЗ": {
-    "tr": "Голос / Грамм. звук",
+    "tr": "Голос / Звук",
     "pos": "noun",
     "level": "A1",
     "difficulty": 1,
@@ -1143,7 +1139,7 @@ const WordRamDataCE = {
     "tileCount": 2
   },
   "ДА": {
-    "tr": "Хозяин / Хозяйка / Староста",
+    "tr": "Отец / Хозяин",
     "pos": "noun",
     "level": "A1",
     "difficulty": 1,
@@ -1305,7 +1301,7 @@ const WordRamDataCE = {
     "tileCount": 2
   },
   "ШО": {
-    "tr": "Сычуг / Сычужина",
+    "tr": "Год",
     "pos": "noun",
     "level": "A1",
     "difficulty": 1,
@@ -1416,6 +1412,18 @@ const WordRamDataCE = {
     ],
     "tileCount": 3
   },
+  "ДАА": {
+    "tr": "Кушать",
+    "pos": "verb",
+    "level": "A1",
+    "difficulty": 1,
+    "tiles": [
+      "Д",
+      "А",
+      "А"
+    ],
+    "tileCount": 3
+  },
   "ДИН": {
     "tr": "Вера / Религия",
     "pos": "noun",
@@ -1454,8 +1462,20 @@ const WordRamDataCE = {
     "tileCount": 3,
     "ex": "Дог даьттӀа воьлху со — Я плачу от досады"
   },
+  "ЕТТ": {
+    "tr": "Корова",
+    "pos": "noun",
+    "level": "A1",
+    "difficulty": 1,
+    "tiles": [
+      "Е",
+      "Т",
+      "Т"
+    ],
+    "tileCount": 3
+  },
   "ИЗА": {
-    "tr": "См. и",
+    "tr": "Он / Тот",
     "pos": "pronoun",
     "level": "A1",
     "difficulty": 1,
@@ -1493,7 +1513,7 @@ const WordRamDataCE = {
     "ex": "Ков делла — Растворить ворота"
   },
   "КОГ": {
-    "tr": "Нога / Перен. свая / Опора",
+    "tr": "Нога / Свая / Опора",
     "pos": "noun",
     "level": "A1",
     "difficulty": 1,
@@ -1569,7 +1589,7 @@ const WordRamDataCE = {
     "ex": "Куьг хецна — Спустя рукава"
   },
   "КХИН": {
-    "tr": "Невестка",
+    "tr": "Другой / Ещё / Невестка",
     "pos": "adjective",
     "level": "A1",
     "difficulty": 1,
@@ -1819,7 +1839,7 @@ const WordRamDataCE = {
     "ex": "Хохийн хас — Грядка, засеянная луком"
   },
   "ХЬАЖ": {
-    "tr": "Лоб",
+    "tr": "Лоб / Хадж",
     "pos": "noun",
     "level": "A1",
     "difficulty": 1,
@@ -2035,6 +2055,19 @@ const WordRamDataCE = {
     ],
     "tileCount": 4,
     "ex": "Бага са а кхаьчна — Впопыхах"
+  },
+  "БАЖА": {
+    "tr": "Стадо скота",
+    "pos": "noun",
+    "level": "A1",
+    "difficulty": 2,
+    "tiles": [
+      "Б",
+      "А",
+      "Ж",
+      "А"
+    ],
+    "tileCount": 4
   },
   "БАЛА": {
     "tr": "Горе / Беда / Невзгода",
@@ -2256,7 +2289,7 @@ const WordRamDataCE = {
     "ex": "Говрана нуьйр тилла — Оседлать коня"
   },
   "ГОЛА": {
-    "tr": "Локоть / Колено / Положив ногу на ногу",
+    "tr": "Локоть / Колено",
     "pos": "noun",
     "level": "A1",
     "difficulty": 1,
@@ -2687,6 +2720,19 @@ const WordRamDataCE = {
     ],
     "tileCount": 4
   },
+  "ЛАЬХЬА": {
+    "tr": "Змея",
+    "pos": "noun",
+    "level": "A1",
+    "difficulty": 2,
+    "tiles": [
+      "Л",
+      "АЬ",
+      "ХЬ",
+      "А"
+    ],
+    "tileCount": 4
+  },
   "ЛЕРГ": {
     "tr": "Ухо",
     "pos": "noun",
@@ -2714,19 +2760,6 @@ const WordRamDataCE = {
     ],
     "tileCount": 4,
     "ex": "Лоха стаг — Низкорослый человек, человек невысокого роста"
-  },
-  "МАГА": {
-    "tr": "Мочь",
-    "pos": "noun",
-    "level": "A1",
-    "difficulty": 1,
-    "tiles": [
-      "М",
-      "А",
-      "Г",
-      "А"
-    ],
-    "tileCount": 4
   },
   "МАЛХ": {
     "tr": "Солнце",
@@ -2769,6 +2802,19 @@ const WordRamDataCE = {
     ],
     "tileCount": 4,
     "ex": "Мачаш дӀаяха — Разуться"
+  },
+  "МЕГА": {
+    "tr": "Можно",
+    "pos": "adverb",
+    "level": "A1",
+    "difficulty": 1,
+    "tiles": [
+      "М",
+      "Е",
+      "Г",
+      "А"
+    ],
+    "tileCount": 4
   },
   "МИЛА": {
     "tr": "Кто",
@@ -2957,7 +3003,7 @@ const WordRamDataCE = {
     "tileCount": 4
   },
   "СТАГ": {
-    "tr": "Мужчина",
+    "tr": "Человек / Мужчина",
     "pos": "noun",
     "level": "A1",
     "difficulty": 1,
@@ -3175,7 +3221,7 @@ const WordRamDataCE = {
     "ex": "Цхьаъ санна массо а — Все как один, поголовно все"
   },
   "ЦӀЕНА": {
-    "tr": "Гречиха",
+    "tr": "Чистый / Гречиха",
     "pos": "adjective",
     "level": "A1",
     "difficulty": 2,
@@ -3215,7 +3261,7 @@ const WordRamDataCE = {
     "tileCount": 4
   },
   "ШУРА": {
-    "tr": "Молока",
+    "tr": "Молоко",
     "pos": "noun",
     "level": "A1",
     "difficulty": 1,
@@ -3240,21 +3286,6 @@ const WordRamDataCE = {
       "Г"
     ],
     "tileCount": 4
-  },
-  "БЕЖАН": {
-    "tr": "Табунный",
-    "pos": "noun",
-    "level": "A1",
-    "difficulty": 3,
-    "tiles": [
-      "Б",
-      "Е",
-      "Ж",
-      "А",
-      "Н"
-    ],
-    "tileCount": 5,
-    "ex": "Бежан аренан — Пастбищный"
   },
   "БЕПИГ": {
     "tr": "Хлеб",
@@ -3633,7 +3664,7 @@ const WordRamDataCE = {
     "tileCount": 5
   },
   "КЪОНАХ": {
-    "tr": "Молодец / Кто думал о последствии / Не стал молодцем",
+    "tr": "Молодец",
     "pos": "noun",
     "level": "A1",
     "difficulty": 3,
@@ -4413,21 +4444,6 @@ const WordRamDataCE = {
     "tileCount": 6,
     "ex": "Тахана дуьйна — С сегодняшнего дня"
   },
-  "ТЕКХАРГ": {
-    "tr": "Прич. ползающий / Ползучий / Перен. змея",
-    "pos": "noun",
-    "level": "A1",
-    "difficulty": 4,
-    "tiles": [
-      "Т",
-      "Е",
-      "КХ",
-      "А",
-      "Р",
-      "Г"
-    ],
-    "tileCount": 6
-  },
   "ТӀОРКАЗ": {
     "tr": "Сундук",
     "pos": "noun",
@@ -4530,6 +4546,22 @@ const WordRamDataCE = {
       "АЬ",
       "Ц",
       "Ц",
+      "А",
+      "Р",
+      "А"
+    ],
+    "tileCount": 7
+  },
+  "ГЕРГАРА": {
+    "tr": "Близкий",
+    "pos": "adjective",
+    "level": "A1",
+    "difficulty": 2,
+    "tiles": [
+      "Г",
+      "Е",
+      "Р",
+      "Г",
       "А",
       "Р",
       "А"
@@ -4735,24 +4767,6 @@ const WordRamDataCE = {
     ],
     "tileCount": 8
   },
-  "ГЕРГАРНИГ": {
-    "tr": "См. гергара",
-    "pos": "noun",
-    "level": "A1",
-    "difficulty": 5,
-    "tiles": [
-      "Г",
-      "Е",
-      "Р",
-      "Г",
-      "А",
-      "Р",
-      "Н",
-      "И",
-      "Г"
-    ],
-    "tileCount": 9
-  },
   "ДАГАДАЛАР": {
     "tr": "Консультация",
     "pos": "noun",
@@ -4882,7 +4896,7 @@ const WordRamDataCE = {
     "ex": "Дов юхахьаладала — Подать кассационную жалобу"
   },
   "ДОШ": {
-    "tr": "Слово / Перен. любое хорошее дело / Поступок",
+    "tr": "Слово / Поступок",
     "pos": "noun",
     "level": "A2",
     "difficulty": 1,
@@ -5172,18 +5186,6 @@ const WordRamDataCE = {
     "tileCount": 3,
     "ex": "Хьал долуш хила — Разбогатеть, стать богатым"
   },
-  "ХЬАР": {
-    "tr": "Раздражение / Шевеление",
-    "pos": "noun",
-    "level": "A2",
-    "difficulty": 2,
-    "tiles": [
-      "ХЬ",
-      "А",
-      "Р"
-    ],
-    "tileCount": 3
-  },
   "ЦКЪА": {
     "tr": "Однажды",
     "pos": "adverb",
@@ -5304,19 +5306,6 @@ const WordRamDataCE = {
     ],
     "tileCount": 4,
     "ex": "Барт цхьаъ берг — Дружный, единодушный"
-  },
-  "БЕЛА": {
-    "tr": "См. дела2",
-    "pos": "noun",
-    "level": "A2",
-    "difficulty": 1,
-    "tiles": [
-      "Б",
-      "Е",
-      "Л",
-      "А"
-    ],
-    "tileCount": 4
   },
   "БЕРД": {
     "tr": "Обрыв / Пропасть / Яр",
@@ -7270,22 +7259,6 @@ const WordRamDataCE = {
     ],
     "tileCount": 7
   },
-  "БОХАЛЛА": {
-    "tr": "См. дохалла",
-    "pos": "noun",
-    "level": "A2",
-    "difficulty": 5,
-    "tiles": [
-      "Б",
-      "О",
-      "Х",
-      "А",
-      "Л",
-      "Л",
-      "А"
-    ],
-    "tileCount": 7
-  },
   "ДАЙМОХК": {
     "tr": "Родина / Отечество",
     "pos": "noun",
@@ -7351,7 +7324,7 @@ const WordRamDataCE = {
     "tileCount": 7
   },
   "ДОЗАЛЛА": {
-    "tr": "Вес / Тяжесть / Перен. гордость",
+    "tr": "Вес / Тяжесть / Гордость",
     "pos": "noun",
     "level": "A2",
     "difficulty": 5,
@@ -7359,6 +7332,22 @@ const WordRamDataCE = {
       "Д",
       "О",
       "З",
+      "А",
+      "Л",
+      "Л",
+      "А"
+    ],
+    "tileCount": 7
+  },
+  "ДОХАЛЛА": {
+    "tr": "Длина",
+    "pos": "noun",
+    "level": "A2",
+    "difficulty": 2,
+    "tiles": [
+      "Д",
+      "О",
+      "Х",
       "А",
       "Л",
       "Л",
@@ -7593,7 +7582,7 @@ const WordRamDataCE = {
     "tileCount": 7
   },
   "СИХАЛЛА": {
-    "tr": "Спешка / Перен. горячность / Вспыльчивость",
+    "tr": "Спешка / Горячность / Вспыльчивость",
     "pos": "noun",
     "level": "A2",
     "difficulty": 5,
@@ -8163,7 +8152,7 @@ const WordRamDataCE = {
     "tileCount": 10
   },
   "АРЦ": {
-    "tr": "Гора",
+    "tr": "Лесистый склон гор",
     "pos": "noun",
     "level": "B1",
     "difficulty": 1,
@@ -8174,20 +8163,8 @@ const WordRamDataCE = {
     ],
     "tileCount": 3
   },
-  "БАА": {
-    "tr": "См. даа",
-    "pos": "noun",
-    "level": "B1",
-    "difficulty": 1,
-    "tiles": [
-      "Б",
-      "А",
-      "А"
-    ],
-    "tileCount": 3
-  },
   "ДАКХ": {
-    "tr": "Береза",
+    "tr": "Осина / Берёза",
     "pos": "noun",
     "level": "B1",
     "difficulty": 1,
@@ -8426,20 +8403,6 @@ const WordRamDataCE = {
       "А"
     ],
     "tileCount": 4
-  },
-  "БАЙТА": {
-    "tr": "Понуд. от бан3",
-    "pos": "noun",
-    "level": "B1",
-    "difficulty": 4,
-    "tiles": [
-      "Б",
-      "А",
-      "Й",
-      "Т",
-      "А"
-    ],
-    "tileCount": 5
   },
   "БЕХКЕ": {
     "tr": "Виноватый / Виновный",
@@ -8810,7 +8773,7 @@ const WordRamDataCE = {
     "tileCount": 5
   },
   "СЕРЛО": {
-    "tr": "Свет / Освещение / Перен. просвещение",
+    "tr": "Свет / Освещение / Просвещение",
     "pos": "noun",
     "level": "B1",
     "difficulty": 3,
@@ -9394,22 +9357,6 @@ const WordRamDataCE = {
     ],
     "tileCount": 7
   },
-  "БОЗАЛЛА": {
-    "tr": "См. дозалла2",
-    "pos": "noun",
-    "level": "B1",
-    "difficulty": 5,
-    "tiles": [
-      "Б",
-      "О",
-      "З",
-      "А",
-      "Л",
-      "Л",
-      "А"
-    ],
-    "tileCount": 7
-  },
   "ГРАМОТА": {
     "tr": "Грамота",
     "pos": "noun",
@@ -9730,22 +9677,6 @@ const WordRamDataCE = {
       "М",
       "Х",
       "О"
-    ],
-    "tileCount": 7
-  },
-  "ТОХИЙТА": {
-    "tr": "Понуд. от тоха",
-    "pos": "noun",
-    "level": "B1",
-    "difficulty": 5,
-    "tiles": [
-      "Т",
-      "О",
-      "Х",
-      "И",
-      "Й",
-      "Т",
-      "А"
     ],
     "tileCount": 7
   },
@@ -10605,7 +10536,7 @@ const WordRamDataCE = {
     "tileCount": 11
   },
   "СИНХААМАЛЛА": {
-    "tr": "Дешнаш Бексултанов Мусан / Сан ойланаш а…)",
+    "tr": "Чувственность слова",
     "pos": "noun",
     "level": "B1",
     "difficulty": 5,
@@ -13909,7 +13840,7 @@ const WordRamDataCE = {
   wordsList: [
   {
     "word": "АЗ",
-    "translation": "Голос / Грамм. звук",
+    "translation": "Голос / Звук",
     "languageLevel": "A1",
     "gameDifficulty": 1,
     "partOfSpeech": "noun",
@@ -13921,7 +13852,7 @@ const WordRamDataCE = {
   },
   {
     "word": "ДА",
-    "translation": "Хозяин / Хозяйка / Староста",
+    "translation": "Отец / Хозяин",
     "languageLevel": "A1",
     "gameDifficulty": 1,
     "partOfSpeech": "noun",
@@ -14097,7 +14028,7 @@ const WordRamDataCE = {
   },
   {
     "word": "ШО",
-    "translation": "Сычуг / Сычужина",
+    "translation": "Год",
     "languageLevel": "A1",
     "gameDifficulty": 1,
     "partOfSpeech": "noun",
@@ -14217,6 +14148,19 @@ const WordRamDataCE = {
     "tileCount": 3
   },
   {
+    "word": "ДАА",
+    "translation": "Кушать",
+    "languageLevel": "A1",
+    "gameDifficulty": 1,
+    "partOfSpeech": "verb",
+    "tiles": [
+      "Д",
+      "А",
+      "А"
+    ],
+    "tileCount": 3
+  },
+  {
     "word": "ДИН",
     "translation": "Вера / Религия",
     "languageLevel": "A1",
@@ -14258,8 +14202,21 @@ const WordRamDataCE = {
     "ex": "Дог даьттӀа воьлху со — Я плачу от досады"
   },
   {
+    "word": "ЕТТ",
+    "translation": "Корова",
+    "languageLevel": "A1",
+    "gameDifficulty": 1,
+    "partOfSpeech": "noun",
+    "tiles": [
+      "Е",
+      "Т",
+      "Т"
+    ],
+    "tileCount": 3
+  },
+  {
     "word": "ИЗА",
-    "translation": "См. и",
+    "translation": "Он / Тот",
     "languageLevel": "A1",
     "gameDifficulty": 1,
     "partOfSpeech": "pronoun",
@@ -14300,7 +14257,7 @@ const WordRamDataCE = {
   },
   {
     "word": "КОГ",
-    "translation": "Нога / Перен. свая / Опора",
+    "translation": "Нога / Свая / Опора",
     "languageLevel": "A1",
     "gameDifficulty": 1,
     "partOfSpeech": "noun",
@@ -14382,7 +14339,7 @@ const WordRamDataCE = {
   },
   {
     "word": "КХИН",
-    "translation": "Невестка",
+    "translation": "Другой / Ещё / Невестка",
     "languageLevel": "A1",
     "gameDifficulty": 1,
     "partOfSpeech": "adjective",
@@ -14652,7 +14609,7 @@ const WordRamDataCE = {
   },
   {
     "word": "ХЬАЖ",
-    "translation": "Лоб",
+    "translation": "Лоб / Хадж",
     "languageLevel": "A1",
     "gameDifficulty": 1,
     "partOfSpeech": "noun",
@@ -14884,6 +14841,20 @@ const WordRamDataCE = {
     ],
     "tileCount": 4,
     "ex": "Бага са а кхаьчна — Впопыхах"
+  },
+  {
+    "word": "БАЖА",
+    "translation": "Стадо скота",
+    "languageLevel": "A1",
+    "gameDifficulty": 2,
+    "partOfSpeech": "noun",
+    "tiles": [
+      "Б",
+      "А",
+      "Ж",
+      "А"
+    ],
+    "tileCount": 4
   },
   {
     "word": "БАЛА",
@@ -15122,7 +15093,7 @@ const WordRamDataCE = {
   },
   {
     "word": "ГОЛА",
-    "translation": "Локоть / Колено / Положив ногу на ногу",
+    "translation": "Локоть / Колено",
     "languageLevel": "A1",
     "gameDifficulty": 1,
     "partOfSpeech": "noun",
@@ -15585,6 +15556,20 @@ const WordRamDataCE = {
     "tileCount": 4
   },
   {
+    "word": "ЛАЬХЬА",
+    "translation": "Змея",
+    "languageLevel": "A1",
+    "gameDifficulty": 2,
+    "partOfSpeech": "noun",
+    "tiles": [
+      "Л",
+      "АЬ",
+      "ХЬ",
+      "А"
+    ],
+    "tileCount": 4
+  },
+  {
     "word": "ЛЕРГ",
     "translation": "Ухо",
     "languageLevel": "A1",
@@ -15613,20 +15598,6 @@ const WordRamDataCE = {
     ],
     "tileCount": 4,
     "ex": "Лоха стаг — Низкорослый человек, человек невысокого роста"
-  },
-  {
-    "word": "МАГА",
-    "translation": "Мочь",
-    "languageLevel": "A1",
-    "gameDifficulty": 1,
-    "partOfSpeech": "noun",
-    "tiles": [
-      "М",
-      "А",
-      "Г",
-      "А"
-    ],
-    "tileCount": 4
   },
   {
     "word": "МАЛХ",
@@ -15672,6 +15643,20 @@ const WordRamDataCE = {
     ],
     "tileCount": 4,
     "ex": "Мачаш дӀаяха — Разуться"
+  },
+  {
+    "word": "МЕГА",
+    "translation": "Можно",
+    "languageLevel": "A1",
+    "gameDifficulty": 1,
+    "partOfSpeech": "adverb",
+    "tiles": [
+      "М",
+      "Е",
+      "Г",
+      "А"
+    ],
+    "tileCount": 4
   },
   {
     "word": "МИЛА",
@@ -15875,7 +15860,7 @@ const WordRamDataCE = {
   },
   {
     "word": "СТАГ",
-    "translation": "Мужчина",
+    "translation": "Человек / Мужчина",
     "languageLevel": "A1",
     "gameDifficulty": 1,
     "partOfSpeech": "noun",
@@ -16109,7 +16094,7 @@ const WordRamDataCE = {
   },
   {
     "word": "ЦӀЕНА",
-    "translation": "Гречиха",
+    "translation": "Чистый / Гречиха",
     "languageLevel": "A1",
     "gameDifficulty": 2,
     "partOfSpeech": "adjective",
@@ -16152,7 +16137,7 @@ const WordRamDataCE = {
   },
   {
     "word": "ШУРА",
-    "translation": "Молока",
+    "translation": "Молоко",
     "languageLevel": "A1",
     "gameDifficulty": 1,
     "partOfSpeech": "noun",
@@ -16178,22 +16163,6 @@ const WordRamDataCE = {
       "Г"
     ],
     "tileCount": 4
-  },
-  {
-    "word": "БЕЖАН",
-    "translation": "Табунный",
-    "languageLevel": "A1",
-    "gameDifficulty": 3,
-    "partOfSpeech": "noun",
-    "tiles": [
-      "Б",
-      "Е",
-      "Ж",
-      "А",
-      "Н"
-    ],
-    "tileCount": 5,
-    "ex": "Бежан аренан — Пастбищный"
   },
   {
     "word": "БЕПИГ",
@@ -16599,7 +16568,7 @@ const WordRamDataCE = {
   },
   {
     "word": "КЪОНАХ",
-    "translation": "Молодец / Кто думал о последствии / Не стал молодцем",
+    "translation": "Молодец",
     "languageLevel": "A1",
     "gameDifficulty": 3,
     "partOfSpeech": "noun",
@@ -17432,22 +17401,6 @@ const WordRamDataCE = {
     "ex": "Тахана дуьйна — С сегодняшнего дня"
   },
   {
-    "word": "ТЕКХАРГ",
-    "translation": "Прич. ползающий / Ползучий / Перен. змея",
-    "languageLevel": "A1",
-    "gameDifficulty": 4,
-    "partOfSpeech": "noun",
-    "tiles": [
-      "Т",
-      "Е",
-      "КХ",
-      "А",
-      "Р",
-      "Г"
-    ],
-    "tileCount": 6
-  },
-  {
     "word": "ТӀОРКАЗ",
     "translation": "Сундук",
     "languageLevel": "A1",
@@ -17556,6 +17509,23 @@ const WordRamDataCE = {
       "АЬ",
       "Ц",
       "Ц",
+      "А",
+      "Р",
+      "А"
+    ],
+    "tileCount": 7
+  },
+  {
+    "word": "ГЕРГАРА",
+    "translation": "Близкий",
+    "languageLevel": "A1",
+    "gameDifficulty": 2,
+    "partOfSpeech": "adjective",
+    "tiles": [
+      "Г",
+      "Е",
+      "Р",
+      "Г",
       "А",
       "Р",
       "А"
@@ -17774,25 +17744,6 @@ const WordRamDataCE = {
     "tileCount": 8
   },
   {
-    "word": "ГЕРГАРНИГ",
-    "translation": "См. гергара",
-    "languageLevel": "A1",
-    "gameDifficulty": 5,
-    "partOfSpeech": "noun",
-    "tiles": [
-      "Г",
-      "Е",
-      "Р",
-      "Г",
-      "А",
-      "Р",
-      "Н",
-      "И",
-      "Г"
-    ],
-    "tileCount": 9
-  },
-  {
     "word": "ДАГАДАЛАР",
     "translation": "Консультация",
     "languageLevel": "A1",
@@ -17932,7 +17883,7 @@ const WordRamDataCE = {
   },
   {
     "word": "ДОШ",
-    "translation": "Слово / Перен. любое хорошее дело / Поступок",
+    "translation": "Слово / Поступок",
     "languageLevel": "A2",
     "gameDifficulty": 1,
     "partOfSpeech": "noun",
@@ -18245,19 +18196,6 @@ const WordRamDataCE = {
     "ex": "Хьал долуш хила — Разбогатеть, стать богатым"
   },
   {
-    "word": "ХЬАР",
-    "translation": "Раздражение / Шевеление",
-    "languageLevel": "A2",
-    "gameDifficulty": 2,
-    "partOfSpeech": "noun",
-    "tiles": [
-      "ХЬ",
-      "А",
-      "Р"
-    ],
-    "tileCount": 3
-  },
-  {
     "word": "ЦКЪА",
     "translation": "Однажды",
     "languageLevel": "A2",
@@ -18386,20 +18324,6 @@ const WordRamDataCE = {
     ],
     "tileCount": 4,
     "ex": "Барт цхьаъ берг — Дружный, единодушный"
-  },
-  {
-    "word": "БЕЛА",
-    "translation": "См. дела2",
-    "languageLevel": "A2",
-    "gameDifficulty": 1,
-    "partOfSpeech": "noun",
-    "tiles": [
-      "Б",
-      "Е",
-      "Л",
-      "А"
-    ],
-    "tileCount": 4
   },
   {
     "word": "БЕРД",
@@ -20490,23 +20414,6 @@ const WordRamDataCE = {
     "tileCount": 7
   },
   {
-    "word": "БОХАЛЛА",
-    "translation": "См. дохалла",
-    "languageLevel": "A2",
-    "gameDifficulty": 5,
-    "partOfSpeech": "noun",
-    "tiles": [
-      "Б",
-      "О",
-      "Х",
-      "А",
-      "Л",
-      "Л",
-      "А"
-    ],
-    "tileCount": 7
-  },
-  {
     "word": "ДАЙМОХК",
     "translation": "Родина / Отечество",
     "languageLevel": "A2",
@@ -20576,7 +20483,7 @@ const WordRamDataCE = {
   },
   {
     "word": "ДОЗАЛЛА",
-    "translation": "Вес / Тяжесть / Перен. гордость",
+    "translation": "Вес / Тяжесть / Гордость",
     "languageLevel": "A2",
     "gameDifficulty": 5,
     "partOfSpeech": "noun",
@@ -20584,6 +20491,23 @@ const WordRamDataCE = {
       "Д",
       "О",
       "З",
+      "А",
+      "Л",
+      "Л",
+      "А"
+    ],
+    "tileCount": 7
+  },
+  {
+    "word": "ДОХАЛЛА",
+    "translation": "Длина",
+    "languageLevel": "A2",
+    "gameDifficulty": 2,
+    "partOfSpeech": "noun",
+    "tiles": [
+      "Д",
+      "О",
+      "Х",
       "А",
       "Л",
       "Л",
@@ -20833,7 +20757,7 @@ const WordRamDataCE = {
   },
   {
     "word": "СИХАЛЛА",
-    "translation": "Спешка / Перен. горячность / Вспыльчивость",
+    "translation": "Спешка / Горячность / Вспыльчивость",
     "languageLevel": "A2",
     "gameDifficulty": 5,
     "partOfSpeech": "noun",
@@ -21436,7 +21360,7 @@ const WordRamDataCE = {
   },
   {
     "word": "АРЦ",
-    "translation": "Гора",
+    "translation": "Лесистый склон гор",
     "languageLevel": "B1",
     "gameDifficulty": 1,
     "partOfSpeech": "noun",
@@ -21448,21 +21372,8 @@ const WordRamDataCE = {
     "tileCount": 3
   },
   {
-    "word": "БАА",
-    "translation": "См. даа",
-    "languageLevel": "B1",
-    "gameDifficulty": 1,
-    "partOfSpeech": "noun",
-    "tiles": [
-      "Б",
-      "А",
-      "А"
-    ],
-    "tileCount": 3
-  },
-  {
     "word": "ДАКХ",
-    "translation": "Береза",
+    "translation": "Осина / Берёза",
     "languageLevel": "B1",
     "gameDifficulty": 1,
     "partOfSpeech": "noun",
@@ -21719,21 +21630,6 @@ const WordRamDataCE = {
       "А"
     ],
     "tileCount": 4
-  },
-  {
-    "word": "БАЙТА",
-    "translation": "Понуд. от бан3",
-    "languageLevel": "B1",
-    "gameDifficulty": 4,
-    "partOfSpeech": "noun",
-    "tiles": [
-      "Б",
-      "А",
-      "Й",
-      "Т",
-      "А"
-    ],
-    "tileCount": 5
   },
   {
     "word": "БЕХКЕ",
@@ -22131,7 +22027,7 @@ const WordRamDataCE = {
   },
   {
     "word": "СЕРЛО",
-    "translation": "Свет / Освещение / Перен. просвещение",
+    "translation": "Свет / Освещение / Просвещение",
     "languageLevel": "B1",
     "gameDifficulty": 3,
     "partOfSpeech": "noun",
@@ -22754,23 +22650,6 @@ const WordRamDataCE = {
     "tileCount": 7
   },
   {
-    "word": "БОЗАЛЛА",
-    "translation": "См. дозалла2",
-    "languageLevel": "B1",
-    "gameDifficulty": 5,
-    "partOfSpeech": "noun",
-    "tiles": [
-      "Б",
-      "О",
-      "З",
-      "А",
-      "Л",
-      "Л",
-      "А"
-    ],
-    "tileCount": 7
-  },
-  {
     "word": "ГРАМОТА",
     "translation": "Грамота",
     "languageLevel": "B1",
@@ -23110,23 +22989,6 @@ const WordRamDataCE = {
       "М",
       "Х",
       "О"
-    ],
-    "tileCount": 7
-  },
-  {
-    "word": "ТОХИЙТА",
-    "translation": "Понуд. от тоха",
-    "languageLevel": "B1",
-    "gameDifficulty": 5,
-    "partOfSpeech": "noun",
-    "tiles": [
-      "Т",
-      "О",
-      "Х",
-      "И",
-      "Й",
-      "Т",
-      "А"
     ],
     "tileCount": 7
   },
@@ -24036,7 +23898,7 @@ const WordRamDataCE = {
   },
   {
     "word": "СИНХААМАЛЛА",
-    "translation": "Дешнаш Бексултанов Мусан / Сан ойланаш а…)",
+    "translation": "Чувственность слова",
     "languageLevel": "B1",
     "gameDifficulty": 5,
     "partOfSpeech": "noun",
@@ -27530,7 +27392,7 @@ const WordRamDataCE = {
     food: {
       title: "Еда и напитки",
       icon: "☕",
-      words: ["БЕПИГ", "ШУРА", "ЖИЖИГ", "ДАЬТТА", "КХАЧА", "ХОХ", "ӀАЖ", "КХОР", "БАЛЛ", "ЧУЬРА", "ХЬАЛХАРА", "МЕРЗА", "ДУЬРА", "КЪАЬХЬА", "МУЬСТА", "СИСКАЛ", "ХИНГАЛ", "ЧӀЕПАЛГ", "ТОВХА", "НЕХЧА", "ШЕКАР", "ТУЬХА", "МАРХА", "КХОЛЛАР", "ХАМА", "НАХ", "МАГА", "ХӀОА", "БОДА", "ГӀАБАКХ", "КӀА", "МУКХ", "ЧАЙ", "ХИ"]
+      words: ["БЕПИГ", "ШУРА", "ЖИЖИГ", "ДАЬТТА", "КХАЧА", "ХОХ", "ӀАЖ", "КХОР", "БАЛЛ", "ЧУЬРА", "ХЬАЛХАРА", "МЕРЗА", "ДУЬРА", "КЪАЬХЬА", "МУЬСТА", "СИСКАЛ", "ХИНГАЛ", "ЧӀЕПАЛГ", "ТОВХА", "НЕХЧА", "ШЕКАР", "ТУЬХА", "МАРХА", "КХОЛЛАР", "ХАМА", "НАХ", "ХӀОА", "БОДА", "ГӀАБАКХ", "КӀА", "МУКХ", "ЧАЙ", "ХИ"]
     },
     nature: {
       title: "Природа и погода",
@@ -27550,7 +27412,7 @@ const WordRamDataCE = {
     animals: {
       title: "Животные и птицы",
       icon: "🐺",
-      words: ["ДИН", "ГОВР", "БЕЖАН", "УЬСТАГӀ", "ГАЗА", "ЖӀАЬЛА", "ЦИЦИГ", "БОРЗ", "ЦХЬОГАЛ", "ЧА", "ОЛХАЗАР", "КХОКХА", "ТУЬРАН", "ГЕРГО", "КОТАМ", "БУХӀА", "АКХШО", "САЙ", "ПХЬАГАЛ", "ТЕКХАРГ", "МОЗА", "ЗИНГАТ"]
+      words: ["ДИН", "ГОВР", "БАЖА", "ЕТТ", "УЬСТАГӀ", "ГАЗА", "ЖӀАЬЛА", "ЦИЦИГ", "БОРЗ", "ЦХЬОГАЛ", "ЧА", "ОЛХАЗАР", "КХОКХА", "ТУЬРАН", "ГЕРГО", "КОТАМ", "БУХӀА", "АКХШО", "САЙ", "ПХЬАГАЛ", "ЛАЬХЬА", "МОЗА", "ЗИНГАТ"]
     },
     city: {
       title: "Город и транспорт",
@@ -27560,7 +27422,7 @@ const WordRamDataCE = {
     work: {
       title: "Работа и ремесло",
       icon: "⚒️",
-      words: ["БОЛХ", "ХЬЕХАРХО", "УСТАЗ", "ПХЬАР", "ТУРКО", "ЭПСАР", "САЛТИ", "БАХАМХО", "ЖАӀУ", "АХАРХО", "ДЕШАРХО", "ХЬУЬНХО", "ЙОХКАРХО", "ПХЬАЛГӀА", "КХЕМА", "БЕЛА", "МАРС", "МАНГАЛ", "ТАЛЛАМХО", "ПАЙДА"]
+      words: ["БОЛХ", "ХЬЕХАРХО", "УСТАЗ", "ПХЬАР", "ТУРКО", "ЭПСАР", "САЛТИ", "БАХАМХО", "ЖАӀУ", "АХАРХО", "ДЕШАРХО", "ХЬУЬНХО", "ЙОХКАРХО", "ПХЬАЛГӀА", "КХЕМА", "МАРС", "МАНГАЛ", "ТАЛЛАМХО", "ПАЙДА"]
     },
     culture: {
       title: "Культура и традиции",
@@ -27570,7 +27432,7 @@ const WordRamDataCE = {
     education: {
       title: "Учеба и наука",
       icon: "📚",
-      words: ["ӀИЛМА", "ӀИЛМАНЧА", "ХЬЕХАР", "ЙАЗДАРХО", "БАЙТА", "ГОЧДАР", "ДОШАМ", "ТАЛЛАМ", "ЖАЙНА", "АЛФАВИТ", "ШКОЛА", "ЙОЗА", "ХЬАР"]
+      words: ["ӀИЛМА", "ӀИЛМАНЧА", "ХЬЕХАР", "ЙАЗДАРХО", "ГОЧДАР", "ДОШАМ", "ТАЛЛАМ", "ЖАЙНА", "АЛФАВИТ", "ШКОЛА", "ЙОЗА"]
     },
     society: {
       title: "Общество и право",
@@ -27579,18 +27441,18 @@ const WordRamDataCE = {
     }
   },
   placementTestWords: [
-    { word: "ДА", level: "A1", tr: "Отец" },
+    { word: "НАНА", level: "A1", tr: "Мать / Мама" },
     { word: "БЕПИГ", level: "A1", tr: "Хлеб" },
-    { word: "ГӀАЛА", level: "A2", tr: "Город" },
-    { word: "ХЬЕХАРХО", level: "A2", tr: "Учитель" },
-    { word: "ОЬЗДАНГАЛЛА", level: "B1", tr: "Благородство / Вежливость" },
-    { word: "КЪОНАХЧАЛЛА", level: "B1", tr: "Мужество / Кодекс чести" },
-    { word: "ЮКЪАРАЛЛА", level: "B2", tr: "Общество" },
-    { word: "БАРТКХОЛЛАМ", level: "B2", tr: "Миротворчество" },
-    { word: "СИНСАКХТАЛЛА", level: "C1", tr: "Духовная чуткость" },
-    { word: "ХЬАЬРКМЕТТАНАЛЛА", level: "C1", tr: "Символичность" },
-    { word: "ДАРЖМЕТТИГ", level: "C2", tr: "Должностной сан" },
-    { word: "СИНКХЕРАМАЛЛА", level: "C2", tr: "Боговдохновенность" }
+    { word: "ГӀАЛА", level: "A2", tr: "Город / Станица / Крепость" },
+    { word: "ХЬЕХАРХО", level: "A2", tr: "Учитель / Учительница" },
+    { word: "ЮКЪАРАЛЛА", level: "B1", tr: "Общество" },
+    { word: "НИЙСО", level: "B1", tr: "Равенство / Справедливость" },
+    { word: "МУЗЕЙ", level: "B2", tr: "Музей" },
+    { word: "АНАЛИЗ", level: "B2", tr: "Анализ" },
+    { word: "ПАТРИОТИЗМ", level: "C1", tr: "Патриотизм" },
+    { word: "СТАТИСТИКА", level: "C1", tr: "Статистика" },
+    { word: "ПАТРИОТ", level: "C2", tr: "Патриот" },
+    { word: "ДОЦЕНТ", level: "C2", tr: "Доцент" }
   ],
   masteryRanks: [
     { threshold: 50, title: "Дошдолорхо", desc: "Начинающий исследователь слов" },
@@ -27692,11 +27554,13 @@ const WordRamDataCE = {
     }
   ],
 
-  evaluatePlacementTest(answers) {
+  evaluatePlacementTest(answers, questions) {
+    const list = (questions && questions.length) ? questions : this.placementTestWords;
     const levelWeights = { A1: 0, A2: 0, B1: 0, B2: 0, C1: 0, C2: 0 };
     const levelCounts = { A1: 0, A2: 0, B1: 0, B2: 0, C1: 0, C2: 0 };
 
-    this.placementTestWords.forEach(item => {
+    list.forEach(item => {
+      if (levelCounts[item.level] === undefined) return;
       const ans = answers[item.word] || "DONT_KNOW";
       levelCounts[item.level]++;
 
