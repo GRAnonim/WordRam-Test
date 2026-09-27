@@ -18907,13 +18907,15 @@ const WordRamDataEN = {
     { threshold: 1200, title: "Продвинутый B2", desc: "Уверенный профессиональный язык" },
     { threshold: 1300, title: "Мастер эссе", desc: "Академическая речь" },
     { threshold: 1400, title: "Эксперт C1", desc: "Свободное владение на уровне носителя" },
-    { threshold: 1500, title: "Академик English", desc: "Полный словарный багаж 1500 слов" }
+    { threshold: 1500, title: "Академик English", desc: "Полный словарный багаж" }
   ],
-  evaluatePlacementTest(answers) {
+  evaluatePlacementTest(answers, questions) {
+    const list = (questions && questions.length) ? questions : this.placementTestWords;
     const levelWeights = { A1: 0, A2: 0, B1: 0, B2: 0, C1: 0 };
     const levelCounts = { A1: 0, A2: 0, B1: 0, B2: 0, C1: 0 };
 
-    this.placementTestWords.forEach(item => {
+    list.forEach(item => {
+      if (levelCounts[item.level] === undefined) return;
       const ans = answers[item.word] || "DONT_KNOW";
       levelCounts[item.level]++;
 
@@ -18928,6 +18930,7 @@ const WordRamDataEN = {
     let assignedLevel = "A1";
 
     for (const lvl of levels) {
+      if (!levelCounts[lvl]) continue;
       const scoreRatio = levelWeights[lvl] / levelCounts[lvl];
       if (scoreRatio >= 0.5) {
         assignedLevel = lvl;

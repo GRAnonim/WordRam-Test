@@ -27,6 +27,7 @@ class WordRamGame {
     this.isDailyMode = false;
     this.foundWords = [];
     this.foundBonusWordsInLevel = [];
+    this.newWordsThisLevel = [];
     this.selectedPath = [];
     this.isDragging = false;
     this.revealedHints = {};
@@ -37,19 +38,8 @@ class WordRamGame {
     this.comboStreak = 0;
     this.lastWordFoundTime = 0;
 
-    // Палитра цветов для найденных слов
-    this.wordColors = [
-      { bg: "linear-gradient(135deg, #10b981, #059669)", border: "#34d399", text: "#ffffff" },
-      { bg: "linear-gradient(135deg, #8b5cf6, #7c3aed)", border: "#a78bfa", text: "#ffffff" },
-      { bg: "linear-gradient(135deg, #f59e0b, #d97706)", border: "#fbbf24", text: "#ffffff" },
-      { bg: "linear-gradient(135deg, #0ea5e9, #0284c7)", border: "#38bdf8", text: "#ffffff" },
-      { bg: "linear-gradient(135deg, #f43f5e, #e11d48)", border: "#fb7185", text: "#ffffff" },
-      { bg: "linear-gradient(135deg, #14b8a6, #0d9488)", border: "#2dd4bf", text: "#ffffff" },
-      { bg: "linear-gradient(135deg, #6366f1, #4f46e5)", border: "#818cf8", text: "#ffffff" },
-      { bg: "linear-gradient(135deg, #f97316, #ea580c)", border: "#fb923c", text: "#ffffff" },
-      { bg: "linear-gradient(135deg, #ec4899, #db2777)", border: "#f472b6", text: "#ffffff" },
-      { bg: "linear-gradient(135deg, #06b6d4, #0891b2)", border: "#22d3ee", text: "#ffffff" }
-    ];
+    // Палитра найденных слов: CSS-классы found-tone-0…9
+    this.wordColorCount = 10;
 
     // Звуковой синтез Web Audio API
     this.audioCtx = null;
@@ -83,10 +73,11 @@ class WordRamGame {
 
   speakWord(word) {
     if (!window.speechSynthesis || !word) return;
+    if (this.storage.getSetting("voiceSpeechEnabled") === false) return;
+
     const currentLang = (this.levelData && this.levelData.language) || (this.storage.getLanguage ? this.storage.getLanguage() : "english");
-    
-    // Полное отключение синтезатора для чеченского языка
-    if (currentLang === "chechen") return;
+    const isChechen = currentLang === "chechen" || /[А-ЯЁӀа-яё]/i.test(String(word));
+    if (isChechen) return;
 
     try {
       window.speechSynthesis.cancel();
@@ -97,12 +88,10 @@ class WordRamGame {
       utterance.rate = 0.88;
       utterance.volume = 1.0;
 
-      const voices = window.speechSynthesis.getVoices();
-      if (voices && voices.length > 0) {
-        const enVoice = voices.find(v => (v.lang === "en-US" || v.lang === "en_US" || v.lang.startsWith("en")) && !v.localService) ||
-                        voices.find(v => v.lang.startsWith("en"));
-        if (enVoice) utterance.voice = enVoice;
-      }
+      const voices = window.speechSynthesis.getVoices() || [];
+      const enVoice = voices.find(v => (v.lang === "en-US" || v.lang === "en_US" || (v.lang || "").startsWith("en")) && !v.localService) ||
+                      voices.find(v => (v.lang || "").startsWith("en"));
+      if (enVoice) utterance.voice = enVoice;
 
       window.speechSynthesis.speak(utterance);
     } catch (e) {
@@ -263,6 +252,7 @@ class WordRamGame {
     this.currentLevel = levelNumber;
     this.foundWords = [];
     this.foundBonusWordsInLevel = [];
+    this.newWordsThisLevel = [];
     this.selectedPath = [];
     this.revealedHints = {};
     this.hintsUsedInLevel = 0;
@@ -272,8 +262,12 @@ class WordRamGame {
 
     const currentLang = this.storage.getLanguage ? this.storage.getLanguage() : "english";
     const userCefr = this.storage.getLanguageLevel ? this.storage.getLanguageLevel(currentLang) : this.storage.getEnglishLevel();
-    
-    this.levelData = this.generator.generateLevel(levelNumber, userCefr, currentLang);
+    const ease = this.storage.getWordEase ? this.storage.getWordEase() : "normal";
+    const playCefr = (typeof WordRamData !== "undefined" && WordRamData.applyWordEase)
+      ? WordRamData.applyWordEase(userCefr, ease, currentLang)
+      : userCefr;
+
+    this.levelData = this.generator.generateLevel(levelNumber, playCefr, currentLang);
 
     for (const w of this.levelData.words) {
       this.revealedHints[w] = 0;
@@ -297,9 +291,11 @@ class WordRamGame {
     const cost = this.storage.state.hintCost || 15;
 
     if (remainingFree > 0) {
-      this.hintButton.innerHTML = `<span class="btn-icon">💡</span> <span class="btn-text">Подсказка (${remainingFree} беспл.)</span>`;
+      this.hintButton.innerHTML = `<span class="btn-icon">💡</span><span class="btn-hint-label">Подсказка</span><span class="btn-text">${remainingFree}</span>`;
+      this.hintButton.title = `Подсказка · ${remainingFree} бесплатно`;
     } else {
-      this.hintButton.innerHTML = `<span class="btn-icon">💡</span> <span class="btn-text">Подсказка (-${cost} 🪙)</span>`;
+      this.hintButton.innerHTML = `<span class="btn-icon">💡</span><span class="btn-hint-label">Подсказка</span><span class="btn-text">${cost}</span>`;
+      this.hintButton.title = `Подсказка · ${cost} монет`;
     }
   }
 
@@ -317,17 +313,15 @@ class WordRamGame {
     }
 
     if (this.cefrBadgeDisplay) {
-      if (currentLang === "chechen") {
-        this.cefrBadgeDisplay.textContent = `🟢 ${userCefr}`;
-        this.cefrBadgeDisplay.title = "Язык игры: Чеченский";
-      } else {
-        this.cefrBadgeDisplay.textContent = `🇬🇧 ${userCefr}`;
-        this.cefrBadgeDisplay.title = "Язык игры: English";
-      }
+      const flag = currentLang === "chechen"
+        ? '<span class="flag-ce" title="Флаг Чеченской Республики"></span>'
+        : '<span class="flag-gb">🇬🇧</span>';
+      this.cefrBadgeDisplay.innerHTML = `${flag} ${userCefr}`;
+      this.cefrBadgeDisplay.title = currentLang === "chechen" ? "Язык игры: Чеченский" : "Язык игры: English";
     }
 
     if (this.progressElement && this.levelData) {
-      this.progressElement.textContent = `Найдено ${this.foundWords.length} / ${this.levelData.words.length}`;
+      this.progressElement.textContent = `${this.foundWords.length}/${this.levelData.words.length}`;
     }
 
     const themeIconEl = document.getElementById("theme-icon");
@@ -337,7 +331,7 @@ class WordRamGame {
         themeIconEl.textContent = this.levelData.themeIcon;
       }
       if (themeTitleEl && this.levelData.themeTitle) {
-        themeTitleEl.textContent = `Тема: ${this.levelData.themeTitle}`;
+        themeTitleEl.textContent = this.levelData.themeTitle;
       }
     }
   }
@@ -360,10 +354,7 @@ class WordRamGame {
 
       if (isFound) {
         slot.textContent = word;
-        const color = this.wordColors[idx % this.wordColors.length];
-        slot.style.backgroundColor = color.bg;
-        slot.style.borderColor = color.border;
-        slot.style.color = color.text;
+        slot.classList.add(`found-tone-${idx % this.wordColorCount}`);
 
         slot.addEventListener("click", (e) => {
           e.stopPropagation();
@@ -670,7 +661,17 @@ class WordRamGame {
         this.lastWordFoundTime = now;
 
         // Записываем слово в Личный словарь с языковым тегом
+        const collected = this.storage.getCollectedWords ? this.storage.getCollectedWords(currentLang) : {};
+        const vocabKey = this.storage.normalizeVocabKey
+          ? this.storage.normalizeVocabKey(word, currentLang)
+          : String(word).toUpperCase();
+        const isNewWord = !collected[vocabKey];
         const newAchs = this.storage.recordWordToVocabulary(word, currentLang);
+        if (isNewWord) this.newWordsThisLevel.push(word);
+        if (this.storage.tryClaimWodFromPlay && this.storage.tryClaimWodFromPlay(word, currentLang)) {
+          this.updateCoinsDisplay();
+          this.showFloatingMessage("Слово дня найдено на поле! Награда засчитана", "bonus");
+        }
 
         // Авто-озвучка слова
         if (this.storage.getSetting("voiceSpeechEnabled") !== false) {
@@ -730,6 +731,10 @@ class WordRamGame {
             this.speakWord(bonusWord);
           }
           this.showFloatingMessage(`🌟 Слово-бонус: ${bonusWord} (+5 🪙 в Копилку, +5 XP)!`, "bonus");
+          if (this.storage.tryClaimWodFromPlay && this.storage.tryClaimWodFromPlay(bonusWord, currentLang)) {
+            this.updateCoinsDisplay();
+            this.showFloatingMessage("Это ещё и слово дня! Награда засчитана", "bonus");
+          }
         } else {
           this.showFloatingMessage("Это бонусное слово уже собрано на этом уровне!", "info");
         }
@@ -819,6 +824,7 @@ class WordRamGame {
           cell.classList.add("cell-multichar");
         }
 
+        cell.style.background = "";
         cell.style.backgroundColor = "";
         cell.style.borderColor = "";
         cell.style.color = "";
@@ -834,15 +840,11 @@ class WordRamGame {
     // Подсветка найденных слов
     this.foundWords.forEach((word, wordIdx) => {
       const route = this.levelData.routes[word];
-      const color = this.wordColors[wordIdx % this.wordColors.length];
       if (route) {
         route.forEach(([r, c]) => {
           const cell = this.getCellElement(r, c);
           if (cell) {
-            cell.classList.add("cell-found");
-            cell.style.background = color.bg;
-            cell.style.borderColor = color.border;
-            cell.style.color = color.text;
+            cell.classList.add("cell-found", `found-tone-${wordIdx % this.wordColorCount}`);
           }
         });
       }
@@ -885,7 +887,7 @@ class WordRamGame {
 
     const toast = document.createElement("div");
     toast.className = `floating-toast toast-${type}`;
-    toast.textContent = text;
+    toast.innerHTML = String(text).replaceAll("🪙", '<span class="coin-icon"></span>');
     document.body.appendChild(toast);
 
     setTimeout(() => toast.classList.add("show"), 10);
@@ -904,20 +906,23 @@ class WordRamGame {
 
     const stars = this.hintsUsedInLevel === 0 ? 3 : (this.hintsUsedInLevel <= 2 ? 2 : 1);
     const score = 100 + (this.foundBonusWordsInLevel.length * 20);
-    const rewardCoins = this.levelData.coinsReward || 15;
+    const rewardCoins = this.levelData.rewardCoins || this.levelData.coinsReward || 15;
+    const rewardXp = this.levelData.xpReward || (30 + this.currentLevel * 2);
 
     let winResult = null;
     if (this.isDailyMode) {
-      this.storage.completeDailyChallenge();
+      const dailyRes = this.storage.completeDailyChallenge();
       winResult = {
         level: "Сегодня",
         stars: 3,
-        coinsEarned: 50,
-        xpEarned: 150,
+        coinsEarned: dailyRes.coinsEarned || 0,
+        xpEarned: dailyRes.xpEarned || 0,
+        alreadyCompleted: !!dailyRes.alreadyCompleted,
         words: this.levelData.words,
         bonusWords: this.foundBonusWordsInLevel,
         isDaily: true,
-        language: currentLang
+        language: currentLang,
+        newWords: this.newWordsThisLevel || []
       };
     } else {
       const res = this.storage.completeLevel(
@@ -927,18 +932,23 @@ class WordRamGame {
         rewardCoins,
         this.hintsUsedInLevel,
         this.levelData.gridSize,
-        currentLang
+        currentLang,
+        rewardXp
       );
+      const coinsEarned = res.alreadyCompleted ? 0 : (res.coinsEarned != null ? res.coinsEarned : rewardCoins);
+      const xpEarned = res.alreadyCompleted ? 0 : (res.xpResult ? res.xpResult.xpAdded : rewardXp);
       winResult = {
         level: this.currentLevel,
         stars: stars,
-        coinsEarned: rewardCoins,
-        rewardCoins: rewardCoins,
-        xpEarned: res.xpResult ? res.xpResult.xpAdded : 30,
+        coinsEarned: coinsEarned,
+        rewardCoins: coinsEarned,
+        xpEarned: xpEarned,
+        alreadyCompleted: !!res.alreadyCompleted,
         words: this.levelData.words,
         bonusWords: this.foundBonusWordsInLevel,
         isDaily: false,
-        language: currentLang
+        language: currentLang,
+        newWords: this.newWordsThisLevel || []
       };
     }
 

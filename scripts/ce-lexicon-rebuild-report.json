@@ -1,0 +1,1206 @@
+{
+  "input": 1500,
+  "kept": 945,
+  "updated": 779,
+  "renamed": [
+    {
+      "from": "ВОША",
+      "to": "ВАША",
+      "gloss": "Брат",
+      "why": "suggest:ismailov_ce_ru"
+    },
+    {
+      "from": "НЕРИЙ",
+      "to": "НЕКИЙ",
+      "gloss": "Хьенех / Ар",
+      "why": "suggest:ismailov_ru_ce"
+    },
+    {
+      "from": "ХЬОЬХ",
+      "to": "ХЬОВХ",
+      "gloss": "Не только",
+      "why": "suggest:ismailov_ce_ru"
+    },
+    {
+      "from": "СИНО",
+      "to": "СА",
+      "gloss": "Свет / Зрение",
+      "why": "ismailov_ce_ru"
+    },
+    {
+      "from": "ХОНА",
+      "to": "ХИНА",
+      "gloss": "Хина / Хинин",
+      "why": "suggest:maciev_ce_ru"
+    },
+    {
+      "from": "МОРУ",
+      "to": "МОР",
+      "gloss": "Охапка",
+      "why": "suggest:ismailov_ce_ru"
+    },
+    {
+      "from": "СИНХАТАМ",
+      "to": "СИНХААМ",
+      "gloss": "Предчувствие / Интуиция",
+      "why": "suggest:ismailov_ce_ru"
+    },
+    {
+      "from": "ШОДА",
+      "to": "ШАДА",
+      "gloss": "Наш – вилы",
+      "why": "suggest:ismailov_ce_ru"
+    },
+    {
+      "from": "ГИСЛА",
+      "to": "ГИЛА",
+      "gloss": "Поджарый / Быстрый / Проворный",
+      "why": "suggest:ismailov_ce_ru"
+    },
+    {
+      "from": "ПАЛТА",
+      "to": "ПАЛАТА",
+      "gloss": "В разн. знач. палата",
+      "why": "suggest:maciev_ce_ru"
+    },
+    {
+      "from": "КХОТА",
+      "to": "КХЕТА",
+      "gloss": "Людей насмешишь) / Неца кхетта завелась моль / Наб кхета заснуть",
+      "why": "suggest:maciev_ce_ru"
+    },
+    {
+      "from": "ХЬОСТ",
+      "to": "ХЬАСТ",
+      "gloss": "Ш – поошрение / Поглаживание",
+      "why": "suggest:ismailov_ce_ru"
+    },
+    {
+      "from": "ЧУЬРПА",
+      "to": "ЧУЬРА",
+      "gloss": "Внутренний",
+      "why": "suggest:ismailov_ce_ru"
+    },
+    {
+      "from": "ХЬАЛХАРХА",
+      "to": "ХЬАЛХАРА",
+      "gloss": "Первый",
+      "why": "suggest:ismailov_ce_ru"
+    },
+    {
+      "from": "ЧЕПАЛГ",
+      "to": "ЧӀЕПАЛГ",
+      "gloss": "Аш – пшеничная лепешка / Начиненная творогом",
+      "why": "suggest:ismailov_ce_ru"
+    },
+    {
+      "from": "ТОПХА",
+      "to": "ТОВХА",
+      "gloss": "Наш – горская печь / Камин",
+      "why": "suggest:ismailov_ce_ru"
+    },
+    {
+      "from": "КХОЛЛАРГ",
+      "to": "КХОЛЛАР",
+      "gloss": "Сотворение / Созидание / Накидка",
+      "why": "suggest:ismailov_ce_ru"
+    },
+    {
+      "from": "ХОМА",
+      "to": "ХАМА",
+      "gloss": "Бережное отношение / Уважение / Почет",
+      "why": "suggest:ismailov_ce_ru"
+    },
+    {
+      "from": "НУХ",
+      "to": "НАХ",
+      "gloss": "Люди / Народ / Общество",
+      "why": "suggest:ismailov_ce_ru"
+    },
+    {
+      "from": "МАЖА",
+      "to": "МАГА",
+      "gloss": "Мочь",
+      "why": "suggest:maciev_ce_ru"
+    },
+    {
+      "from": "ТУЬРЛИ",
+      "to": "ТУЬРАН",
+      "gloss": "Сабельный",
+      "why": "suggest:ismailov_ce_ru"
+    },
+    {
+      "from": "ГАРГО",
+      "to": "ГЕРГО",
+      "gloss": "Поближе",
+      "why": "suggest:ismailov_ce_ru"
+    },
+    {
+      "from": "АКХРО",
+      "to": "АКХШО",
+      "gloss": "Даргинец / Даргинка",
+      "why": "suggest:maciev_ce_ru"
+    },
+    {
+      "from": "ДИКЪ",
+      "to": "ДИЪ",
+      "gloss": "Четыре",
+      "why": "suggest:ismailov_ce_ru"
+    },
+    {
+      "from": "ТӀОМА",
+      "to": "ТРОМБ",
+      "gloss": "М мед. тромб",
+      "why": "suggest:karasaev_maciev_ru_ce"
+    },
+    {
+      "from": "ОЛАР",
+      "to": "ОГАР",
+      "gloss": "Ковыль",
+      "why": "suggest:ismailov_ce_ru"
+    },
+    {
+      "from": "ЛОЦАР",
+      "to": "ЛАЦАР",
+      "gloss": "Поимка / Ловля / Уженье",
+      "why": "suggest:ismailov_ce_ru"
+    },
+    {
+      "from": "КХОЧУР",
+      "to": "КХОЧАР",
+      "gloss": "Ш – родственник",
+      "why": "suggest:ismailov_ce_ru"
+    },
+    {
+      "from": "ДАГАДАХАР",
+      "to": "ДАГАДАЛАР",
+      "gloss": "Консультация",
+      "why": "suggest:ismailov_ce_ru"
+    },
+    {
+      "from": "ОХЬАХИАР",
+      "to": "ОХЬАХААР",
+      "gloss": "Приседание",
+      "why": "suggest:ismailov_ce_ru"
+    },
+    {
+      "from": "ДАГӀАР",
+      "to": "ДАГАР",
+      "gloss": "Горение / Жар",
+      "why": "suggest:ismailov_ce_ru"
+    },
+    {
+      "from": "ДОЬДУ",
+      "to": "ДОЬЛУ",
+      "gloss": "Смеющийся",
+      "why": "suggest:ismailov_ce_ru"
+    },
+    {
+      "from": "СЕХАНА",
+      "to": "СЕЛХАНА",
+      "gloss": "Вчера утром / Вчера днем",
+      "why": "suggest:ismailov_ce_ru"
+    },
+    {
+      "from": "ТУЬМ",
+      "to": "ТУМ",
+      "gloss": "Кочерыжка",
+      "why": "suggest:ismailov_ce_ru"
+    },
+    {
+      "from": "МАХКАХЬ",
+      "to": "МАХКАХО",
+      "gloss": "Й – земляк / Сородич",
+      "why": "suggest:ismailov_ce_ru"
+    },
+    {
+      "from": "ТОХАРГ",
+      "to": "ТОХАР",
+      "gloss": "Масд. удар / Стук / Грам. ударение",
+      "why": "suggest:maciev_ce_ru"
+    },
+    {
+      "from": "ТОХИ",
+      "to": "ТОХА",
+      "gloss": "Ударить / Стукнуть / Кор тоха постучать в окно",
+      "why": "suggest:maciev_ce_ru"
+    },
+    {
+      "from": "ХОНКА",
+      "to": "ХОСКА",
+      "gloss": "Сумка",
+      "why": "suggest:ismailov_ce_ru"
+    },
+    {
+      "from": "ВАГЗАЛ",
+      "to": "ВОКЗАЛ",
+      "gloss": "Вокзал",
+      "why": "suggest:maciev_ce_ru"
+    },
+    {
+      "from": "ХЬАЬТТА",
+      "to": "ХЬАЬТТ",
+      "gloss": "Арш – ток / Лишай / Экзема",
+      "why": "suggest:ismailov_ce_ru"
+    },
+    {
+      "from": "КАРТ",
+      "to": "КАРА",
+      "gloss": "Наш – рукавица / На руки",
+      "why": "suggest:ismailov_ce_ru"
+    },
+    {
+      "from": "ТУРХО",
+      "to": "ТУРКО",
+      "gloss": "Й – турок / Турчанка",
+      "why": "suggest:ismailov_ce_ru"
+    },
+    {
+      "from": "АРТАР",
+      "to": "АРАР",
+      "gloss": "Молотьба",
+      "why": "suggest:ismailov_ce_ru"
+    },
+    {
+      "from": "ТОЛЛАМХО",
+      "to": "ТАЛЛАМХО",
+      "gloss": "Й – исследователь",
+      "why": "suggest:ismailov_ce_ru"
+    },
+    {
+      "from": "КХОМА",
+      "to": "КХЕМА",
+      "gloss": "Челюсть / Зубной протез / Инструмент для разминания кожи",
+      "why": "suggest:maciev_ce_ru"
+    },
+    {
+      "from": "ДОРТ",
+      "to": "ДЕРТ",
+      "gloss": "Аш – недостаток / Дефект",
+      "why": "suggest:ismailov_ce_ru"
+    },
+    {
+      "from": "КХЕЛХО",
+      "to": "КХАЛХО",
+      "gloss": "Переселить",
+      "why": "suggest:ismailov_ce_ru"
+    },
+    {
+      "from": "ХЬУКМАТ",
+      "to": "ХЬУРМАТ",
+      "gloss": "Почет / Уважение / Бережливость",
+      "why": "suggest:ismailov_ce_ru"
+    },
+    {
+      "from": "ОЬГӀАЗВАХАР",
+      "to": "ОЬГӀАЗДАХАР",
+      "gloss": "Обозление / Обида",
+      "why": "suggest:ismailov_ce_ru"
+    },
+    {
+      "from": "ТЕМЕ",
+      "to": "ТЕМА",
+      "gloss": "Показуха",
+      "why": "suggest:ismailov_ce_ru"
+    },
+    {
+      "from": "СИНХАТАМЕ",
+      "to": "СИНХААМЕ",
+      "gloss": "Интуитивный",
+      "why": "suggest:ismailov_ce_ru"
+    },
+    {
+      "from": "ПУЬЧ",
+      "to": "ПУТЧ",
+      "gloss": "М путч",
+      "why": "suggest:karasaev_maciev_ru_ce"
+    },
+    {
+      "from": "ДАГАЛААМ",
+      "to": "ДАГАЛАЦАМ",
+      "gloss": "Сознание",
+      "why": "suggest:ismailov_ce_ru"
+    },
+    {
+      "from": "КХЕЧО",
+      "to": "КЕЧО",
+      "gloss": "Подготовка",
+      "why": "suggest:ismailov_ce_ru"
+    },
+    {
+      "from": "САБАР",
+      "to": "САБА",
+      "gloss": "Наш – мыло",
+      "why": "suggest:ismailov_ce_ru"
+    },
+    {
+      "from": "ӀОБДАЛ",
+      "to": "ӀОВДАЛ",
+      "gloss": "Ш – дурак / Дура / Глупец",
+      "why": "suggest:ismailov_ce_ru"
+    },
+    {
+      "from": "БАХАНА",
+      "to": "БАХЬАНА",
+      "gloss": "Ш – причина / Повод / Старание",
+      "why": "suggest:ismailov_ce_ru"
+    },
+    {
+      "from": "ХЬАЛХАХЬ",
+      "to": "ХЬАЛАХЬ",
+      "gloss": "Наверху",
+      "why": "suggest:ismailov_ce_ru"
+    },
+    {
+      "from": "АЬРРО",
+      "to": "АЬРРУ",
+      "gloss": "Левый",
+      "why": "suggest:ismailov_ce_ru"
+    },
+    {
+      "from": "ЛАКХАЛЛА",
+      "to": "ЛЕКХАЛЛА",
+      "gloss": "Высота",
+      "why": "suggest:ismailov_ce_ru"
+    },
+    {
+      "from": "ТЕМЕХЬ",
+      "to": "ТЕМЕНЬ",
+      "gloss": "Ж разг. бода",
+      "why": "suggest:karasaev_maciev_ru_ce"
+    },
+    {
+      "from": "МАССАРАА",
+      "to": "МАССАРА",
+      "gloss": "Все",
+      "why": "suggest:ismailov_ce_ru"
+    },
+    {
+      "from": "ТХЬАН",
+      "to": "ТХАН",
+      "gloss": "Наш / Наша / Наше",
+      "why": "suggest:ismailov_ce_ru"
+    },
+    {
+      "from": "ЧОЬТА",
+      "to": "ЧОЬРА",
+      "gloss": "Дуплистый / Пустотелый",
+      "why": "suggest:ismailov_ce_ru"
+    },
+    {
+      "from": "ХЬАРК",
+      "to": "ХЬАР",
+      "gloss": "Раздражение / Шевеление",
+      "why": "suggest:ismailov_ce_ru"
+    },
+    {
+      "from": "ПОХЬМА",
+      "to": "ПОХӀМА",
+      "gloss": "Талант / Дар",
+      "why": "suggest:ismailov_ce_ru"
+    },
+    {
+      "from": "КЪОМ",
+      "to": "КЪАМ",
+      "gloss": "Народ / Народность / Национальность",
+      "why": "suggest:ismailov_ce_ru"
+    },
+    {
+      "from": "ШОЛДАН",
+      "to": "ШЕЛДАН",
+      "gloss": "Охладить / Охлаждать / Остудить",
+      "why": "suggest:ismailov_ce_ru"
+    },
+    {
+      "from": "ДОРЦ",
+      "to": "ДАРЦ",
+      "gloss": "Аш – вьюга / Снежный буран / Метель",
+      "why": "suggest:ismailov_ce_ru"
+    },
+    {
+      "from": "КХОЛ",
+      "to": "КОЛ",
+      "gloss": "Куст / Кустарник",
+      "why": "suggest:maciev_ce_ru"
+    },
+    {
+      "from": "ТӀОМАДАЛА",
+      "to": "ТӀЕМАДАЛА",
+      "gloss": "Взлететь / Окрылиться",
+      "why": "suggest:ismailov_ce_ru"
+    },
+    {
+      "from": "ДИНБАР",
+      "to": "ДИЕБАР",
+      "gloss": "Размножение",
+      "why": "suggest:ismailov_ce_ru"
+    },
+    {
+      "from": "ХЬАЛАХАТТАР",
+      "to": "ХЬАЛАСАТТАР",
+      "gloss": "Выпрямление",
+      "why": "suggest:ismailov_ce_ru"
+    },
+    {
+      "from": "ДЕХАЛЛА",
+      "to": "ДЕГАЛЛА",
+      "gloss": "Самолюбие",
+      "why": "suggest:ismailov_ce_ru"
+    },
+    {
+      "from": "СТОММИЙ",
+      "to": "СТОЙКИЙ",
+      "gloss": "1. собаре / Собарениг / 2. стагаллайерг",
+      "why": "suggest:ismailov_ru_ce"
+    },
+    {
+      "from": "КЪОНАХАЛЛА",
+      "to": "КЪОНАХЧАЛЛА",
+      "gloss": "Мужество",
+      "why": "suggest:maciev_ce_ru"
+    },
+    {
+      "from": "СИНТОАМАЛЛА",
+      "to": "СИНХААМАЛЛА",
+      "gloss": "Дешнаш Бексултанов Мусан / Сан ойланаш а…)",
+      "why": "suggest:baisultanov_ce_ru"
+    },
+    {
+      "from": "МАРШОНАН",
+      "to": "МАРШОНАХ",
+      "gloss": "Ваккхар д лишение свободы",
+      "why": "suggest:abdurashidov_ce_ru_ru_ce"
+    },
+    {
+      "from": "БАРТАХЬ",
+      "to": "БЕРТАХЬ",
+      "gloss": "Согласно / Согласованно / Дружно",
+      "why": "suggest:ismailov_ce_ru"
+    },
+    {
+      "from": "ДАЙМОХКАН",
+      "to": "ДАЙМЕХКАН",
+      "gloss": "Отечественный",
+      "why": "suggest:ismailov_ce_ru"
+    },
+    {
+      "from": "ПОХЬМАЛЛА",
+      "to": "ПОХӀМАЛЛА",
+      "gloss": "Талантливость / Способность",
+      "why": "suggest:ismailov_ce_ru"
+    },
+    {
+      "from": "СИНМАРХО",
+      "to": "СИНМАРШО",
+      "gloss": "Дух свободы. Вайн синмаршо / Сатийсамаш Бохамашца лакъийнехь / Вайн Ницкъ",
+      "why": "suggest:baisultanov_ce_ru"
+    },
+    {
+      "from": "ЭСАР",
+      "to": "ЭЗАР",
+      "gloss": "Тысяча",
+      "why": "suggest:ismailov_ce_ru"
+    },
+    {
+      "from": "КЪИНТХЕРА",
+      "to": "КЪИНТӀЕРА",
+      "gloss": "Ваккха попросить прощения / Извиниться",
+      "why": "suggest:abdurashidov_ce_ru_ru_ce"
+    },
+    {
+      "from": "БЕХКЗА",
+      "to": "БЕХКАЗА",
+      "gloss": "Невинный / Невиновный",
+      "why": "suggest:ismailov_ce_ru"
+    },
+    {
+      "from": "ТАМАША",
+      "to": "ТАМАШ",
+      "gloss": "Удивление / Диво / Чудо",
+      "why": "suggest:ismailov_ce_ru"
+    },
+    {
+      "from": "ТОЛАМАХО",
+      "to": "ТОЛАМХО",
+      "gloss": "Победитель / Победительница",
+      "why": "suggest:maciev_ce_ru"
+    },
+    {
+      "from": "ДИНХО",
+      "to": "ДАЛХО",
+      "gloss": "Жаловаться / Сетовать / Выражать неудовольствие",
+      "why": "suggest:ismailov_ce_ru"
+    },
+    {
+      "from": "ШАРӀАТ",
+      "to": "ШАРИАТ",
+      "gloss": "ШарI",
+      "why": "suggest:ismailov_ru_ce"
+    },
+    {
+      "from": "КХЕЛТАХО",
+      "to": "КХЕЛАХО",
+      "gloss": "Й – участник третейского суда / Мировой судья",
+      "why": "suggest:ismailov_ce_ru"
+    },
+    {
+      "from": "ИЛЛИНЧА",
+      "to": "ИЛЛАНЧА",
+      "gloss": "Ш – поэт-песенник / Бард",
+      "why": "suggest:ismailov_ce_ru"
+    },
+    {
+      "from": "ХЕЛХАРХО",
+      "to": "ХЕЛХАРЧА",
+      "gloss": "Ш – танцор / Плясун / Плясунья",
+      "why": "suggest:ismailov_ce_ru"
+    },
+    {
+      "from": "ЙАЗАРХО",
+      "to": "ЙАЗДАРХО",
+      "gloss": "Й – писатель / Писательница",
+      "why": "suggest:ismailov_ce_ru"
+    },
+    {
+      "from": "БАЙТАШ",
+      "to": "БАЙТА",
+      "gloss": "Понуд. от бан3",
+      "why": "suggest:maciev_ce_ru"
+    },
+    {
+      "from": "ТЕСТ",
+      "to": "ТЕКСТ",
+      "gloss": "Текст / Сочиненин текст текст сочинения",
+      "why": "suggest:maciev_ce_ru"
+    },
+    {
+      "from": "ЗЕРАЛЛА",
+      "to": "ЗОРАЛЛА",
+      "gloss": "Отвага",
+      "why": "suggest:ismailov_ce_ru"
+    },
+    {
+      "from": "НЕСК",
+      "to": "НЕКК",
+      "gloss": "Некк",
+      "why": "suggest:daukaev_ru_ce"
+    },
+    {
+      "from": "НИЗАМАШ",
+      "to": "НИЗАМАН",
+      "gloss": "Дисциплинарный",
+      "why": "suggest:ismailov_ce_ru"
+    },
+    {
+      "from": "ХОБАР",
+      "to": "ХАБАР",
+      "gloss": "Ш – слух / Молва / Известия",
+      "why": "suggest:ismailov_ce_ru"
+    },
+    {
+      "from": "ТАРИХАН",
+      "to": "ТАРХАН",
+      "gloss": "Скальный",
+      "why": "suggest:ismailov_ce_ru"
+    },
+    {
+      "from": "ЛАМАНАШ",
+      "to": "ЛАМАНАН",
+      "gloss": "Горный",
+      "why": "suggest:ismailov_ce_ru"
+    },
+    {
+      "from": "ХИНТОХАР",
+      "to": "ХАНТОХАР",
+      "gloss": "Масд. осуждение / Назначение срока",
+      "why": "suggest:maciev_ce_ru"
+    },
+    {
+      "from": "БАЬЦНАШ",
+      "to": "БАЬЛНАШ",
+      "gloss": "Мн. от бал",
+      "why": "suggest:maciev_ce_ru"
+    },
+    {
+      "from": "ЗЕЗАГАШ",
+      "to": "ЗЕЗАГАН",
+      "gloss": "Цветочный",
+      "why": "suggest:maciev_ce_ru"
+    },
+    {
+      "from": "ДИТТАШ",
+      "to": "ДИТТА",
+      "gloss": "Стирать / Лить / Поливать",
+      "why": "suggest:ismailov_ce_ru"
+    },
+    {
+      "from": "АЬРЦ",
+      "to": "АРЦ",
+      "gloss": "Гора",
+      "why": "suggest:ismailov_ce_ru"
+    },
+    {
+      "from": "ГУРАШ",
+      "to": "ГУРА",
+      "gloss": "Клетка / Косяк / Западня",
+      "why": "suggest:maciev_ce_ru"
+    },
+    {
+      "from": "ТОХИЙЛА",
+      "to": "ТОХИЙТА",
+      "gloss": "Понуд. от тоха",
+      "why": "suggest:maciev_ce_ru"
+    },
+    {
+      "from": "СТИГЛАН",
+      "to": "СТИГАЛАН",
+      "gloss": "Небесный",
+      "why": "suggest:ismailov_ce_ru"
+    },
+    {
+      "from": "БОДАЛЛА",
+      "to": "БОЗАЛЛА",
+      "gloss": "См. дозалла2",
+      "why": "suggest:maciev_ce_ru"
+    },
+    {
+      "from": "ГУЬЙРАН",
+      "to": "ГУЬЙРИГ",
+      "gloss": "Чурбан / Чурка",
+      "why": "suggest:ismailov_ce_ru"
+    },
+    {
+      "from": "ХЬУКМАТАН",
+      "to": "ХЬУКМАДАН",
+      "gloss": "Приговорить / Предначертать",
+      "why": "suggest:ismailov_ce_ru"
+    },
+    {
+      "from": "ЭЛХИ",
+      "to": "ЭЛЧА",
+      "gloss": "Пророк / Посланник Аллаха / Посол",
+      "why": "suggest:ismailov_ce_ru"
+    },
+    {
+      "from": "БАЧА",
+      "to": "БАА",
+      "gloss": "См. даа",
+      "why": "suggest:maciev_ce_ru"
+    },
+    {
+      "from": "БАЗАРХОЙ",
+      "to": "БАЗАРХО",
+      "gloss": "Й – торговец / Торговка",
+      "why": "suggest:ismailov_ce_ru"
+    },
+    {
+      "from": "ПХЬАРАШ",
+      "to": "ПХЬЕРАШ",
+      "gloss": "Мн. от пхьар",
+      "why": "suggest:maciev_ce_ru"
+    },
+    {
+      "from": "ДОШАМАШ",
+      "to": "ДОШАМАН",
+      "gloss": "Словарный",
+      "why": "suggest:ismailov_ce_ru"
+    },
+    {
+      "from": "КЕХАТАШ",
+      "to": "КЕХАТАН",
+      "gloss": "Бумажный",
+      "why": "suggest:ismailov_ce_ru"
+    },
+    {
+      "from": "ХОАМАШ",
+      "to": "ХААМАШ",
+      "gloss": "Буьззина цахилар д неполнота сведений",
+      "why": "suggest:abdurashidov_ce_ru_ru_ce"
+    },
+    {
+      "from": "КЪАМЕЛИН",
+      "to": "КЪАМЕЛАН",
+      "gloss": "Разговорный / Речевой",
+      "why": "suggest:ismailov_ce_ru"
+    },
+    {
+      "from": "БАРТКХОЛЛАР",
+      "to": "БАРТКХОЛЛАМ",
+      "gloss": "Устное творчество. Ойла ца йича / Самукъане а / Хилларг сийсаз де",
+      "why": "suggest:baisultanov_ce_ru"
+    },
+    {
+      "from": "ХЬАКЪАЛЛА",
+      "to": "ХЬОКЪАЛЛА",
+      "gloss": "Соответствие",
+      "why": "suggest:ismailov_ce_ru"
+    },
+    {
+      "from": "СИЙБАР",
+      "to": "СИЙДАР",
+      "gloss": "Почитание / Уважение / Позор",
+      "why": "suggest:ismailov_ce_ru"
+    },
+    {
+      "from": "ДАЙХОЙ",
+      "to": "ДАЙХО",
+      "gloss": "Полегче / Подешевле",
+      "why": "suggest:ismailov_ce_ru"
+    },
+    {
+      "from": "МОГУШАЛЛА",
+      "to": "МОГАШАЛЛА",
+      "gloss": "Здоровье",
+      "why": "suggest:ismailov_ce_ru"
+    },
+    {
+      "from": "ЛОРВАЛАР",
+      "to": "ЛАРДАЛАР",
+      "gloss": "Осторожность / Предусмотрительность",
+      "why": "suggest:ismailov_ce_ru"
+    },
+    {
+      "from": "ЛАЗАРАШ",
+      "to": "ЛАЗАРАН",
+      "gloss": "Болевой",
+      "why": "suggest:ismailov_ce_ru"
+    },
+    {
+      "from": "ЛАКСАР",
+      "to": "ЛАКХАР",
+      "gloss": "Игра на музыкальном инструменте / Исполнение песни",
+      "why": "suggest:ismailov_ce_ru"
+    },
+    {
+      "from": "ХЬОСТАШ",
+      "to": "ХЬОСТАМ",
+      "gloss": "Аш – гвоздь",
+      "why": "suggest:ismailov_ce_ru"
+    },
+    {
+      "from": "КЕМАХО",
+      "to": "КЕМАНХО",
+      "gloss": "Лодочник",
+      "why": "suggest:maciev_ce_ru"
+    },
+    {
+      "from": "ТУЬКАХО",
+      "to": "ТУЬКАНХО",
+      "gloss": "Уст. лавочник / Лавочница",
+      "why": "suggest:maciev_ce_ru"
+    },
+    {
+      "from": "БОЛХОЙ",
+      "to": "БЕЛХИЙ",
+      "gloss": "Участники белхи",
+      "why": "suggest:ismailov_ce_ru"
+    },
+    {
+      "from": "ДАРЖХО",
+      "to": "ДАРЖО",
+      "gloss": "Разложить / Расстелить / Устлать",
+      "why": "suggest:ismailov_ce_ru"
+    },
+    {
+      "from": "КУЬЙГАЛЛАДАР",
+      "to": "КУЬЙГАЛЛАДАН",
+      "gloss": "Руководить",
+      "why": "suggest:ismailov_ce_ru"
+    },
+    {
+      "from": "СИЙСАМАЛЛА",
+      "to": "СИЙСАЗАЛЛА",
+      "gloss": "Уродливость / Безобразие / Бесстыдство",
+      "why": "suggest:ismailov_ce_ru"
+    },
+    {
+      "from": "КЪОНАХАЛЛИН",
+      "to": "КЪУОНАХАЛЛИН",
+      "gloss": "Молодеческий / Мужественный / Стойкий",
+      "why": "suggest:ismailov_ce_ru"
+    },
+    {
+      "from": "СОБАРЛИН",
+      "to": "СОБАРДАН",
+      "gloss": "Ждать / Терпеть",
+      "why": "suggest:ismailov_ce_ru"
+    },
+    {
+      "from": "ЭСАРАЛЛА",
+      "to": "ЭВСАРАЛЛА",
+      "gloss": "Изобилие / Продуктивность",
+      "why": "suggest:ismailov_ce_ru"
+    },
+    {
+      "from": "ТОЛАМАЛЛА",
+      "to": "ТИДАМАЛЛА",
+      "gloss": "Д наблюдательность",
+      "why": "suggest:abdurashidov_ce_ru_ru_ce"
+    },
+    {
+      "from": "ЭШАМАЛЛА",
+      "to": "ЭКАМАЛЛА",
+      "gloss": "Чувствительность / Восприимчивость / Раздражительность",
+      "why": "suggest:ismailov_ce_ru"
+    },
+    {
+      "from": "ЗЕНАЛЛА",
+      "to": "ЗЕВНАЛЛА",
+      "gloss": "Хьан озан зевналла муьйлуш / Сан къинна дилхина маликаш",
+      "why": "suggest:baisultanov_ce_ru"
+    },
+    {
+      "from": "ХЬАЖАМАЛЛА",
+      "to": "ХЬАЛАЛАЛЛА",
+      "gloss": "Объект в ед. погнать вверх",
+      "why": "suggest:maciev_ce_ru"
+    },
+    {
+      "from": "ТАЛЛАМАЛЛА",
+      "to": "ТАЛМАЖАЛЛА",
+      "gloss": "Синхронный перевод",
+      "why": "suggest:ismailov_ce_ru"
+    },
+    {
+      "from": "СЕДАЛЛА",
+      "to": "СЕМАЛЛА",
+      "gloss": "Чуткость / Бдительность / Настороженность",
+      "why": "suggest:ismailov_ce_ru"
+    },
+    {
+      "from": "БАЧАЛЛА",
+      "to": "БАЦИЛЛА",
+      "gloss": "Бацилла",
+      "why": "suggest:maciev_ce_ru"
+    },
+    {
+      "from": "КХЕЛАЛЛА",
+      "to": "КЪЕНАЛЛА",
+      "gloss": "Старость",
+      "why": "suggest:ismailov_ce_ru"
+    },
+    {
+      "from": "МОГУШАЛЛИН",
+      "to": "МОГАШАЛЛИН",
+      "gloss": "Заздравный",
+      "why": "suggest:ismailov_ce_ru"
+    },
+    {
+      "from": "ИНЖЕНЕРИ",
+      "to": "ИНЖЕНЕР",
+      "gloss": "Инженер",
+      "why": "suggest:maciev_ce_ru"
+    },
+    {
+      "from": "СОЦИОЛОГИ",
+      "to": "СОЦИОЛОГ",
+      "gloss": "М социолог",
+      "why": "suggest:karasaev_maciev_ru_ce"
+    },
+    {
+      "from": "ЭКОЛОГИ",
+      "to": "ЭКОНОМИ",
+      "gloss": "Экономия",
+      "why": "suggest:maciev_ce_ru"
+    },
+    {
+      "from": "ФАРМАЦИ",
+      "to": "ФОРМАЦИ",
+      "gloss": "Формация",
+      "why": "suggest:maciev_ce_ru"
+    },
+    {
+      "from": "САНИТАРИ",
+      "to": "САНИТАР",
+      "gloss": "Санитар",
+      "why": "suggest:maciev_ce_ru"
+    },
+    {
+      "from": "КООРДИНАЦИ",
+      "to": "КООРДИНАТА",
+      "gloss": "Координата",
+      "why": "suggest:maciev_ce_ru"
+    },
+    {
+      "from": "СИНКХЕРАМ",
+      "to": "СИНКХЕТАМ",
+      "gloss": "Сознание",
+      "why": "suggest:ismailov_ce_ru"
+    },
+    {
+      "from": "ДАГАЛЕЦАМАЛЛА",
+      "to": "ДАГАЛАЦАМАЛЛА",
+      "gloss": "Осознанность",
+      "why": "suggest:ismailov_ce_ru"
+    },
+    {
+      "from": "БАЧАЛЛИН",
+      "to": "БЕРАЛЛИН",
+      "gloss": "Младенческий",
+      "why": "suggest:ismailov_ce_ru"
+    },
+    {
+      "from": "КХЕЛТАХОЙН",
+      "to": "КХЕЛАХОЙН",
+      "gloss": "Судейский",
+      "why": "suggest:ismailov_ce_ru"
+    },
+    {
+      "from": "ТУРХОЙН",
+      "to": "ТУРКОЙН",
+      "gloss": "Турецкий",
+      "why": "suggest:ismailov_ce_ru"
+    },
+    {
+      "from": "ДАЙХОЙН",
+      "to": "ДАКЪОЙН",
+      "gloss": "Дробный",
+      "why": "suggest:umarhadjiev_ahmatukaev_ce_ru_ru_ce"
+    },
+    {
+      "from": "АНАЛИТИКА",
+      "to": "АНАЛИТИК",
+      "gloss": "М аналитик / Талламхо",
+      "why": "suggest:karasaev_maciev_ru_ce"
+    },
+    {
+      "from": "НАНОТЕХНОЛОГИ",
+      "to": "НАНАТЕХНОЛОГИ",
+      "gloss": "Уьш шайн заманан нах а / Къонахий а хилла / Амма динберийн зама яхана",
+      "why": "suggest:baisultanov_ce_ru"
+    },
+    {
+      "from": "ДЕМОГРАФИ",
+      "to": "ДЕМОКРАТИ",
+      "gloss": "Демократия",
+      "why": "suggest:maciev_ce_ru"
+    },
+    {
+      "from": "БИБЛИОГРАФИ",
+      "to": "БИБЛИОГРАФ",
+      "gloss": "М библиограф",
+      "why": "suggest:karasaev_maciev_ru_ce"
+    },
+    {
+      "from": "АХАРАЛЛА",
+      "to": "АКХАРАЛЛА",
+      "gloss": "Зверство",
+      "why": "suggest:ismailov_ce_ru"
+    },
+    {
+      "from": "МАГИСТР",
+      "to": "МИНИСТР",
+      "gloss": "Министр",
+      "why": "suggest:maciev_ce_ru"
+    },
+    {
+      "from": "СПИКЕР",
+      "to": "СПИНОР",
+      "gloss": "Спинор",
+      "why": "suggest:umarhadjiev_ahmatukaev_ce_ru_ru_ce"
+    }
+  ],
+  "dropped_n": 555,
+  "dropped_sample": [
+    {
+      "word": "ДАДАЙ",
+      "reason": "duplicate:ДАДА"
+    },
+    {
+      "word": "ХӀАНХӀА",
+      "reason": "not-in-dikdosham",
+      "old": "Нет"
+    },
+    {
+      "word": "ПХЬАРСТ",
+      "reason": "duplicate:ПХЬАРС"
+    },
+    {
+      "word": "ТӀОГӀА",
+      "reason": "not-in-dikdosham",
+      "old": "Пятка / подошва"
+    },
+    {
+      "word": "ТӀУМА",
+      "reason": "not-in-dikdosham",
+      "old": "Костный мозг / суть"
+    },
+    {
+      "word": "ХЬОРС",
+      "reason": "not-in-dikdosham",
+      "old": "Борода"
+    },
+    {
+      "word": "СА",
+      "reason": "duplicate:СА"
+    },
+    {
+      "word": "МОТТО",
+      "reason": "duplicate:МОТТ"
+    },
+    {
+      "word": "ХИМАЛЛИТ",
+      "reason": "not-in-dikdosham",
+      "old": "Кувшин для омовения"
+    },
+    {
+      "word": "ПХЬЕГӀАШ",
+      "reason": "not-in-dikdosham",
+      "old": "Посуда / утварь"
+    },
+    {
+      "word": "ЙОХК",
+      "reason": "not-in-dikdosham",
+      "old": "Цена / продажа"
+    },
+    {
+      "word": "ЭЦАР",
+      "reason": "not-in-dikdosham",
+      "old": "Покупка"
+    },
+    {
+      "word": "САРАМСАКХ",
+      "reason": "not-in-dikdosham",
+      "old": "Чеснок"
+    },
+    {
+      "word": "ХЬОЖОЛГ",
+      "reason": "not-in-dikdosham",
+      "old": "Галушка"
+    },
+    {
+      "word": "ХЬАЖКӀА",
+      "reason": "not-in-dikdosham",
+      "old": "Кукуруза"
+    },
+    {
+      "word": "КОМАСТ",
+      "reason": "not-in-dikdosham",
+      "old": "Малина / ежевика"
+    },
+    {
+      "word": "НАКХАР",
+      "reason": "duplicate:НАКХА"
+    },
+    {
+      "word": "ӀУЙРЕ",
+      "reason": "not-in-dikdosham",
+      "old": "Утро"
+    },
+    {
+      "word": "МАРХАШ",
+      "reason": "suggest-miss:МАРХА1",
+      "old": "Облака / тучи"
+    },
+    {
+      "word": "ШОЛДА",
+      "reason": "not-in-dikdosham",
+      "old": "Лед / иней"
+    },
+    {
+      "word": "ВАХАР",
+      "reason": "not-in-dikdosham",
+      "old": "Идти / жизнь / уход"
+    },
+    {
+      "word": "ЭЦАРХО",
+      "reason": "not-in-dikdosham",
+      "old": "Покупатель"
+    },
+    {
+      "word": "КХОЛЛАР",
+      "reason": "duplicate:КХОЛЛАР"
+    },
+    {
+      "word": "КХОБАР",
+      "reason": "duplicate:КХОЧАР"
+    },
+    {
+      "word": "ВАЛАР",
+      "reason": "not-in-dikdosham",
+      "old": "Выйти / скончаться"
+    },
+    {
+      "word": "ВОН",
+      "reason": "not-in-dikdosham",
+      "old": "Плохой / злой"
+    },
+    {
+      "word": "ОРЕХЬ",
+      "reason": "suggest-miss:ОРЕХ",
+      "old": "Внутри"
+    },
+    {
+      "word": "ДИЪ",
+      "reason": "duplicate:ДИЪ"
+    },
+    {
+      "word": "ЮРТ",
+      "reason": "not-in-dikdosham",
+      "old": "Село / деревня"
+    },
+    {
+      "word": "ХЬУЬН",
+      "reason": "not-in-dikdosham",
+      "old": "Лес"
+    },
+    {
+      "word": "ХОХКАРГ",
+      "reason": "not-in-dikdosham",
+      "old": "Лодка / челн"
+    },
+    {
+      "word": "ОТТУЗ",
+      "reason": "not-in-dikdosham",
+      "old": "Остановка"
+    },
+    {
+      "word": "БОЛХОРГ",
+      "reason": "not-in-dikdosham",
+      "old": "Работник / мастер"
+    },
+    {
+      "word": "ДЕШАРДОН",
+      "reason": "not-in-dikdosham",
+      "old": "Учебное заведение"
+    },
+    {
+      "word": "КХЕРАМ",
+      "reason": "not-in-dikdosham",
+      "old": "Опасность"
+    },
+    {
+      "word": "КХОЧУШ",
+      "reason": "not-in-dikdosham",
+      "old": "Прибытие"
+    },
+    {
+      "word": "ЛОХТУР",
+      "reason": "not-in-dikdosham",
+      "old": "Врач / доктор"
+    },
+    {
+      "word": "ЖӀАРХО",
+      "reason": "not-in-dikdosham",
+      "old": "Воин / всадник"
+    },
+    {
+      "word": "ТОПХАХО",
+      "reason": "not-in-dikdosham",
+      "old": "Сыровар"
+    },
+    {
+      "word": "ГӀИШЛОХО",
+      "reason": "not-in-dikdosham",
+      "old": "Строитель"
+    }
+  ],
+  "levels": {
+    "A1": 272,
+    "A2": 243,
+    "B1": 177,
+    "B2": 169,
+    "C1": 51,
+    "C2": 33
+  }
+}

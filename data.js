@@ -28,6 +28,7 @@ const WordRamData = {
       icon: "🧽",
       startLevel: 1,
       endLevel: 20,
+      story: "Губка только учится словам. Пройди уровни по одному — и она доплывёт до берега.",
       milestones: [
         { level: 5, label: "5 ур.", icon: "🎁", title: "Сундук монет" },
         { level: 10, label: "10 ур.", icon: "📖", title: "Книга слов" },
@@ -40,6 +41,7 @@ const WordRamData = {
       icon: "🪼",
       startLevel: 21,
       endLevel: 45,
+      story: "Медуза зовёт дальше. Каждое найденное слово — шаг сквозь воду.",
       milestones: [
         { level: 25, label: "25 ур.", icon: "🎁", title: "Сундук монет" },
         { level: 35, label: "35 ур.", icon: "📖", title: "Книга слов" },
@@ -52,6 +54,7 @@ const WordRamData = {
       icon: "🐌",
       startLevel: 46,
       endLevel: 70,
+      story: "Улитка не спешит. Играй каждый день — так слова остаются в памяти.",
       milestones: [
         { level: 50, label: "50 ур.", icon: "🎁", title: "Сундук монет" },
         { level: 60, label: "60 ур.", icon: "📖", title: "Книга слов" },
@@ -64,6 +67,7 @@ const WordRamData = {
       icon: "🦉",
       startLevel: 71,
       endLevel: 95,
+      story: "Сова любит точные слова. Чем дальше глава, тем интереснее находки.",
       milestones: [
         { level: 75, label: "75 ур.", icon: "🎁", title: "Сундук монет" },
         { level: 85, label: "85 ур.", icon: "📖", title: "Книга слов" },
@@ -76,6 +80,7 @@ const WordRamData = {
       icon: "🦊",
       startLevel: 96,
       endLevel: 125,
+      story: "Лисёнок собирает языки. Твой словарь — его сокровище.",
       milestones: [
         { level: 100, label: "100 ур.", icon: "🎁", title: "Сундук мастера" },
         { level: 115, label: "115 ур.", icon: "📖", title: "Книга слов" },
@@ -92,6 +97,99 @@ const WordRamData = {
     { code: "C1", title: "Продвинутый (C1)", badge: "C1 — Advanced", minXp: 4000, nextXp: 7000 }
   ],
 
+  wordOfTheDayPools: {
+    english: [
+      { word: "COURAGE", ph: "[ˈkʌrɪdʒ]", tr: "Мужество / Смелость / Отвага", ex: "Have the courage to speak — Иметь смелость заговорить." },
+      { word: "PERSEVERE", ph: "[ˌpɜːsɪˈvɪə]", tr: "Упорствовать / Стойко продолжать", ex: "Persevere through difficulties — Преодолевать трудности." },
+      { word: "GENEROSITY", ph: "[ˌdʒenəˈrɒsɪti]", tr: "Щедрость / Великодушие", ex: "Show true generosity — Проявлять искреннее великодушие." },
+      { word: "KNOWLEDGE", ph: "[ˈnɒlɪdʒ]", tr: "Знание / Познание", ex: "Knowledge is power — Знание — сила." },
+      { word: "DISCOVERY", ph: "[dɪˈskʌvəri]", tr: "Открытие / Находка", ex: "Make a great discovery — Сделать великое открытие." }
+    ],
+    chechen: [
+      { word: "КЪОНАХ", tr: "Благородный муж / Рыцарь чести", ex: "Къонахчун дош — тешаме. — Слово къонаха надежно." },
+      { word: "ОЬЗДАНГАЛЛА", tr: "Благородство / Вежливость / Такт", ex: "Оьздангалла — адамаллин коьрта билгало. — Благородство — главный признак человечности." },
+      { word: "НОХЧАЛЛА", tr: "Чеченский кодекс чести и достоинства", ex: "Нохчалла ларъяр — коьрта декхар. — Соблюдение нохчалла — главный долг." },
+      { word: "ХЬОШАЛЛА", tr: "Гостеприимство и радушие", ex: "Хьаша варе сатийсар — Ожидание гостя — прекрасный обычай." },
+      { word: "СОБАР", tr: "Терпение и выдержка", ex: "Собар — толаман некъ. — Терпение — путь к победе." }
+    ]
+  },
+
+  _wodPoolCache: {},
+
+  hashString(str) {
+    let h = 2166136261;
+    const s = String(str || "");
+    for (let i = 0; i < s.length; i++) {
+      h ^= s.charCodeAt(i);
+      h = Math.imul(h, 16777619);
+    }
+    return h >>> 0;
+  },
+
+  getWordOfTheDayPool(lang = "english") {
+    const key = lang === "chechen" ? "chechen" : "english";
+    if (this._wodPoolCache[key] && this._wodPoolCache[key].length) return this._wodPoolCache[key];
+    const words = [];
+    if (key === "chechen") {
+      const dict = this.chechenDictionary || {};
+      ["A1", "A2", "B1", "B2"].forEach((level) => {
+        const byLen = dict[level] || {};
+        Object.keys(byLen).forEach((lenStr) => {
+          const n = parseInt(lenStr, 10);
+          if (n < 3 || n > 8) return;
+          (byLen[lenStr] || []).forEach((w) => { if (w) words.push(w); });
+        });
+      });
+    } else {
+      const dict = this.cefrDictionary || {};
+      ["A1", "A2", "B1", "B2"].forEach((level) => {
+        const byLen = dict[level] || {};
+        Object.keys(byLen).forEach((lenStr) => {
+          const n = parseInt(lenStr, 10);
+          if (n < 4 || n > 9) return;
+          (byLen[lenStr] || []).forEach((w) => { if (w) words.push(w); });
+        });
+      });
+    }
+    const fallback = (key === "chechen" ? this.wordOfTheDayPools.chechen : this.wordOfTheDayPools.english)
+      .map((item) => item.word);
+    this._wodPoolCache[key] = words.length ? words : fallback;
+    return this._wodPoolCache[key];
+  },
+
+  formatWordOfTheDay(word, lang = "english") {
+    const details = this.getWordDetails(word, lang) || {};
+    const fallbackPool = lang === "chechen" ? this.wordOfTheDayPools.chechen : this.wordOfTheDayPools.english;
+    const fallback = fallbackPool.find((item) => item.word === word) || {};
+    return {
+      word: details.word || word,
+      ph: details.ph || fallback.ph || "",
+      tr: details.tr || fallback.tr || "",
+      ex: details.ex || fallback.ex || ""
+    };
+  },
+
+  getWordOfTheDay(lang = "english", dateStr, excludeWords = []) {
+    const pool = this.getWordOfTheDayPool(lang);
+    const exclude = new Set((excludeWords || []).map((w) => String(w).toUpperCase()));
+    let filtered = pool.filter((w) => !exclude.has(String(w).toUpperCase()));
+    if (!filtered.length) filtered = pool.slice();
+    const seed = `${dateStr || ""}|${lang === "chechen" ? "chechen" : "english"}`;
+    const idx = this.hashString(seed) % filtered.length;
+    return this.formatWordOfTheDay(filtered[idx], lang);
+  },
+
+  applyWordEase(levelCode, ease = "normal", lang = "english") {
+    const bands = lang === "chechen"
+      ? ["A1", "A2", "B1", "B2", "C1", "C2"]
+      : ["A1", "A2", "B1", "B2", "C1"];
+    let idx = bands.indexOf(levelCode);
+    if (idx < 0) idx = 0;
+    if (ease === "easier") idx = Math.max(0, idx - 1);
+    if (ease === "harder") idx = Math.min(bands.length - 1, idx + 1);
+    return bands[idx];
+  },
+
   leagues: [
     { id: 1, name: "Бронзовая лига", icon: "🥉", color: "#cd7f32", minXpWeek: 0, rewardCoins: 50 },
     { id: 2, name: "Серебряная лига", icon: "🥈", color: "#94a3b8", minXpWeek: 200, rewardCoins: 100 },
@@ -101,9 +199,9 @@ const WordRamData = {
   ],
 
   dailyQuestsTemplates: [
-    { id: "find_words", title: "Сыщик слов", desc: "Найдите 8 любых слов на игровом поле", target: 8, rewardCoins: 20, rewardXp: 40 },
-    { id: "no_hints", title: "Чистый разум", desc: "Пройдите 2 уровня без использования подсказок", target: 2, rewardCoins: 25, rewardXp: 50 },
-    { id: "vocab_review", title: "Любознательность", desc: "Откройте и изучите 3 карточки в словаре", target: 3, rewardCoins: 15, rewardXp: 30 }
+    { id: "find_words", title: "Сыщик слов", desc: "Найдите 8 слов на поле", target: 8, rewardCoins: 20, rewardXp: 40 },
+    { id: "no_hints", title: "Чистый разум", desc: "2 уровня без подсказок", target: 2, rewardCoins: 25, rewardXp: 50 },
+    { id: "vocab_review", title: "Любознательность", desc: "3 карточки в словаре", target: 3, rewardCoins: 15, rewardXp: 30 }
   ],
 
   achievements: [
@@ -121,13 +219,22 @@ const WordRamData = {
   ],
 
   dailyStreakRewards: [
-    { day: 1, coins: 15, hints: 0, label: "День 1" },
-    { day: 2, coins: 25, hints: 0, label: "День 2" },
-    { day: 3, coins: 40, hints: 1, label: "Сундук 3 дн. 🎁" },
-    { day: 4, coins: 30, hints: 0, label: "День 4" },
-    { day: 5, coins: 45, hints: 0, label: "День 5" },
-    { day: 6, coins: 50, hints: 1, label: "День 6" },
-    { day: 7, coins: 120, hints: 2, label: "Мега-Сундук 👑" }
+    { day: 1, coins: 15, hints: 0, label: "1" },
+    { day: 2, coins: 25, hints: 0, label: "2" },
+    { day: 3, coins: 40, hints: 1, label: "3" },
+    { day: 4, coins: 30, hints: 0, label: "4" },
+    { day: 5, coins: 45, hints: 0, label: "5" },
+    { day: 6, coins: 50, hints: 1, label: "6" },
+    { day: 7, coins: 120, hints: 2, label: "7" }
+  ],
+
+  luckyWheelSectors: [
+    { label: "+20 🪙", type: "coins", value: 20 },
+    { label: "+40 🪙", type: "coins", value: 40 },
+    { label: "+1 💡", type: "hints", value: 1 },
+    { label: "+50 XP", type: "xp", value: 50 },
+    { label: "❄️ Заморозка", type: "freeze", value: 1 },
+    { label: "+80 🪙", type: "coins", value: 80 }
   ],
 
   placementTestWords: [
@@ -193,23 +300,51 @@ const WordRamData = {
     return (typeof WordRamDataCE !== "undefined") ? WordRamDataCE.placementTestWords : [];
   },
 
+  getPlayableDictionary(lang = "english") {
+    if (lang === "chechen") return this.chechenDictionary || {};
+    return this.cefrDictionary || {};
+  },
+
+  getCefrTotals(lang = "english") {
+    const dict = this.getPlayableDictionary(lang);
+    const totals = {};
+    Object.keys(dict).forEach((lvl) => {
+      const buckets = dict[lvl] || {};
+      let count = 0;
+      Object.keys(buckets).forEach((len) => {
+        count += (buckets[len] || []).length;
+      });
+      totals[lvl] = count;
+    });
+    return totals;
+  },
+
+  getLexiconSize(lang = "english") {
+    const totals = this.getCefrTotals(lang);
+    return Object.values(totals).reduce((sum, n) => sum + n, 0);
+  },
+
   getWordMastery(wordsCount, lang = "english") {
-    if (lang === "chechen" && typeof WordRamDataCE !== "undefined") {
-      const ranks = WordRamDataCE.masteryRanks;
-      let currentRank = ranks[0];
-      for (const r of ranks) {
-        if (wordsCount >= r.threshold) currentRank = r;
-        else break;
-      }
-      return currentRank;
-    }
-    const ranks = (typeof WordRamDataEN !== "undefined") ? WordRamDataEN.masteryRanks : [];
+    const size = this.getLexiconSize(lang);
+    const source = lang === "chechen" && typeof WordRamDataCE !== "undefined"
+      ? WordRamDataCE.masteryRanks
+      : ((typeof WordRamDataEN !== "undefined") ? WordRamDataEN.masteryRanks : []);
+    const ranks = this.fitMasteryRanks(source, size);
     let currentRank = ranks[0] || { threshold: 0, title: "Новичок", desc: "Начало пути" };
     for (const r of ranks) {
       if (wordsCount >= r.threshold) currentRank = r;
       else break;
     }
     return currentRank;
+  },
+
+  fitMasteryRanks(ranks, size) {
+    const list = Array.isArray(ranks) ? ranks : [];
+    if (!list.length || !size) return list;
+    const below = list.filter((r) => r.threshold < size);
+    const top = list[list.length - 1];
+    below.push({ ...top, threshold: size });
+    return below;
   },
 
 
@@ -302,31 +437,41 @@ const WordRamData = {
         const def = WordRamDataCE.definitions[normCe];
         const rawTr = def.tr || normCe;
         const trCap = rawTr.charAt(0).toUpperCase() + rawTr.slice(1);
+        const extra = (typeof ChechenPhonetics !== "undefined")
+          ? ChechenPhonetics.enrich(normCe, def)
+          : { ph: "", speakText: normCe, def: "Чеченский язык (Уровень " + def.level + ")", ex: trCap };
         return {
           word: normCe,
           tr: trCap,
-          def: "Чеченский язык (Уровень " + def.level + ", сложность: " + def.difficulty + "/5)",
+          def: extra.def,
           pos: def.pos,
           level: def.level,
           difficulty: def.difficulty,
           tiles: def.tiles,
           tileCount: def.tileCount,
-          ph: "",
-          ex: "",
+          ph: extra.ph,
+          ex: extra.ex,
+          speakText: extra.speakText,
           collocations: []
         };
       }
+      const tiles = (typeof WordRamTokenizer !== "undefined") ? WordRamTokenizer.tokenize(normCe, "chechen") : normCe.split("");
+      const fallbackDef = { tr: normCe, pos: "noun", level: "A1" };
+      const extra = (typeof ChechenPhonetics !== "undefined")
+        ? ChechenPhonetics.enrich(normCe, fallbackDef)
+        : { ph: "", speakText: normCe, def: "Чеченский язык", ex: "" };
       return {
         word: normCe,
         tr: normCe.charAt(0).toUpperCase() + normCe.slice(1).toLowerCase(),
-        def: "Чеченский язык",
+        def: extra.def,
         pos: null,
         level: "A1",
         difficulty: 1,
-        tiles: (typeof WordRamTokenizer !== "undefined") ? WordRamTokenizer.tokenize(normCe, "chechen") : normCe.split(""),
-        tileCount: (typeof WordRamTokenizer !== "undefined") ? WordRamTokenizer.getTileCount(normCe, "chechen") : normCe.length,
-        ph: "",
-        ex: "",
+        tiles: tiles,
+        tileCount: tiles.length,
+        ph: extra.ph,
+        ex: extra.ex,
+        speakText: extra.speakText,
         collocations: []
       };
     }
@@ -348,18 +493,76 @@ const WordRamData = {
     };
   },
 
-  evaluatePlacementTest(answers, lang = "english") {
+  evaluatePlacementTest(answers, lang = "english", questions) {
     if (lang === "chechen" && typeof WordRamDataCE !== "undefined") {
-      return WordRamDataCE.evaluatePlacementTest(answers);
+      return WordRamDataCE.evaluatePlacementTest(answers, questions);
     }
     if (typeof WordRamDataEN !== "undefined") {
-      return WordRamDataEN.evaluatePlacementTest(answers);
+      return WordRamDataEN.evaluatePlacementTest(answers, questions);
     }
     return { code: "A1", badge: "A1", title: "A1", desc: "", startingXp: 0 };
   },
 
-  evaluateChechenPlacementTest(answers) {
-    return this.evaluatePlacementTest(answers, "chechen");
+  evaluateChechenPlacementTest(answers, questions) {
+    return this.evaluatePlacementTest(answers, "chechen", questions);
+  },
+
+  _shuffleInPlace(arr) {
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      const tmp = arr[i];
+      arr[i] = arr[j];
+      arr[j] = tmp;
+    }
+    return arr;
+  },
+
+  _placementPoolForLevel(lang, level) {
+    const out = [];
+    if (lang === "chechen" && typeof WordRamDataCE !== "undefined" && WordRamDataCE.dictionary && WordRamDataCE.dictionary[level]) {
+      Object.keys(WordRamDataCE.dictionary[level]).forEach((len) => {
+        const n = Number(len);
+        if (n < 3 || n > 10) return;
+        (WordRamDataCE.dictionary[level][len] || []).forEach((word) => {
+          out.push({ word, level });
+        });
+      });
+      return out;
+    }
+    if (typeof WordRamDataEN !== "undefined" && WordRamDataEN.cefrDictionary && WordRamDataEN.cefrDictionary[level]) {
+      Object.keys(WordRamDataEN.cefrDictionary[level]).forEach((len) => {
+        const n = Number(len);
+        if (n < 4 || n > 12) return;
+        (WordRamDataEN.cefrDictionary[level][len] || []).forEach((word) => {
+          out.push({ word, level });
+        });
+      });
+      return out;
+    }
+    const fallback = lang === "chechen" ? this.chechenPlacementTestWords : this.placementTestWords;
+    return (fallback || []).filter((item) => item.level === level);
+  },
+
+  buildPlacementQuiz(lang = "english") {
+    const bands = lang === "chechen" ? ["A1", "A2", "B1", "B2", "C1", "C2"] : ["A1", "A2", "B1", "B2", "C1"];
+    const picked = [];
+    const used = {};
+    bands.forEach((level) => {
+      const pool = this._placementPoolForLevel(lang, level).filter((item) => !used[item.word]);
+      this._shuffleInPlace(pool);
+      const take = pool.slice(0, 2);
+      if (take.length < 2) {
+        const fb = (lang === "chechen" ? this.chechenPlacementTestWords : this.placementTestWords) || [];
+        fb.filter((item) => item.level === level && !used[item.word]).forEach((item) => {
+          if (take.length < 2) take.push(item);
+        });
+      }
+      take.forEach((item) => {
+        used[item.word] = true;
+        picked.push(item);
+      });
+    });
+    return picked.length ? picked : (lang === "chechen" ? this.chechenPlacementTestWords : this.placementTestWords);
   },
 
   getWordForCefrAndLength(cefrLevel, targetLen, exclude = [], themeKey = null, lang = "english") {
@@ -401,18 +604,26 @@ const WordRamData = {
         }
       }
 
-      // 5. Поиск по полному списку 1500 слов точной длины targetLen
+      // 5. Поиск по полному списку 1500 слов ближайшей длины
       if (WordRamDataCE.wordsList) {
         const matching = WordRamDataCE.wordsList.filter(item => {
           const tCount = item.tileCount || ((typeof WordRamTokenizer !== "undefined") ? WordRamTokenizer.getTileCount(item.word, "chechen") : item.word.length);
-          return tCount === targetLen;
+          return tCount === targetLen && !exclude.includes(item.word);
         });
         if (matching.length > 0) {
           return matching[Math.floor(Math.random() * matching.length)].word;
         }
+        const nearest = [...WordRamDataCE.wordsList]
+          .filter(item => item.word && !exclude.includes(item.word))
+          .sort((a, b) => {
+            const ca = a.tileCount || a.word.length;
+            const cb = b.tileCount || b.word.length;
+            return Math.abs(ca - targetLen) - Math.abs(cb - targetLen);
+          });
+        if (nearest.length > 0) return nearest[0].word;
       }
 
-      return "ДАХАР".padEnd(targetLen, "А").slice(0, targetLen);
+      return "ДАХАР";
     }
 
     // English logic

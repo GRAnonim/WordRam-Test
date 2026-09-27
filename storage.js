@@ -36,7 +36,8 @@ class WordRamStorage {
     return {
       currentLevel: 1,
       unlockedLevel: 1,
-      languageLevel: lang === "chechen" ? "A1" : "A2",
+      languageLevel: "A1",
+      xp: 0,
       levelStars: {},
       levelHighScores: {},
       collectedWords: {}
@@ -51,10 +52,11 @@ class WordRamStorage {
         chechen: this.getDefaultProgress("chechen")
       },
       // Global profile & currencies
-      xp: 300,
-      weeklyXp: 45,
+      xp: 0,
+      weeklyXp: 0,
       hasCompletedPlacementTest: false,
       hasCompletedChechenPlacementTest: false,
+      hasChosenLanguage: false,
       unlockedAchievements: [],
       claimedDailyRewards: {},
       coins: 60,
@@ -63,14 +65,33 @@ class WordRamStorage {
       streakFreezes: 0,
       lastWheelSpinDate: null,
       currentLeagueId: 1,
+      leagueWeekKey: null,
+      claimedMilestones: {},
       soundEnabled: true,
       voiceSpeechEnabled: true,
       vibrationEnabled: true,
+      wordEase: "normal",
+      weekAlbum: {
+        weekKey: null,
+        daysPlayed: [],
+        stampClaimed: false,
+        stamps: []
+      },
+      weeklyReview: {
+        weekKey: null,
+        claimed: false,
+        wordsByLang: {}
+      },
       daily: {
         lastPlayedDate: null,
         streak: 0,
         completed: false,
-        lastWodClaimDate: null
+        lastWodClaimDate: null,
+        lastWodClaimByLang: {}
+      },
+      wodAssign: {
+        english: { date: null, word: "", recent: [] },
+        chechen: { date: null, word: "", recent: [] }
       },
       dailyQuests: {
         date: null,
@@ -126,6 +147,39 @@ class WordRamStorage {
           }
 
           if (!state.language) state.language = "english";
+          if (!state.daily) state.daily = def.daily;
+          if (!state.daily.lastWodClaimByLang) state.daily.lastWodClaimByLang = {};
+          if (!state.wodAssign) state.wodAssign = def.wodAssign;
+          if (!state.wodAssign.english) state.wodAssign.english = { date: null, word: "", recent: [] };
+          if (!state.wodAssign.chechen) state.wodAssign.chechen = { date: null, word: "", recent: [] };
+          if (!state.wordEase) state.wordEase = "normal";
+          if (!state.weekAlbum) state.weekAlbum = def.weekAlbum;
+          if (!state.weekAlbum.daysPlayed) state.weekAlbum.daysPlayed = [];
+          if (!state.weekAlbum.stamps) state.weekAlbum.stamps = [];
+          if (!state.weeklyReview) state.weeklyReview = def.weeklyReview;
+          if (!state.claimedMilestones) state.claimedMilestones = {};
+          if (!state.claimedDailyRewards) state.claimedDailyRewards = {};
+          if (state.progress.english && state.progress.english.xp == null) {
+            state.progress.english.xp = state.xp || 0;
+          }
+          if (state.progress.chechen && state.progress.chechen.xp == null) {
+            state.progress.chechen.xp = 0;
+          }
+          if (!Object.prototype.hasOwnProperty.call(parsed, "hasChosenLanguage")) {
+            const en = state.progress.english || {};
+            const ce = state.progress.chechen || {};
+            const enWords = Object.keys(en.collectedWords || {}).length;
+            const ceWords = Object.keys(ce.collectedWords || {}).length;
+            state.hasChosenLanguage = !!(
+              parsed.hasCompletedPlacementTest ||
+              parsed.hasCompletedChechenPlacementTest ||
+              (en.unlockedLevel && en.unlockedLevel > 1) ||
+              (ce.unlockedLevel && ce.unlockedLevel > 1) ||
+              enWords > 0 ||
+              ceWords > 0 ||
+              (state.stats && state.stats.levelsCompleted > 0)
+            );
+          }
           return state;
         }
       }
@@ -146,6 +200,22 @@ class WordRamStorage {
     } catch (e) {
       console.error("Ошибка сохранения в LocalStorage", e);
     }
+  }
+
+  exportCode() {
+    return JSON.stringify(this.state);
+  }
+
+  importCode(raw) {
+    const parsed = JSON.parse(String(raw || "").trim());
+    if (!parsed || typeof parsed !== "object" || !parsed.progress) {
+      throw new Error("bad-save");
+    }
+    if (typeof localStorage !== "undefined") {
+      localStorage.setItem(this.STORAGE_KEY, JSON.stringify(parsed));
+    }
+    this.state = this.load();
+    this.save();
   }
 
   // ----------------------------------------------------
@@ -192,19 +262,20 @@ class WordRamStorage {
   }
 
   getLanguageLevel(lang = this.getLanguage()) {
-    return this.getLanguageProgress(lang).languageLevel || (lang === "chechen" ? "A1" : "A2");
+    return this.getLanguageProgress(lang).languageLevel || "A1";
   }
 
   setLanguageLevel(levelCode, lang = this.getLanguage()) {
-    this.getLanguageProgress(lang).languageLevel = levelCode;
+    const prog = this.getLanguageProgress(lang);
+    prog.languageLevel = levelCode;
+    const rank = (typeof WordRamData !== "undefined" && WordRamData.xpRanks)
+      ? WordRamData.xpRanks.find(r => r.code === levelCode)
+      : null;
+    if (rank && (prog.xp || 0) < rank.minXp) {
+      prog.xp = rank.minXp;
+    }
     if (lang === "english") {
       this.state.hasCompletedPlacementTest = true;
-      const rank = (typeof WordRamData !== "undefined" && WordRamData.xpRanks)
-        ? WordRamData.xpRanks.find(r => r.code === levelCode)
-        : null;
-      if (rank && this.state.xp < rank.minXp) {
-        this.state.xp = rank.minXp;
-      }
     } else if (lang === "chechen") {
       this.state.hasCompletedChechenPlacementTest = true;
     }
@@ -219,18 +290,18 @@ class WordRamStorage {
     this.setLanguageLevel(levelCode, "english");
   }
 
-  getXp() {
-    return this.state.xp || 0;
+  getXp(lang = this.getLanguage()) {
+    return this.getLanguageProgress(lang).xp || 0;
   }
 
-  getXpProgress() {
-    const currentCode = this.getLanguageLevel("english");
+  getXpProgress(lang = this.getLanguage()) {
+    const currentCode = this.getLanguageLevel(lang);
     const ranks = (typeof WordRamData !== "undefined" && WordRamData.xpRanks) ? WordRamData.xpRanks : [];
     const currentRankIdx = ranks.findIndex(r => r.code === currentCode);
     const rank = ranks[currentRankIdx] || ranks[0] || { minXp: 0, nextXp: 500, title: "A1", badge: "A1" };
     const isMax = currentRankIdx === ranks.length - 1;
 
-    const currentXp = this.state.xp || 0;
+    const currentXp = this.getLanguageProgress(lang).xp || 0;
     const minXp = rank.minXp || 0;
     const nextXp = rank.nextXp || 500;
 
@@ -247,16 +318,18 @@ class WordRamStorage {
     };
   }
 
-  addXp(amount) {
-    const oldLevel = this.getEnglishLevel();
-    this.state.xp = (this.state.xp || 0) + amount;
+  addXp(amount, lang = this.getLanguage()) {
+    const prog = this.getLanguageProgress(lang);
+    const oldLevel = this.getLanguageLevel(lang);
+    prog.xp = (prog.xp || 0) + amount;
     this.state.weeklyXp = (this.state.weeklyXp || 0) + amount;
+    this.state.xp = (this.getLanguageProgress("english").xp || 0) + (this.getLanguageProgress("chechen").xp || 0);
 
     const ranks = (typeof WordRamData !== "undefined" && WordRamData.xpRanks) ? WordRamData.xpRanks : [];
     let newLevel = oldLevel;
     for (let i = ranks.length - 1; i >= 0; i--) {
       const r = ranks[i];
-      if (this.state.xp >= r.minXp) {
+      if (prog.xp >= r.minXp) {
         newLevel = r.code;
         break;
       }
@@ -264,7 +337,7 @@ class WordRamStorage {
 
     let leveledUp = false;
     if (newLevel !== oldLevel) {
-      this.setLanguageLevel(newLevel, "english");
+      prog.languageLevel = newLevel;
       leveledUp = true;
     }
 
@@ -274,7 +347,7 @@ class WordRamStorage {
       oldLevel: oldLevel,
       newLevel: newLevel,
       xpAdded: amount,
-      totalXp: this.state.xp
+      totalXp: prog.xp
     };
   }
 
@@ -295,11 +368,11 @@ class WordRamStorage {
         language: lang
       };
       this.state.stats.totalWordsFound++;
-      this.addXp(10);
+        this.addXp(10, lang);
     } else {
       prog.collectedWords[upper].count++;
       this.state.stats.totalWordsFound++;
-      this.addXp(3);
+      this.addXp(3, lang);
     }
 
     this.updateDailyQuestProgress("find_words", 1);
@@ -325,7 +398,6 @@ class WordRamStorage {
       if (isCorrect) {
         prog.collectedWords[upper].mastery = Math.min(3, (prog.collectedWords[upper].mastery || 1) + 1);
         this.state.stats.blitzCorrectTotal++;
-        this.addXp(5);
       }
     }
     this.save();
@@ -336,7 +408,7 @@ class WordRamStorage {
   // Ежедневные задания (Daily Quests)
   // ----------------------------------------------------
   getDailyQuests() {
-    const todayStr = new Date().toISOString().slice(0, 10);
+    const todayStr = this.localDateStr();
     if (this.state.dailyQuests.date !== todayStr) {
       const qMap = {};
       const templates = (typeof WordRamData !== "undefined" && WordRamData.dailyQuestsTemplates) ? WordRamData.dailyQuestsTemplates : [];
@@ -402,12 +474,12 @@ class WordRamStorage {
   }
 
   canSpinLuckyWheel() {
-    const todayStr = new Date().toISOString().slice(0, 10);
+    const todayStr = this.localDateStr();
     return this.state.lastWheelSpinDate !== todayStr;
   }
 
   applyLuckyWheelSector(sector) {
-    const todayStr = new Date().toISOString().slice(0, 10);
+    const todayStr = this.localDateStr();
     this.state.lastWheelSpinDate = todayStr;
 
     if (sector.type === "coins") this.addCoins(sector.value);
@@ -432,7 +504,48 @@ class WordRamStorage {
     return { success: false, reason: this.state.coins < cost ? "NOT_ENOUGH_COINS" : "MAX_REACHED" };
   }
 
+  ensureLeagueWeek() {
+    const week = this.isoWeekKey();
+    if (this.state.leagueWeekKey === week) return null;
+
+    const prevWeek = this.state.leagueWeekKey;
+    const prevXp = this.state.weeklyXp || 0;
+    const settle = prevWeek ? this.settleLeagueWeek(prevXp) : null;
+
+    this.state.leagueWeekKey = week;
+    this.state.weeklyXp = 0;
+    this.save();
+    return settle;
+  }
+
+  settleLeagueWeek(weeklyXp) {
+    const leagues = (typeof WordRamData !== "undefined" && WordRamData.leagues) ? WordRamData.leagues : [];
+    const currentId = this.state.currentLeagueId || 1;
+    const league = leagues.find((l) => l.id === currentId) || leagues[0];
+    if (!league) return null;
+
+    let coins = 0;
+    let moved = 0;
+    if (weeklyXp >= (league.minXpWeek || 0) && league.rewardCoins) {
+      this.addCoins(league.rewardCoins);
+      coins = league.rewardCoins;
+    }
+
+    const next = leagues.find((l) => l.id === currentId + 1);
+    const prev = leagues.find((l) => l.id === currentId - 1);
+    if (next && weeklyXp >= next.minXpWeek) {
+      this.state.currentLeagueId = next.id;
+      moved = 1;
+    } else if (prev && weeklyXp < (league.minXpWeek || 0)) {
+      this.state.currentLeagueId = prev.id;
+      moved = -1;
+    }
+
+    return { coins, moved, leagueName: league.name, weeklyXp };
+  }
+
   getLeagueData() {
+    this.ensureLeagueWeek();
     const leagueId = this.state.currentLeagueId || 1;
     const leagues = (typeof WordRamData !== "undefined" && WordRamData.leagues) ? WordRamData.leagues : [];
     const leagueInfo = leagues.find(l => l.id === leagueId) || leagues[0] || { name: "Лига", icon: "🏆" };
@@ -545,15 +658,32 @@ class WordRamStorage {
     return this.getLanguageProgress(lang).levelStars[lvl] || 0;
   }
 
-  completeLevel(lvl, stars = 3, score = 100, rewardCoins = 15, usedHints = 0, gridSize = 5, lang = this.getLanguage()) {
+  completeLevel(lvl, stars = 3, score = 100, rewardCoins = 15, usedHints = 0, gridSize = 5, lang = this.getLanguage(), rewardXp = null) {
     const prog = this.getLanguageProgress(lang);
+    const alreadyCompleted = (prog.levelStars[lvl] || 0) > 0 || lvl < prog.unlockedLevel;
+
     prog.levelStars[lvl] = Math.max(prog.levelStars[lvl] || 0, stars);
     prog.levelHighScores[lvl] = Math.max(prog.levelHighScores[lvl] || 0, score);
+
+    let xpRes = { xpAdded: 0, leveledUp: false };
+
+    if (alreadyCompleted) {
+      this.recordDailyPlay();
+      this.clearActiveSavedGame();
+      const newAchs = this.checkAchievements();
+      this.save();
+      return {
+        xpResult: xpRes,
+        achievements: newAchs,
+        alreadyCompleted: true,
+        coinsEarned: 0
+      };
+    }
 
     if (lvl >= prog.unlockedLevel) {
       prog.unlockedLevel = lvl + 1;
     }
-    prog.currentLevel = lvl + 1;
+    prog.currentLevel = Math.max(prog.currentLevel || 1, lvl + 1);
     this.state.stats.levelsCompleted++;
 
     if (usedHints === 0) {
@@ -564,14 +694,19 @@ class WordRamStorage {
     this.state.stats.maxGridCompleted = Math.max(this.state.stats.maxGridCompleted || 4, gridSize);
 
     this.addCoins(rewardCoins);
-    const xpRes = this.addXp(30 + lvl * 2);
+    const xpAmount = (typeof rewardXp === "number" && rewardXp >= 0) ? rewardXp : (30 + lvl * 2);
+    xpRes = this.addXp(xpAmount, lang);
+    this.recordDailyPlay();
+    this.claimReachedMilestones(prog.unlockedLevel, lang);
     this.clearActiveSavedGame();
     const newAchs = this.checkAchievements();
     this.save();
 
     return {
       xpResult: xpRes,
-      achievements: newAchs
+      achievements: newAchs,
+      alreadyCompleted: false,
+      coinsEarned: rewardCoins
     };
   }
 
@@ -589,22 +724,298 @@ class WordRamStorage {
     this.save();
   }
 
-  getDailyStatus() {
-    const todayStr = new Date().toISOString().slice(0, 10);
-    const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
+  localDateStr(offsetDays = 0) {
+    const d = new Date();
+    d.setDate(d.getDate() + offsetDays);
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, "0");
+    return `${y}-${m}-${day}`;
+  }
 
-    if (this.state.daily.lastPlayedDate && this.state.daily.lastPlayedDate !== todayStr && this.state.daily.lastPlayedDate !== yesterday) {
-      if (this.state.streakFreezes > 0) {
+  daysBetween(fromStr, toStr) {
+    if (!fromStr || !toStr) return 0;
+    const a = new Date(fromStr + "T12:00:00");
+    const b = new Date(toStr + "T12:00:00");
+    return Math.round((b - a) / 86400000);
+  }
+
+  isoWeekKey(date = new Date()) {
+    const d = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    const dayNum = (d.getDay() + 6) % 7;
+    d.setDate(d.getDate() - dayNum + 3);
+    const firstThursday = new Date(d.getFullYear(), 0, 4);
+    const week = 1 + Math.round(((d - firstThursday) / 86400000 - 3 + ((firstThursday.getDay() + 6) % 7)) / 7);
+    return d.getFullYear() + "-W" + String(week).padStart(2, "0");
+  }
+
+  claimReachedMilestones(unlockedLevel, lang = this.getLanguage()) {
+    const stages = (typeof WordRamData !== "undefined" && WordRamData.monstersStages) ? WordRamData.monstersStages : [];
+    if (!this.state.claimedMilestones) this.state.claimedMilestones = {};
+    let coins = 0;
+    stages.forEach((stage) => {
+      (stage.milestones || []).forEach((m) => {
+        const key = lang + ":" + m.level;
+        if (unlockedLevel >= m.level && !this.state.claimedMilestones[key]) {
+          this.state.claimedMilestones[key] = true;
+          const grant = m.level % 20 === 0 ? 80 : 30;
+          coins += grant;
+        }
+      });
+    });
+    if (coins > 0) {
+      this.addCoins(coins);
+      return { coins };
+    }
+    return null;
+  }
+
+  grantStreakDayReward(streak) {
+    const day = ((streak - 1) % 7) + 1;
+    const todayStr = this.localDateStr();
+    const claimKey = todayStr + ":" + day;
+    if (!this.state.claimedDailyRewards) this.state.claimedDailyRewards = {};
+    if (this.state.claimedDailyRewards[claimKey]) return null;
+    const rewards = (typeof WordRamData !== "undefined" && WordRamData.dailyStreakRewards) ? WordRamData.dailyStreakRewards : [];
+    const item = rewards.find((r) => r.day === day);
+    if (!item) return null;
+    this.state.claimedDailyRewards[claimKey] = true;
+    this.addCoins(item.coins);
+    if (item.hints) this.state.hintsRemaining = (this.state.hintsRemaining || 0) + item.hints;
+    return item;
+  }
+
+  recordDailyPlay() {
+    this.markWeekAlbumDay();
+    const todayStr = this.localDateStr();
+    const last = this.state.daily.lastPlayedDate;
+    if (last === todayStr) {
+      return { alreadyToday: true, streak: this.state.daily.streak || 0, reward: null };
+    }
+
+    this.state.daily.completed = false;
+
+    if (last) {
+      const gap = this.daysBetween(last, todayStr) - 1;
+      let remainingGap = Math.max(0, gap);
+      while (remainingGap > 0 && (this.state.streakFreezes || 0) > 0) {
         this.state.streakFreezes--;
-        this.state.daily.lastPlayedDate = yesterday;
-        this.save();
-      } else {
+        remainingGap--;
+      }
+      if (remainingGap > 0) {
         this.state.daily.streak = 0;
       }
     }
 
+    this.state.daily.streak = (this.state.daily.streak || 0) + 1;
+    this.state.daily.lastPlayedDate = todayStr;
+    const reward = this.grantStreakDayReward(this.state.daily.streak);
+    this.checkAchievements();
+    this.save();
+    return { alreadyToday: false, streak: this.state.daily.streak, reward };
+  }
+
+  formatLocalDate(d) {
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, "0");
+    return `${y}-${m}-${day}`;
+  }
+
+  getWeekKey(date = new Date()) {
+    const d = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    const day = d.getDay();
+    const diff = day === 0 ? -6 : 1 - day;
+    d.setDate(d.getDate() + diff);
+    return this.formatLocalDate(d);
+  }
+
+  getWeekDates(weekKey) {
+    const parts = String(weekKey || this.getWeekKey()).split("-");
+    const start = new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]));
+    const days = [];
+    for (let i = 0; i < 7; i++) {
+      const d = new Date(start);
+      d.setDate(start.getDate() + i);
+      days.push(this.formatLocalDate(d));
+    }
+    return days;
+  }
+
+  ensureWeekAlbum() {
+    const weekKey = this.getWeekKey();
+    if (!this.state.weekAlbum) {
+      this.state.weekAlbum = { weekKey, daysPlayed: [], stampClaimed: false, stamps: [] };
+    }
+    if (this.state.weekAlbum.weekKey !== weekKey) {
+      this.state.weekAlbum.weekKey = weekKey;
+      this.state.weekAlbum.daysPlayed = [];
+      this.state.weekAlbum.stampClaimed = false;
+      if (!this.state.weekAlbum.stamps) this.state.weekAlbum.stamps = [];
+    }
+    return this.state.weekAlbum;
+  }
+
+  markWeekAlbumDay() {
+    const album = this.ensureWeekAlbum();
+    const today = this.localDateStr();
+    if (!album.daysPlayed.includes(today)) {
+      album.daysPlayed.push(today);
+      this.save();
+    }
+    return album;
+  }
+
+  getWeekAlbumStatus() {
+    const album = this.ensureWeekAlbum();
+    const dates = this.getWeekDates(album.weekKey);
+    const labels = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"];
+    const today = this.localDateStr();
     return {
-      isTodayCompleted: this.state.daily.lastPlayedDate === todayStr && this.state.daily.completed,
+      weekKey: album.weekKey,
+      filled: album.daysPlayed.length,
+      stampClaimed: !!album.stampClaimed,
+      stampsCount: (album.stamps || []).length,
+      days: dates.map((date, idx) => ({
+        date,
+        label: labels[idx],
+        done: album.daysPlayed.includes(date),
+        isToday: date === today
+      }))
+    };
+  }
+
+  claimWeekStamp() {
+    const album = this.ensureWeekAlbum();
+    if (album.stampClaimed) return { success: false, reason: "already" };
+    if ((album.daysPlayed || []).length < 7) return { success: false, reason: "incomplete" };
+    album.stampClaimed = true;
+    album.stamps = album.stamps || [];
+    album.stamps.push({ weekKey: album.weekKey, date: this.localDateStr() });
+    this.addCoins(40);
+    this.addXp(60);
+    this.save();
+    return { success: true, coins: 40, xp: 60, stampsCount: album.stamps.length };
+  }
+
+  getWordEase() {
+    const ease = this.state.wordEase;
+    if (ease === "easier" || ease === "harder") return ease;
+    return "normal";
+  }
+
+  setWordEase(ease) {
+    this.state.wordEase = (ease === "easier" || ease === "harder") ? ease : "normal";
+    this.save();
+    return this.state.wordEase;
+  }
+
+  normalizeVocabKey(word, lang = this.getLanguage()) {
+    if (!word) return "";
+    if (lang === "chechen" && typeof WordRamTokenizer !== "undefined") {
+      return WordRamTokenizer.normalizeChechen(String(word));
+    }
+    return String(word).trim().toUpperCase();
+  }
+
+  getWordOfTheDayItem(lang = this.getLanguage()) {
+    const key = lang === "chechen" ? "chechen" : "english";
+    const todayStr = this.localDateStr();
+    if (!this.state.wodAssign) {
+      this.state.wodAssign = {
+        english: { date: null, word: "", recent: [] },
+        chechen: { date: null, word: "", recent: [] }
+      };
+    }
+    if (!this.state.wodAssign[key]) this.state.wodAssign[key] = { date: null, word: "", recent: [] };
+    const slot = this.state.wodAssign[key];
+    if (slot.date === todayStr && slot.word) {
+      return (typeof WordRamData !== "undefined" && WordRamData.formatWordOfTheDay)
+        ? WordRamData.formatWordOfTheDay(slot.word, key)
+        : { word: slot.word, ph: "", tr: "", ex: "" };
+    }
+    const exclude = Array.isArray(slot.recent) ? slot.recent : [];
+    const item = (typeof WordRamData !== "undefined" && WordRamData.getWordOfTheDay)
+      ? WordRamData.getWordOfTheDay(key, todayStr, exclude)
+      : { word: "", ph: "", tr: "", ex: "" };
+    if (item && item.word) {
+      slot.date = todayStr;
+      slot.word = item.word;
+      const recent = exclude.filter((w) => String(w).toUpperCase() !== String(item.word).toUpperCase());
+      slot.recent = [item.word, ...recent].slice(0, 45);
+      this.save();
+    }
+    return item;
+  }
+
+  tryClaimWodFromPlay(word, lang = this.getLanguage()) {
+    if (this.isWodClaimedToday(lang)) return false;
+    const todayItem = this.getWordOfTheDayItem(lang);
+    if (!todayItem || !todayItem.word) return false;
+    const found = this.normalizeVocabKey(word, lang);
+    const target = this.normalizeVocabKey(todayItem.word, lang);
+    if (!found || found !== target) return false;
+    this.claimWodToday(lang);
+    this.recordWordToVocabulary(todayItem.word, lang);
+    this.addCoins(20);
+    this.addXp(40);
+    this.markWeekAlbumDay();
+    return true;
+  }
+
+  getWeeklyReviewStatus(lang = this.getLanguage()) {
+    const weekKey = this.getWeekKey();
+    if (!this.state.weeklyReview) this.state.weeklyReview = { weekKey: null, claimed: false, wordsByLang: {} };
+    if (!this.state.weeklyReview.wordsByLang) this.state.weeklyReview.wordsByLang = {};
+    if (this.state.weeklyReview.weekKey !== weekKey) {
+      this.state.weeklyReview.weekKey = weekKey;
+      this.state.weeklyReview.claimed = false;
+      this.state.weeklyReview.wordsByLang = {};
+    }
+    const all = Object.keys(this.getCollectedWords(lang));
+    if (!this.state.weeklyReview.wordsByLang[lang] && all.length >= 3) {
+      this.state.weeklyReview.wordsByLang[lang] = this.pickWeeklyReviewWords(lang, 5);
+      this.save();
+    }
+    const words = this.state.weeklyReview.wordsByLang[lang] || [];
+    return {
+      weekKey,
+      claimed: !!this.state.weeklyReview.claimed,
+      available: all.length >= 3,
+      words
+    };
+  }
+
+  pickWeeklyReviewWords(lang = this.getLanguage(), count = 5) {
+    const words = Object.keys(this.getCollectedWords(lang));
+    const copy = words.slice();
+    for (let i = copy.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      const tmp = copy[i];
+      copy[i] = copy[j];
+      copy[j] = tmp;
+    }
+    return copy.slice(0, Math.min(count, copy.length));
+  }
+
+  claimWeeklyReview(lang = this.getLanguage()) {
+    const status = this.getWeeklyReviewStatus(lang);
+    if (status.claimed) return { success: false, reason: "already" };
+    if (!status.available) return { success: false, reason: "few" };
+    this.state.weeklyReview.claimed = true;
+    this.state.weeklyReview.weekKey = status.weekKey;
+    this.addCoins(15);
+    this.addXp(20);
+    this.save();
+    return { success: true, coins: 15, xp: 20 };
+  }
+
+  getDailyStatus() {
+    this.ensureLeagueWeek();
+    const todayStr = this.localDateStr();
+    return {
+      isTodayCompleted: this.state.daily.lastPlayedDate === todayStr,
+      isDailyChallengeDone: this.state.daily.lastPlayedDate === todayStr && this.state.daily.completed,
       streak: this.state.daily.streak || 0,
       date: todayStr,
       freezes: this.state.streakFreezes || 0
@@ -612,36 +1023,66 @@ class WordRamStorage {
   }
 
   completeDailyChallenge() {
-    const todayStr = new Date().toISOString().slice(0, 10);
-    const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
-
-    if (this.state.daily.lastPlayedDate === yesterday) {
-      this.state.daily.streak = (this.state.daily.streak || 0) + 1;
-    } else if (this.state.daily.lastPlayedDate !== todayStr) {
-      this.state.daily.streak = 1;
+    const todayStr = this.localDateStr();
+    if (this.state.daily.completed && this.state.daily.lastPlayedDate === todayStr) {
+      return { alreadyCompleted: true, coinsEarned: 0, xpEarned: 0 };
     }
-
-    this.state.daily.lastPlayedDate = todayStr;
+    this.recordDailyPlay();
     this.state.daily.completed = true;
+    this.state.daily.lastPlayedDate = todayStr;
     this.addCoins(50);
     this.addXp(150);
     this.checkAchievements();
+    this.save();
+    return { alreadyCompleted: false, coinsEarned: 50, xpEarned: 150 };
+  }
+
+  isWodClaimedToday(lang) {
+    const todayStr = this.localDateStr();
+    if (!this.state.daily) this.state.daily = {};
+    if (!this.state.daily.lastWodClaimByLang) this.state.daily.lastWodClaimByLang = {};
+    return this.state.daily.lastWodClaimByLang[lang] === todayStr;
+  }
+
+  claimWodToday(lang) {
+    const todayStr = this.localDateStr();
+    if (!this.state.daily) this.state.daily = {};
+    if (!this.state.daily.lastWodClaimByLang) this.state.daily.lastWodClaimByLang = {};
+    this.state.daily.lastWodClaimByLang[lang] = todayStr;
+    this.markWeekAlbumDay();
     this.save();
   }
 
 
   canClaimShareReward() {
-    const todayStr = new Date().toISOString().slice(0, 10);
+    const todayStr = this.localDateStr();
     if (!this.state.daily) this.state.daily = {};
     return this.state.daily.lastShareClaimDate !== todayStr;
   }
 
   claimShareReward(amount = 30) {
-    const todayStr = new Date().toISOString().slice(0, 10);
+    const todayStr = this.localDateStr();
     if (this.canClaimShareReward()) {
       this.state.daily.lastShareClaimDate = todayStr;
       this.addCoins(amount);
       this.addXp(amount);
+      this.save();
+      return { success: true, rewarded: true, coinsAdded: amount };
+    }
+    return { success: true, rewarded: false };
+  }
+
+  canClaimVictoryShareReward() {
+    const todayStr = this.localDateStr();
+    if (!this.state.daily) this.state.daily = {};
+    return this.state.daily.lastVictoryShareClaimDate !== todayStr;
+  }
+
+  claimVictoryShareReward(amount = 10) {
+    const todayStr = this.localDateStr();
+    if (this.canClaimVictoryShareReward()) {
+      this.state.daily.lastVictoryShareClaimDate = todayStr;
+      this.addCoins(amount);
       this.save();
       return { success: true, rewarded: true, coinsAdded: amount };
     }

@@ -12,9 +12,16 @@ document.addEventListener("DOMContentLoaded", () => {
   // Модальные окна
   const winModal = document.getElementById("modal-victory");
   const winWordsList = document.getElementById("win-words-list");
-  const winRewardText = document.getElementById("win-reward-text");
+  const winStars = document.getElementById("win-stars");
+  const winLevelLabel = document.getElementById("win-level-label");
+  const winRewardCoins = document.getElementById("win-reward-coins");
+  const winRewardXp = document.getElementById("win-reward-xp");
+  const winNewWords = document.getElementById("win-new-words");
   const btnNextLevel = document.getElementById("btn-next-level");
+  const btnShareWin = document.getElementById("btn-share-win");
   const btnCloseModal = document.getElementById("btn-close-modal");
+  let lastVictorySummary = null;
+  let victoryShareClaimed = false;
 
   const placementModal = document.getElementById("modal-placement");
   const btnOpenPlacement = document.getElementById("btn-open-placement-test");
@@ -38,6 +45,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const defMeaning = document.getElementById("def-meaning");
   const defExampleBox = document.getElementById("def-example-box");
   const defExampleText = document.getElementById("def-example-text");
+  const defMeta = document.getElementById("def-meta");
+  const defSenses = document.getElementById("def-senses");
+  const defPrimary = document.getElementById("def-primary");
   const btnCloseDefinition = document.getElementById("btn-close-definition");
   const btnOkDefinition = document.getElementById("btn-ok-definition");
 
@@ -69,7 +79,10 @@ document.addEventListener("DOMContentLoaded", () => {
   const btnOkInfoDialog = document.getElementById("btn-ok-info-dialog");
 
   function showCustomInfoDialog(icon, title, messageHtml) {
-    if (infoDialogIcon) infoDialogIcon.textContent = icon || "ℹ️";
+    if (infoDialogIcon) {
+      if (icon && String(icon).indexOf("<") !== -1) infoDialogIcon.innerHTML = icon;
+      else infoDialogIcon.textContent = icon || "ℹ️";
+    }
     if (infoDialogTitle) infoDialogTitle.textContent = title || "Информация";
     if (infoDialogMessage) infoDialogMessage.innerHTML = messageHtml || "";
     showModal(infoModal);
@@ -97,6 +110,70 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  function escapeDefHtml(value) {
+    return String(value || "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;");
+  }
+
+  function highlightLemmaHtml(text, lemma) {
+    const src = String(text || "");
+    const needle = String(lemma || "").trim();
+    if (!needle) return escapeDefHtml(src);
+    const re = new RegExp("(" + needle.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + ")", "gi");
+    return src.split(re).map((part) => {
+      if (part && part.toUpperCase() === needle.toUpperCase()) {
+        return `<mark class="def-hit">${escapeDefHtml(part)}</mark>`;
+      }
+      return escapeDefHtml(part);
+    }).join("");
+  }
+
+  function splitTranslationSenses(raw) {
+    return String(raw || "")
+      .split(/\s*\/\s*|[;•]|,(?=\s)/)
+      .map((part) => part.replace(/^\d+\)\s*/, "").trim())
+      .filter((part) => part.length > 1)
+      .slice(0, 4);
+  }
+
+  function isGlossOnlyExample(ex, word, tr) {
+    const compact = (value) => String(value || "")
+      .toLowerCase()
+      .replace(/[«»"“”.!?,:;()]/g, " ")
+      .replace(/[—–-]/g, " ")
+      .replace(/\s+/g, " ")
+      .trim();
+    const example = compact(ex);
+    const lemma = compact(word);
+    const gloss = compact(tr);
+    if (!example || !lemma) return true;
+    if (example === lemma || example === gloss) return true;
+    if (example === lemma + " " + gloss) return true;
+    const left = compact(String(ex).split(/\s+[—–]\s+/)[0]);
+    const right = compact(String(ex).split(/\s+[—–]\s+/).slice(1).join(" "));
+    if (left === lemma && right && (right === gloss || gloss.indexOf(right) !== -1 || right.indexOf(lemma) !== -1)) {
+      return true;
+    }
+    return left === lemma && !right;
+  }
+
+  function posLabel(pos) {
+    const map = {
+      noun: "сущ.",
+      verb: "гл.",
+      adjective: "прил.",
+      adverb: "нар.",
+      pronoun: "мест.",
+      numeral: "числ.",
+      particle: "част.",
+      interjection: "межд."
+    };
+    return map[pos] || "";
+  }
+
   function showWordDefinitionModal(details) {
     if (!defModal || !details) return;
     currentActiveWord = details.word;
@@ -105,8 +182,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const currentLang = storage.getLanguage();
     const btnSpeakDefEl = document.getElementById("btn-speak-def") || document.querySelector("#modal-word-definition .speak-btn");
     if (btnSpeakDefEl) {
-      // Прячем кнопку озвучки для чеченских слов
-      btnSpeakDefEl.style.display = (currentLang === "chechen" || /[А-ЯЁӀ]/i.test(details.word)) ? "none" : "flex";
+      const isChechenWord = currentLang === "chechen" || /[А-ЯЁӀ]/i.test(details.word || "");
+      btnSpeakDefEl.style.display = isChechenWord ? "none" : "flex";
     }
 
     if (defPhonetic) {
@@ -118,22 +195,75 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
 
-    if (defTranslation) defTranslation.textContent = details.tr || details.word;
-    if (defMeaning) defMeaning.textContent = details.def || "Слово английского языка.";
+    if (defMeta) {
+      const bits = [];
+      const pos = posLabel(details.pos);
+      if (pos) bits.push(pos);
+      if (details.level) bits.push(details.level);
+      defMeta.innerHTML = bits.length
+        ? bits.map((bit) => `<span>${escapeDefHtml(bit)}</span>`).join('<span class="def-meta-dot">·</span>')
+        : "";
+      defMeta.style.display = bits.length ? "flex" : "none";
+    }
+
+    const senses = splitTranslationSenses(details.tr || details.word);
+    const headSenses = senses.slice(0, 2);
+    const extraSenses = senses.slice(2);
+    if (defPrimary) {
+      defPrimary.textContent = headSenses.join(" · ") || (details.tr || details.word);
+      defPrimary.style.display = "block";
+    }
+    if (defSenses) {
+      if (extraSenses.length) {
+        defSenses.innerHTML = extraSenses.map((sense) =>
+          `<span class="def-sense">${escapeDefHtml(sense)}</span>`
+        ).join("");
+        defSenses.style.display = "flex";
+      } else {
+        defSenses.innerHTML = "";
+        defSenses.style.display = "none";
+      }
+    }
+    if (defTranslation) {
+      defTranslation.textContent = details.tr || details.word;
+      defTranslation.style.display = senses.length ? "none" : "block";
+    }
+
+    if (defMeaning) {
+      const rawDef = (details.def || "").trim();
+      const isAutoDef = /^Словарное значение:/i.test(rawDef);
+      if (!rawDef || isAutoDef) {
+        defMeaning.style.display = "none";
+        defMeaning.textContent = "";
+      } else {
+        defMeaning.innerHTML = highlightLemmaHtml(rawDef, details.word);
+        defMeaning.style.display = "block";
+      }
+    }
 
     if (defExampleBox && defExampleText) {
-      if (details.ex && details.ex.trim().length > 0 && !details.ex.includes("English context")) {
-        defExampleText.textContent = details.ex;
-        defExampleBox.style.display = "block";
-      } else {
+      const ex = (details.ex || "").trim();
+      const skip = !ex || ex.includes("English context") || isGlossOnlyExample(ex, details.word, details.tr);
+      if (skip) {
         defExampleBox.style.display = "none";
+        defExampleText.textContent = "";
+      } else {
+        const parts = ex.split(/\s+[—–]\s+/);
+        if (parts.length >= 2) {
+          defExampleText.innerHTML =
+            `<span class="def-ex-src">${highlightLemmaHtml(parts[0], details.word)}</span>` +
+            `<span class="def-ex-tr">${escapeDefHtml(parts.slice(1).join(" — "))}</span>`;
+        } else {
+          defExampleText.innerHTML = highlightLemmaHtml(ex, details.word);
+        }
+        defExampleBox.style.display = "block";
       }
     }
 
     if (defCollocationsBox && defCollocationsList) {
       if (details.collocations && details.collocations.length > 0) {
         defCollocationsList.innerHTML = details.collocations
-          .map(c => `<span class="collocation-tag">${c}</span>`)
+          .map(c => `<span class="collocation-tag">${escapeDefHtml(c)}</span>`)
           .join("");
         defCollocationsBox.style.display = "block";
       } else {
@@ -148,27 +278,163 @@ document.addEventListener("DOMContentLoaded", () => {
   if (btnOkDefinition) btnOkDefinition.addEventListener("click", () => hideAllModals());
   if (btnCloseModal) btnCloseModal.addEventListener("click", () => hideAllModals());
 
+  function getVictoryShareText(summary) {
+    const s = summary || lastVictorySummary;
+    if (!s) {
+      return "🏆 Я прохожу WordRam — игру в слова! Сыграй со мной: https://granonim.github.io/WordRam/";
+    }
+    const starsCount = Math.max(1, Math.min(3, s.stars || 3));
+    const starsStr = "★".repeat(starsCount) + "☆".repeat(3 - starsCount);
+    const levelPart = s.isDaily ? "ежедневный вызов" : `уровень ${s.level}`;
+    const wordsPreview = (s.words || []).slice(0, 5).join(", ");
+    const more = (s.words || []).length > 5 ? "…" : "";
+    return `🏆 Я прошёл ${levelPart} в WordRam! ${starsStr}\nСлова: ${wordsPreview}${more}\nСыграй со мной: https://granonim.github.io/WordRam/`;
+  }
+
+  function claimVictoryShareReward() {
+    if (victoryShareClaimed) return;
+    const res = storage.claimVictoryShareReward(10);
+    if (!res.rewarded) {
+      victoryShareClaimed = true;
+      updateShareWinButton();
+      game.showFloatingMessage("Сегодня награда за победу уже получена — спасибо, что делитесь!", "info");
+      return;
+    }
+    victoryShareClaimed = true;
+    game.playSound("win");
+    game.vibrate([20, 40, 20]);
+    game.updateCoinsDisplay();
+    updateProfileUI();
+    updateShareWinButton();
+    game.showFloatingMessage("🎉 Спасибо, что делитесь! +10 🪙 за победу", "bonus");
+  }
+
+  function updateShareWinButton() {
+    if (!btnShareWin) return;
+    const canClaim = !victoryShareClaimed && storage.canClaimVictoryShareReward();
+    btnShareWin.innerHTML = canClaim
+      ? '🏆 Поделиться победой (+10 <span class="coin-icon"></span>)'
+      : "🏆 Поделиться победой";
+  }
+
+  async function shareVictory() {
+    const text = getVictoryShareText(lastVictorySummary);
+    try {
+      if (navigator.share) {
+        await navigator.share({
+          title: "WordRam",
+          text: text,
+          url: "https://granonim.github.io/WordRam/"
+        });
+        claimVictoryShareReward();
+        return;
+      }
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        await navigator.clipboard.writeText(text);
+        game.showFloatingMessage("📋 Текст победы скопирован — вставьте в мессенджер!", "info");
+        claimVictoryShareReward();
+        return;
+      }
+      window.open(
+        `https://t.me/share/url?url=https://granonim.github.io/WordRam/&text=${encodeURIComponent(text)}`,
+        "_blank"
+      );
+      claimVictoryShareReward();
+    } catch (err) {
+      if (err && err.name === "AbortError") return;
+      try {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          await navigator.clipboard.writeText(text);
+          game.showFloatingMessage("📋 Текст победы скопирован!", "info");
+          claimVictoryShareReward();
+        }
+      } catch (e) {
+        console.warn("Share win error:", err || e);
+      }
+    }
+  }
+
   function showVictoryModal(summary) {
     if (!winModal || !summary || !summary.words || summary.words.length === 0) return;
 
-    if (winWordsList) {
-      winWordsList.innerHTML = summary.words
-        .map((w) => `<li class="win-word-item" data-word="${w}">✔ <strong>${w}</strong></li>`)
-        .join("");
+    lastVictorySummary = summary;
+    victoryShareClaimed = !storage.canClaimVictoryShareReward();
+    updateShareWinButton();
 
-      winWordsList.querySelectorAll(".win-word-item").forEach(item => {
-        item.style.cursor = "pointer";
-        item.addEventListener("click", () => {
-          const w = item.dataset.word;
-          const details = WordRamData.getWordDetails(w);
-          showWordDefinitionModal(details);
-        });
-      });
+    const starsCount = Math.max(1, Math.min(3, summary.stars || 3));
+    const coins = summary.alreadyCompleted ? 0 : (summary.coinsEarned || summary.rewardCoins || 15);
+    const xp = summary.alreadyCompleted ? 0 : (summary.xpEarned || 30);
+    const levelLabel = summary.isDaily
+      ? "Ежедневный вызов"
+      : (summary.alreadyCompleted ? `Уровень ${summary.level} · повтор` : `Уровень ${summary.level}`);
+
+    if (winLevelLabel) {
+      winLevelLabel.textContent = levelLabel;
     }
 
-    if (winRewardText) {
-      const coins = summary.coinsEarned || summary.rewardCoins || 15;
-      winRewardText.textContent = `+${coins} 🪙 монет получено!`;
+    if (winStars) {
+      winStars.innerHTML = [1, 2, 3]
+        .map((i) => `<span class="star${i <= starsCount ? " filled" : ""}">★</span>`)
+        .join("");
+      winStars.setAttribute("aria-label", `${starsCount} из 3 звёзд`);
+    }
+
+    if (winRewardCoins) {
+      winRewardCoins.textContent = `+${coins}`;
+    }
+
+    if (winRewardXp) {
+      winRewardXp.textContent = `+${xp} XP`;
+    }
+
+    if (winNewWords) {
+      const fresh = (summary.newWords && summary.newWords.length) || 0;
+      winNewWords.textContent = fresh > 0
+        ? `Новых слов в словаре: ${fresh}. Они теперь твои.`
+        : "Ты повторил знакомые слова — так они лучше запоминаются.";
+    }
+
+    if (winWordsList) {
+      winWordsList.innerHTML = "";
+      summary.words.forEach((w) => {
+        const details = WordRamData.getWordDetails(w);
+        const rawTr = details && details.tr ? String(details.tr).trim() : "";
+        const sameAsWord = rawTr.toUpperCase() === String(w).trim().toUpperCase();
+        const li = document.createElement("li");
+        li.className = "win-word-item";
+        li.setAttribute("role", "button");
+        li.tabIndex = 0;
+        li.setAttribute("aria-expanded", "false");
+
+        const check = document.createElement("span");
+        check.className = "win-word-check";
+        check.textContent = "✔";
+
+        const body = document.createElement("span");
+        body.className = "win-word-body";
+
+        const strong = document.createElement("strong");
+        strong.textContent = w;
+
+        const trEl = document.createElement("span");
+        trEl.className = "win-word-tr";
+        trEl.textContent = !rawTr || sameAsWord ? "Перевод не найден" : rawTr;
+
+        body.append(strong, trEl);
+        li.append(check, body);
+
+        const toggle = () => {
+          const open = li.classList.toggle("is-open");
+          li.setAttribute("aria-expanded", open ? "true" : "false");
+        };
+        li.addEventListener("click", toggle);
+        li.addEventListener("keydown", (event) => {
+          if (event.key !== "Enter" && event.key !== " ") return;
+          event.preventDefault();
+          toggle();
+        });
+        winWordsList.appendChild(li);
+      });
     }
 
     showModal(winModal);
@@ -184,6 +450,12 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  if (btnShareWin) {
+    btnShareWin.addEventListener("click", () => {
+      shareVictory();
+    });
+  }
+
   
   // Подсказки при нажатии на бейджи шапки и свинью-копилку
   const btnHeaderCefr = document.getElementById("header-cefr-badge");
@@ -192,12 +464,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (btnHeaderCefr) {
     btnHeaderCefr.addEventListener("click", () => {
-      const lvl = storage.getEnglishLevel();
+      const lang = storage.getLanguage();
+      const lvl = storage.getLanguageLevel(lang);
       const rank = WordRamData.xpRanks.find(r => r.code === lvl) || WordRamData.xpRanks[0];
       showCustomInfoDialog(
-        "🇬🇧",
+        lang === "chechen" ? '<span class="flag-ce"></span>' : "🇬🇧",
         "Уровень: " + rank.title,
-        "<p>Ваш текущий ранг: <strong>" + rank.badge + "</strong>.</p><p class='mt-2'>Он определяет сложность и словарный запас генерируемых уровней. Зарабатывайте опыт (XP) на уровнях и в Блиц-повторении, чтобы повысить ранг!</p>"
+        "<p>Текущий ранг <strong>" + (lang === "chechen" ? "чеченского" : "английского") + "</strong> словаря: <strong>" + rank.badge + "</strong>.</p><p class='mt-2'>Опыт и CEFR считаются отдельно для каждого языка. Он задаёт сложность новых уровней.</p>"
       );
     });
   }
@@ -205,9 +478,9 @@ document.addEventListener("DOMContentLoaded", () => {
   if (btnHeaderCoins) {
     btnHeaderCoins.addEventListener("click", () => {
       showCustomInfoDialog(
-        "🪙",
+        '<span class="coin-icon coin-icon-lg"></span>',
         "Баланс монет",
-        "<p>У вас: <strong>" + storage.getCoins() + " 🪙 монет</strong>.</p><p class='mt-2'>Монеты используются для покупки подсказок в игре (15 🪙) и заморозки стрика (60 🪙).</p><p class='mt-2'>Зарабатывайте монеты за победы, квесты дня и вращение Колеса фортуны!</p>"
+        "<p>У вас: <strong>" + storage.getCoins() + " <span class='coin-icon'></span> монет</strong>.</p><p class='mt-2'>Траты: подсказка 15 <span class='coin-icon'></span>, заморозка стрика 60 <span class='coin-icon'></span>.</p><p class='mt-2'>Доход: уровни, квесты, слово дня, стрик-календарь.</p>"
       );
     });
   }
@@ -216,9 +489,23 @@ document.addEventListener("DOMContentLoaded", () => {
     btnShowBonusPiggy.addEventListener("click", () => {
       const bonusCount = storage.state.stats.bonusWordsFound || 0;
       showCustomInfoDialog(
-        "🐷",
+        "💰",
         "Копилка эрудита",
-        "<p>Собрано бонусных слов: <strong>" + bonusCount + "</strong> (+" + (bonusCount * 5) + " 🪙 монет получено).</p><p class='mt-2'>Сюда попадают реальные английские слова, найденные вами на игровом поле вне обязательного списка уровня.</p><p class='mt-2'>За каждое найденное слово-бонус начисляется <strong>+5 🪙 монет</strong> и <strong>+5 XP опыта</strong>!</p>"
+        "<p>Собрано бонусных слов: <strong>" + bonusCount + "</strong> (+" + (bonusCount * 5) + " <span class='coin-icon'></span> монет получено).</p><p class='mt-2'>Сюда попадают реальные слова текущего языка, найденные на поле вне списка уровня.</p><p class='mt-2'>За каждое: <strong>+5 <span class='coin-icon'></span></strong> и <strong>+5 XP</strong>.</p>"
+      );
+    });
+  }
+
+  const btnMapLevelInfo = document.getElementById("btn-map-level-info");
+  if (btnMapLevelInfo) {
+    btnMapLevelInfo.addEventListener("click", () => {
+      showCustomInfoDialog(
+        "ℹ",
+        "Как устроена карта",
+        "<p>Это карта твоего пути.</p>" +
+        "<p class='mt-2'>Внизу есть большая кнопка «УРОВЕНЬ». Нажми её — начнётся игра.</p>" +
+        "<p class='mt-2'>Цифра с процентами: сколько уровней на этом этапе ты уже прошёл.</p>" +
+        "<p class='mt-2'>Слова на поле бывают проще или сложнее. Это зависит от твоего уровня языка в профиле: A1 — самые лёгкие, дальше сложнее.</p>"
       );
     });
   }
@@ -254,7 +541,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function startBlitzSession() {
     const collected = storage.getCollectedWords();
-    const words = Object.keys(collected);
+    const words = Object.keys(collected).filter((word) => wordStillInLexicon(word, storage.getLanguage()));
 
     if (words.length < 4) {
       showCustomInfoDialog("⚡", "Блиц-повторение", "<p>Сначала найдите хотя бы 4 слова на игровых уровнях, чтобы открыть режим интервального повторения!</p>");
@@ -279,8 +566,11 @@ document.addEventListener("DOMContentLoaded", () => {
     if (blitzIndex >= blitzQuestions.length) {
       // Завершение сессии
       game.playSound("win");
-      storage.addXp(blitzScore * 10);
-      showCustomInfoDialog("🎯", "Тренировка завершена!", "<p>Отличный результат! Вы заработали <strong>+" + (blitzScore * 10) + " XP</strong> и закрепили выученные слова!</p><p class='mt-2'>Слова получили дополнительное мастерство ⭐ в вашем словаре.</p>");
+    const xpEarned = blitzScore * 10;
+      storage.addXp(xpEarned);
+      const blitzXpEl = document.getElementById("blitz-xp-counter");
+      if (blitzXpEl) blitzXpEl.textContent = `+${xpEarned} XP`;
+      showCustomInfoDialog("🎯", "Тренировка завершена!", "<p>Отличный результат! Вы заработали <strong>+" + xpEarned + " XP</strong> и закрепили выученные слова!</p><p class='mt-2'>Слова получили дополнительное мастерство ⭐ в вашем словаре.</p>");
       hideAllModals();
       updateProfileUI();
       renderVocabScreen();
@@ -288,10 +578,16 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     const currentWord = blitzQuestions[blitzIndex]; currentBlitzTargetWord = currentWord; game.speakWord(currentWord);
-    const details = WordRamData.getWordDetails(currentWord);
+    const details = WordRamData.getWordDetails(currentWord, storage.getLanguage());
 
     if (blitzWordEl) blitzWordEl.textContent = currentWord;
     if (blitzPhEl) blitzPhEl.textContent = details ? details.ph : "";
+    const blitzCorrectEl = document.getElementById("blitz-correct-counter");
+    const blitzXpLive = document.getElementById("blitz-xp-counter");
+    if (blitzCorrectEl) blitzCorrectEl.textContent = String(blitzScore);
+    if (blitzXpLive) blitzXpLive.textContent = `+${blitzScore * 10} XP`;
+    const blitzStepEl = document.getElementById("blitz-step-pill");
+    if (blitzStepEl) blitzStepEl.textContent = `${blitzIndex + 1} / ${blitzQuestions.length}`;
     if (blitzScoreCounter) blitzScoreCounter.textContent = `Очки: ${blitzScore} / ${blitzQuestions.length}`;
     if (blitzProgressFill) {
       const pct = ((blitzIndex + 1) / blitzQuestions.length) * 100;
@@ -299,12 +595,18 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // Генерируем 4 варианта ответа (1 верный + 3 дистрактора)
-    const allDictWords = Object.keys(WordRamData.wordDefinitions);
-    const distractors = allDictWords
+    const lang = storage.getLanguage();
+    let pool = [];
+    if (lang === "chechen" && typeof WordRamDataCE !== "undefined" && WordRamDataCE.definitions) {
+      pool = Object.keys(WordRamDataCE.definitions);
+    } else if (typeof WordRamDataEN !== "undefined" && WordRamDataEN.wordDefinitions) {
+      pool = Object.keys(WordRamDataEN.wordDefinitions);
+    }
+    const distractors = pool
       .filter(w => w !== currentWord)
       .sort(() => 0.5 - Math.random())
       .slice(0, 3)
-      .map(w => WordRamData.getWordDetails(w).tr);
+      .map(w => WordRamData.getWordDetails(w, lang).tr);
 
     const options = [details.tr, ...distractors].sort(() => 0.5 - Math.random());
 
@@ -349,18 +651,16 @@ document.addEventListener("DOMContentLoaded", () => {
   // ----------------------------------------------------
   let quizIndex = 0;
   let quizAnswers = {};
+  let quizQuestions = [];
 
   function getActiveQuizList() {
-    const currentLang = storage.getLanguage();
-    if (currentLang === "chechen" && WordRamData.chechenPlacementTestWords) {
-      return WordRamData.chechenPlacementTestWords;
-    }
-    return WordRamData.placementTestWords;
+    return quizQuestions.length ? quizQuestions : WordRamData.buildPlacementQuiz(storage.getLanguage());
   }
 
   function openPlacementTest() {
     quizIndex = 0;
     quizAnswers = {};
+    quizQuestions = WordRamData.buildPlacementQuiz(storage.getLanguage());
     if (quizStep) quizStep.style.display = "block";
     if (resultStep) resultStep.style.display = "none";
 
@@ -368,7 +668,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const modalTitleEl = document.querySelector("#modal-placement .modal-header h2");
     if (modalTitleEl) {
       modalTitleEl.textContent = currentLang === "chechen"
-        ? "🟢 Определение уровня чеченского"
+        ? "Определение уровня чеченского"
         : "🎯 Тест словарного запаса (English)";
     }
 
@@ -426,7 +726,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const currentLang = storage.getLanguage();
     if (currentLang === "chechen") {
-      const res = WordRamData.evaluateChechenPlacementTest(quizAnswers);
+      const res = WordRamData.evaluateChechenPlacementTest(quizAnswers, quizQuestions);
       storage.setLanguageLevel(res.code, "chechen");
       storage.setSetting("hasCompletedChechenPlacementTest", true);
 
@@ -437,7 +737,7 @@ document.addEventListener("DOMContentLoaded", () => {
         <p class='mt-2'>Чеченские слова в игре теперь откалиброваны под ваш реальный словарный запас!</p>`;
       }
     } else {
-      const res = WordRamData.evaluatePlacementTest(quizAnswers);
+      const res = WordRamData.evaluatePlacementTest(quizAnswers, "english", quizQuestions);
       storage.setEnglishLevel(res.code);
       storage.setSetting("hasCompletedPlacementTest", true);
 
@@ -485,13 +785,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const levelCode = storage.getLanguageLevel(currentLang);
     
     if (headerCefrBadge) {
-      if (currentLang === "chechen") {
-        headerCefrBadge.textContent = `🟢 ${levelCode}`;
-        headerCefrBadge.title = "Язык игры: Чеченский";
-      } else {
-        headerCefrBadge.textContent = `🇬🇧 ${levelCode}`;
-        headerCefrBadge.title = "Язык игры: English";
-      }
+      const flag = currentLang === "chechen"
+        ? '<span class="flag-ce" title="Флаг Чеченской Республики"></span>'
+        : '<span class="flag-gb">🇬🇧</span>';
+      headerCefrBadge.innerHTML = `${flag} ${levelCode}`;
+      headerCefrBadge.title = currentLang === "chechen" ? "Язык игры: Чеченский" : "Язык игры: English";
     }
 
     const profileCefrBadge = document.getElementById("profile-cefr-badge");
@@ -502,10 +800,13 @@ document.addEventListener("DOMContentLoaded", () => {
     const xpData = storage.getXpProgress();
 
     if (profileCefrBadge) {
+      const flag = currentLang === "chechen"
+        ? '<span class="flag-ce" title="Флаг Чеченской Республики"></span>'
+        : '<span class="flag-gb">🇬🇧</span>';
       if (currentLang === "chechen") {
-        profileCefrBadge.textContent = `${levelCode} — Нохчийн мотт`;
+        profileCefrBadge.innerHTML = `${flag} ${levelCode}`;
       } else {
-        profileCefrBadge.textContent = xpData.rank.badge;
+        profileCefrBadge.innerHTML = `${flag} ${xpData.rank.badge}`;
       }
     }
     if (profileXpFill) profileXpFill.style.width = `${xpData.percent}%`;
@@ -585,13 +886,23 @@ document.addEventListener("DOMContentLoaded", () => {
     return "A1";
   }
 
+  function wordStillInLexicon(word, lang) {
+    const raw = String(word || "").trim().toUpperCase();
+    if (!raw) return false;
+    if (lang === "chechen") {
+      const key = (typeof WordRamTokenizer !== "undefined") ? WordRamTokenizer.normalizeChechen(raw) : raw;
+      return !!(typeof WordRamDataCE !== "undefined" && WordRamDataCE.definitions && WordRamDataCE.definitions[key]);
+    }
+    return !!(typeof WordRamDataEN !== "undefined" && WordRamDataEN.wordDefinitions && WordRamDataEN.wordDefinitions[raw]);
+  }
+
 function renderVocabScreen() {
     if (!vocabCardsGrid) return;
     vocabCardsGrid.innerHTML = "";
 
     const currentLang = storage.getLanguage();
     const collected = storage.getCollectedWords(currentLang);
-    const collectedWordsList = Object.keys(collected);
+    const collectedWordsList = Object.keys(collected).filter((word) => wordStillInLexicon(word, currentLang));
     const userCefr = storage.getLanguageLevel(currentLang);
 
     const rankOrder = currentLang === "chechen"
@@ -601,16 +912,15 @@ function renderVocabScreen() {
 
     if (vocabStatsSubtitle) {
       const langLabel = currentLang === "chechen" ? "чеченских" : "";
-      vocabStatsSubtitle.textContent = `Выучено ${langLabel} слов: ${collectedWordsList.length} из 1500`.replace("  ", " ");
+      const lexiconTotal = WordRamData.getLexiconSize(currentLang);
+      vocabStatsSubtitle.textContent = `Выучено ${langLabel} слов: ${collectedWordsList.length} из ${lexiconTotal}`.replace("  ", " ");
     }
 
     // Подсчет статистики по уровням
     const cefrCounts = {};
     rankOrder.forEach(l => { cefrCounts[l] = 0; });
 
-    const cefrTotals = currentLang === "chechen"
-      ? { A1: 300, A2: 300, B1: 300, B2: 250, C1: 200, C2: 150 }
-      : { A1: 314, A2: 659, B1: 331, B2: 76, C1: 120 };
+    const cefrTotals = WordRamData.getCefrTotals(currentLang);
 
     collectedWordsList.forEach(w => {
       const lvl = findCefrLevel(w, currentLang);
@@ -652,7 +962,8 @@ function renderVocabScreen() {
         if (currentLang === "chechen") {
           const isLocked = rankOrder.indexOf("C2") > userRankIdx;
           const count = cefrCounts["C2"] || 0;
-          chip.textContent = isLocked ? `C2 🔒 (${count}/150)` : `C2 (${count}/150)`;
+          const totalC2 = cefrTotals.C2 || 0;
+          chip.textContent = isLocked ? `C2 🔒 (${count}/${totalC2})` : `C2 (${count}/${totalC2})`;
           chip.style.display = "inline-flex";
         } else {
           chip.style.display = "none";
@@ -783,6 +1094,10 @@ function renderVocabScreen() {
     // 1. Аватар монстрика и имя
     if (stageMonsterAvatar) stageMonsterAvatar.textContent = activeStage.icon;
     if (stageMonsterName) stageMonsterName.textContent = activeStage.name;
+    const stageStoryEl = document.getElementById("stage-story");
+    if (stageStoryEl) {
+      stageStoryEl.textContent = activeStage.story || activeStage.desc || "Пройди уровни по одному. Большая кнопка «УРОВЕНЬ» начинает игру.";
+    }
 
     // 2. Процент прохождения текущего монстрика
     const stageLen = activeStage.endLevel - activeStage.startLevel + 1;
@@ -820,7 +1135,7 @@ function renderVocabScreen() {
     // 6. Счетчик копилки бонусных слов
     if (bonusWordsCounter) {
       const bonusWords = storage.state.stats.bonusWordsFound || 0;
-      bonusWordsCounter.textContent = `${bonusWords * 5} 🪙`;
+      bonusWordsCounter.innerHTML = `${bonusWords * 5} <span class="coin-icon"></span>`;
     }
 
     // 7. Сетка всех уровней (со звездами)
@@ -873,13 +1188,54 @@ function renderVocabScreen() {
   const questsProgressCounter = document.getElementById("quests-progress-counter");
   const btnClaimSuperChest = document.getElementById("btn-claim-super-chest");
 
+  function renderWeekAlbum() {
+    const albumDaysEl = document.getElementById("week-album-days");
+    const albumCountEl = document.getElementById("week-album-count");
+    const btnStamp = document.getElementById("btn-claim-week-stamp");
+    if (!albumDaysEl) return;
+    const status = storage.getWeekAlbumStatus();
+    if (albumCountEl) albumCountEl.textContent = `${status.filled}/7`;
+    albumDaysEl.innerHTML = status.days.map((d) =>
+      `<div class="week-album-day${d.done ? " done" : ""}${d.isToday ? " today" : ""}"><span>${d.label}</span></div>`
+    ).join("");
+    if (btnStamp) {
+      btnStamp.disabled = status.stampClaimed || status.filled < 7;
+      btnStamp.innerHTML = status.stampClaimed
+        ? "Печать недели уже у тебя"
+        : 'Печать недели · +40 <span class="coin-icon"></span>';
+    }
+  }
+
+  function renderWeeklyReview() {
+    const listEl = document.getElementById("weekly-review-list");
+    const btn = document.getElementById("btn-claim-weekly-review");
+    const card = document.getElementById("card-weekly-review");
+    if (!listEl) return;
+    const lang = storage.getLanguage();
+    const status = storage.getWeeklyReviewStatus(lang);
+    if (card) card.style.display = status.available ? "" : "none";
+    if (!status.available) return;
+    const picked = status.words && status.words.length ? status.words : storage.pickWeeklyReviewWords(lang, 5);
+    listEl.innerHTML = picked.map((w) => {
+      const details = WordRamData.getWordDetails(w, lang) || {};
+      const tr = details.tr || "";
+      return `<button type="button" class="weekly-review-item" data-word="${w}"><strong>${w}</strong><span class="weekly-review-tr">${tr}</span></button>`;
+    }).join("");
+    if (btn) {
+      btn.disabled = status.claimed;
+      btn.textContent = status.claimed ? "Награда уже получена" : "Забрать награду";
+    }
+  }
+
   function renderDailyScreen() {
     updateDailyWordCard();
+    renderWeekAlbum();
+    renderWeeklyReview();
     const status = storage.getDailyStatus();
     if (dailyStreakEl) dailyStreakEl.textContent = status.streak;
 
     if (freezeCounterBadge) {
-      freezeCounterBadge.textContent = `❄️ Защита: ${status.freezes}/2`;
+      freezeCounterBadge.textContent = `❄️ ${status.freezes}/2`;
     }
 
     
@@ -887,19 +1243,20 @@ function renderVocabScreen() {
     // 1. Календарь наград
     if (dailyRewardsCalendar) {
       dailyRewardsCalendar.innerHTML = "";
-      const currentDayInStreak = Math.max(1, (status.streak % 7) || (status.isTodayCompleted ? 7 : 1));
+      const cycleDay = status.streak > 0 ? ((status.streak - 1) % 7) + 1 : 1;
+      const playedToday = !!status.isTodayCompleted;
 
       WordRamData.dailyStreakRewards.forEach(item => {
-        const isClaimed = item.day < currentDayInStreak || (item.day === currentDayInStreak && status.isTodayCompleted);
-        const isCurrent = item.day === currentDayInStreak;
+        const isClaimed = playedToday ? item.day <= cycleDay : item.day < cycleDay;
+        const isCurrent = item.day === cycleDay;
 
         const dayBox = document.createElement("div");
         dayBox.className = `reward-day-item ${isClaimed ? "claimed" : ""} ${isCurrent ? "current" : ""}`;
         dayBox.innerHTML = `
-          <span class="reward-day-title">${item.label}</span>
-          <span class="reward-day-prize">+${item.coins} 🪙</span>
-          ${item.hints > 0 ? `<span style="font-size: 0.65rem; color: #a855f7;">+${item.hints} 💡</span>` : ""}
-          <span style="font-size: 0.75rem;">${isClaimed ? "✔" : (isCurrent ? "⭐" : "🔒")}</span>
+          <span class="reward-day-num">${item.label}</span>
+          <span class="reward-day-prize"><span class="coin-icon"></span>${item.coins}</span>
+          ${item.hints > 0 ? `<span class="reward-day-extra">+${item.hints} 💡</span>` : ""}
+          <span class="reward-day-status">${isClaimed ? "✔" : (isCurrent ? "★" : "")}</span>
         `;
         dailyRewardsCalendar.appendChild(dayBox);
       });
@@ -937,10 +1294,10 @@ function renderVocabScreen() {
               <strong>${t.title}</strong>
               ${qState.completed ? '<span class="quest-check-badge">✔</span>' : ''}
             </div>
-            <div class="quest-sub">${t.desc} (${qState.current}/${t.target})</div>
-            <div class="quest-reward">+${t.rewardCoins} 🪙, +${t.rewardXp} XP</div>
+            <div class="quest-sub">${t.desc}</div>
+            <div class="quest-meta"><span>${qState.current}/${t.target}</span><span class="quest-reward">+${t.rewardCoins} <span class="coin-icon"></span> · +${t.rewardXp} XP</span></div>
           </div>
-          <button class="${btnClass}" ${(!qState.completed || qState.claimed) ? "disabled" : ""}>
+          <button class="quest-claim-btn ${btnClass}" ${(!qState.completed || qState.claimed) ? "disabled" : ""}>
             ${btnText}
           </button>
         `;
@@ -967,6 +1324,22 @@ function renderVocabScreen() {
         btnClaimSuperChest.textContent = dq.allClaimed ? "Открыт ✔" : "Забрать";
       }
     }
+
+    if (dailyBtnStart) {
+      const challengeDone = !!status.isDailyChallengeDone;
+      dailyBtnStart.disabled = challengeDone;
+      dailyBtnStart.innerHTML = challengeDone
+        ? "Вызов пройден сегодня"
+        : 'Ежедневный вызов · +50 <span class="coin-icon"></span>';
+    }
+
+    const btnOpenWheel = document.getElementById("btn-open-lucky-wheel");
+    if (btnOpenWheel) {
+      btnOpenWheel.disabled = !storage.canSpinLuckyWheel();
+      btnOpenWheel.textContent = storage.canSpinLuckyWheel()
+        ? "🎡 Колесо фортуны (1 раз в день)"
+        : "🎡 Колесо уже крутили сегодня";
+    }
   }
 
   if (btnClaimSuperChest) {
@@ -974,7 +1347,7 @@ function renderVocabScreen() {
       const res = storage.claimAllQuestsChest();
       if (res.success) {
         game.playSound("win");
-        showCustomInfoDialog("🎁", "Сундук мастера открыт!", "<p>Поздравляем! Вы выполнили все 3 задания дня и получили:</p><p class='mt-2'><strong>+50 🪙 монет</strong>, <strong>+100 XP опыта</strong> и <strong>+1 💡 бесплатную подсказку</strong>!</p>");
+        showCustomInfoDialog("🎁", "Сундук мастера открыт!", "<p>Поздравляем! Вы выполнили все 3 задания дня и получили:</p><p class='mt-2'><strong>+50 <span class='coin-icon'></span> монет</strong>, <strong>+100 XP опыта</strong> и <strong>+1 💡 бесплатную подсказку</strong>!</p>");
         renderDailyScreen();
         updateProfileUI();
       }
@@ -989,17 +1362,104 @@ function renderVocabScreen() {
         showCustomInfoDialog("❄️", "Заморозка стрика", "<p>Защита успешно активирована!</p><p class='mt-2'>Если вы пропустите один день, заморозка автоматически защитит вашу серию входов от сгорания.</p>");
         renderDailyScreen();
       } else {
-        showCustomInfoDialog("❄️", "Заморозка стрика", res.reason === "NOT_ENOUGH_COINS" ? "<p>Недостаточно монет (нужно <strong>60 🪙</strong>)!</p>" : "<p>У вас уже максимальный запас защит (<strong>2 из 2</strong>)!</p>");
+        showCustomInfoDialog("❄️", "Заморозка стрика", res.reason === "NOT_ENOUGH_COINS" ? "<p>Недостаточно монет (нужно <strong>60 <span class='coin-icon'></span></strong>)!</p>" : "<p>У вас уже максимальный запас защит (<strong>2 из 2</strong>)!</p>");
+      }
+    });
+  }
+
+  const btnClaimWeekStamp = document.getElementById("btn-claim-week-stamp");
+  if (btnClaimWeekStamp) {
+    btnClaimWeekStamp.addEventListener("click", () => {
+      const res = storage.claimWeekStamp();
+      if (res.success) {
+        game.playSound("win");
+        game.updateCoinsDisplay();
+        updateProfileUI();
+        renderDailyScreen();
+        game.showFloatingMessage("Печать недели у тебя! +40 монет и +60 XP", "bonus");
+      }
+    });
+  }
+
+  const btnClaimWeeklyReview = document.getElementById("btn-claim-weekly-review");
+  if (btnClaimWeeklyReview) {
+    btnClaimWeeklyReview.addEventListener("click", () => {
+      const res = storage.claimWeeklyReview(storage.getLanguage());
+      if (res.success) {
+        game.playSound("win");
+        game.updateCoinsDisplay();
+        updateProfileUI();
+        renderDailyScreen();
+        game.showFloatingMessage("Повтор недели засчитан! +15 монет и +20 XP", "bonus");
       }
     });
   }
 
   if (dailyBtnStart) {
     dailyBtnStart.addEventListener("click", () => {
+      if (storage.getDailyStatus().isDailyChallengeDone) {
+        showCustomInfoDialog("🎯", "Ежедневный вызов", "<p>Награда за вызов уже получена сегодня. Завтра будет новая сетка.</p>");
+        return;
+      }
       hideAllModals();
       const todayLvl = 10 + (new Date().getDate() % 20);
       game.startLevel(todayLvl, true);
       switchTab("game");
+    });
+  }
+
+  const luckyWheelModal = document.getElementById("modal-lucky-wheel");
+  const btnOpenLuckyWheel = document.getElementById("btn-open-lucky-wheel");
+  const btnCloseLuckyWheel = document.getElementById("btn-close-lucky-wheel");
+  const btnSpinWheel = document.getElementById("btn-spin-wheel");
+  const luckyWheelDisc = document.getElementById("lucky-wheel-disc");
+  const wheelResultBadge = document.getElementById("wheel-result-badge");
+
+  function paintLuckyWheel() {
+    if (!luckyWheelDisc) return;
+    const sectors = WordRamData.luckyWheelSectors || [];
+    luckyWheelDisc.innerHTML = sectors.map((s, i) =>
+      `<div class="wheel-sector-label" style="transform: rotate(${i * (360 / sectors.length)}deg)">${s.label}</div>`
+    ).join("");
+  }
+  paintLuckyWheel();
+
+  if (btnOpenLuckyWheel) {
+    btnOpenLuckyWheel.addEventListener("click", () => {
+      if (wheelResultBadge) {
+        wheelResultBadge.style.display = "none";
+      }
+      if (btnSpinWheel) {
+        btnSpinWheel.disabled = !storage.canSpinLuckyWheel();
+        btnSpinWheel.textContent = storage.canSpinLuckyWheel() ? "Крутить" : "Уже крутили сегодня";
+      }
+      showModal(luckyWheelModal);
+    });
+  }
+  if (btnCloseLuckyWheel) {
+    btnCloseLuckyWheel.addEventListener("click", () => hideAllModals());
+  }
+  if (btnSpinWheel) {
+    btnSpinWheel.addEventListener("click", () => {
+      if (!storage.canSpinLuckyWheel()) return;
+      const sectors = WordRamData.luckyWheelSectors || [];
+      const idx = Math.floor(Math.random() * sectors.length);
+      const sector = sectors[idx];
+      if (luckyWheelDisc) {
+        luckyWheelDisc.style.transition = "transform 1.2s cubic-bezier(0.2, 0.8, 0.2, 1)";
+        luckyWheelDisc.style.transform = `rotate(${360 * 4 + idx * (360 / sectors.length)}deg)`;
+      }
+      storage.applyLuckyWheelSector(sector);
+      game.playSound("win");
+      game.updateCoinsDisplay();
+      updateProfileUI();
+      btnSpinWheel.disabled = true;
+      btnSpinWheel.textContent = "Уже крутили сегодня";
+      if (wheelResultBadge) {
+        wheelResultBadge.style.display = "inline-block";
+        wheelResultBadge.textContent = "Выпало: " + sector.label;
+      }
+      renderDailyScreen();
     });
   }
 
@@ -1025,7 +1485,7 @@ function renderVocabScreen() {
         : "📝 Пройти тест на определение уровня английского (A1–C1)";
     }
     updateProfileUI();
-    if (toggleVoice) toggleVoice.checked = storage.getSetting("voiceSpeechEnabled") !== false;
+    refreshShareBonusChips();
 
     // Переключатель языка слов в игре
     const btnLangEn = document.getElementById("btn-lang-en");
@@ -1037,31 +1497,17 @@ function renderVocabScreen() {
       btnLangCe.classList.toggle("active", currentLang === "chechen");
     }
 
-    // 1. Еженедельная лига
-    const leagueData = storage.getLeagueData();
-    if (leagueNameEl) leagueNameEl.textContent = leagueData.league.name;
-    if (leagueIconEl) leagueIconEl.textContent = leagueData.league.icon;
-    if (leagueRewardPreview) leagueRewardPreview.textContent = `Приз: +${leagueData.league.rewardCoins} 🪙`;
+    const ease = storage.getWordEase();
+    document.querySelectorAll(".word-ease-btn").forEach((btn) => {
+      btn.classList.toggle("active", btn.dataset.ease === ease);
+    });
 
-    if (leagueLeaderboardList) {
-      leagueLeaderboardList.innerHTML = "";
-      leagueData.rivals.forEach((r, idx) => {
-        const row = document.createElement("div");
-        row.className = `leaderboard-row ${r.isUser ? "user-row" : ""}`;
-        row.innerHTML = `
-          <div class="row-rank">#${idx + 1}</div>
-          <div class="row-avatar">${r.avatar}</div>
-          <div class="row-name">${r.name}</div>
-          <div class="row-xp">${r.xp} XP</div>
-        `;
-        leagueLeaderboardList.appendChild(row);
-      });
-    }
+    // Лиги скрыты в профиле, пока нет живых игроков.
 
-    // 2. Достижения
     if (achievementsListEl) {
       achievementsListEl.innerHTML = "";
       const unlockedIds = storage.state.unlockedAchievements || [];
+      const previewCount = 4;
 
       WordRamData.achievements.forEach(ach => {
         const isUnlocked = unlockedIds.includes(ach.id);
@@ -1073,10 +1519,19 @@ function renderVocabScreen() {
             <div class="ach-title">${ach.title} ${isUnlocked ? "✔" : ""}</div>
             <div class="ach-desc">${ach.desc}</div>
           </div>
-          <div class="ach-reward">+${ach.rewardCoins} 🪙</div>
+          <div class="ach-reward">+${ach.rewardCoins} <span class="coin-icon"></span></div>
         `;
         achievementsListEl.appendChild(card);
       });
+
+      const moreBtn = document.getElementById("btn-achievements-more");
+      const total = WordRamData.achievements.length;
+      if (moreBtn) {
+        const expanded = achievementsListEl.classList.contains("is-expanded");
+        moreBtn.hidden = total <= previewCount;
+        moreBtn.textContent = expanded ? "Свернуть" : "Ещё";
+        moreBtn.setAttribute("aria-expanded", expanded ? "true" : "false");
+      }
     }
 
     if (toggleSound) toggleSound.checked = !!storage.getSetting("soundEnabled");
@@ -1093,6 +1548,7 @@ function renderVocabScreen() {
       if (storage.getLanguage() !== "english") {
         storage.setLanguage("english");
         renderSettingsScreen();
+        updateDailyWordCard();
         game.startLevel(storage.getCurrentLevel("english"), false);
         game.showFloatingMessage("Язык слов переключен на English 🇬🇧", "success");
       }
@@ -1104,11 +1560,26 @@ function renderVocabScreen() {
       if (storage.getLanguage() !== "chechen") {
         storage.setLanguage("chechen");
         renderSettingsScreen();
+        updateDailyWordCard();
         game.startLevel(storage.getCurrentLevel("chechen"), false);
-        game.showFloatingMessage("Язык слов переключен на Чеченский 🟢", "success");
+        game.showFloatingMessage("Язык слов переключен на чеченский", "success");
       }
     });
   }
+
+  document.querySelectorAll(".word-ease-btn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const ease = btn.dataset.ease || "normal";
+      storage.setWordEase(ease);
+      renderSettingsScreen();
+      game.showFloatingMessage(
+        ease === "easier" ? "Следующий уровень будет с более лёгкими словами" :
+        ease === "harder" ? "Следующий уровень будет со словами посложнее" :
+        "Слова снова как у твоего уровня языка",
+        "success"
+      );
+    });
+  });
 
 
   // Обработчики: Слово дня
@@ -1121,48 +1592,25 @@ function renderVocabScreen() {
 
   function updateDailyWordCard() {
     const currentLang = storage.getLanguage();
-    const todayStr = new Date().toISOString().slice(0, 10);
-    const daySeed = new Date().getDate();
-
-    let word = "COURAGE";
-    let phonetic = "[ˈkʌrɪdʒ]";
-    let translation = "Мужество / Смелость / Отвага";
-    let example = "Have the courage to speak — Иметь смелость заговорить.";
-
+    const item = storage.getWordOfTheDayItem(currentLang) || {};
+    let word = item.word || "COURAGE";
+    let phonetic = item.ph || "";
+    let translation = item.tr || "";
+    let example = item.ex || "";
     if (currentLang === "chechen") {
-      const chechenWords = [
-        { word: "КЪОНАХ", tr: "Благородный муж / Рыцарь чести", ex: "Къонахчун дош — тешаме. — Слово къонаха надежно." },
-        { word: "ОЬЗДАНГАЛЛА", tr: "Благородство / Вежливость / Такт", ex: "Оьздангалла — адамаллин коьрта билгало. — Благородство — главный признак человечности." },
-        { word: "НОХЧАЛЛА", tr: "Чеченский кодекс чести и достоинства", ex: "Нохчалла ларъяр — коьрта декхар. — Соблюдение нохчалла — главный долг." },
-        { word: "ХЬОШАЛЛА", tr: "Гостеприимство и радушие", ex: "Хьаша варе сатийсар — хаза гӀиллакх. — Ожидание гостя — прекрасный обычай." },
-        { word: "СОБАР", tr: "Терпение и выдержка", ex: "Собар — толаман некъ. — Терпение — путь к победе." }
-      ];
-      const selected = chechenWords[daySeed % chechenWords.length];
-      word = selected.word;
-      phonetic = "[чеченский]";
-      translation = selected.tr;
-      example = selected.ex;
-    } else {
-      const englishWords = [
-        { word: "COURAGE", ph: "[ˈkʌrɪdʒ]", tr: "Мужество / Смелость / Отвага", ex: "Have the courage to speak — Иметь смелость заговорить." },
-        { word: "PERSEVERE", ph: "[ˌpɜːsɪˈvɪə]", tr: "Упорствовать / Стойко продолжать", ex: "Persevere through difficulties — Преодолевать трудности." },
-        { word: "GENEROSITY", ph: "[ˌdʒenəˈrɒsɪti]", tr: "Щедрость / Великодушие", ex: "Show true generosity — Проявлять искреннее великодушие." },
-        { word: "KNOWLEDGE", ph: "[ˈnɒlɪdʒ]", tr: "Знание / Познание", ex: "Knowledge is power — Знание — сила." },
-        { word: "DISCOVERY", ph: "[dɪˈskʌvəri]", tr: "Открытие / Находка", ex: "Make a great discovery — Сделать великое открытие." }
-      ];
-      const selected = englishWords[daySeed % englishWords.length];
-      word = selected.word;
-      phonetic = selected.ph;
-      translation = selected.tr;
-      example = selected.ex;
+      const ceDetails = WordRamData.getWordDetails(word, "chechen");
+      phonetic = (ceDetails && ceDetails.ph) ? ceDetails.ph : "";
     }
 
     if (wodWordEl) wodWordEl.textContent = word;
     if (wodPhoneticEl) wodPhoneticEl.textContent = phonetic;
     if (wodTranslationEl) wodTranslationEl.textContent = translation;
     if (wodExampleEl) wodExampleEl.textContent = example;
+    if (btnWodSpeak) {
+      btnWodSpeak.style.display = currentLang === "chechen" ? "none" : "";
+    }
 
-    const isClaimed = storage.state.daily && storage.state.daily.lastWodClaimDate === todayStr;
+    const isClaimed = storage.isWodClaimedToday(currentLang);
     if (btnClaimWod) {
       if (isClaimed) {
         btnClaimWod.disabled = true;
@@ -1170,7 +1618,7 @@ function renderVocabScreen() {
         btnClaimWod.classList.add("claimed-btn");
       } else {
         btnClaimWod.disabled = false;
-        btnClaimWod.textContent = "Изучить и забрать награду (+20 🪙)";
+        btnClaimWod.innerHTML = 'Изучить · +20 <span class="coin-icon"></span>';
         btnClaimWod.classList.remove("claimed-btn");
       }
     }
@@ -1185,13 +1633,13 @@ function renderVocabScreen() {
 
   if (btnClaimWod) {
     btnClaimWod.addEventListener("click", () => {
-      const todayStr = new Date().toISOString().slice(0, 10);
-      if (storage.state.daily && storage.state.daily.lastWodClaimDate === todayStr) {
+      const lang = storage.getLanguage();
+      if (storage.isWodClaimedToday(lang)) {
         game.showFloatingMessage("Вы уже забрали сегодняшнюю награду за Слово дня!", "info");
         return;
       }
-      if (!storage.state.daily) storage.state.daily = {};
-      storage.state.daily.lastWodClaimDate = todayStr;
+      storage.claimWodToday(lang);
+      storage.recordWordToVocabulary(storage.getWordOfTheDayItem(lang).word, lang);
       storage.addCoins(20);
       storage.addXp(40);
       game.playSound("win");
@@ -1247,11 +1695,14 @@ function renderVocabScreen() {
     const totalStars = Object.values(starsObj).reduce((a, b) => a + b, 0);
 
     if (shareCardLangBadge) {
-      shareCardLangBadge.textContent = currentLang === "chechen" ? "🟢 Чеченский язык" : "🇬🇧 English";
+      shareCardLangBadge.innerHTML = currentLang === "chechen"
+        ? '<span class="flag-ce"></span> Чеченский язык'
+        : "🇬🇧 English";
     }
     if (shareMasteryTitleEl) shareMasteryTitleEl.textContent = `«${mastery.title}»`;
     if (shareMasteryDescEl) shareMasteryDescEl.textContent = mastery.desc;
-    if (shareStatWordsEl) shareStatWordsEl.textContent = `${wordsCount} / 1500`;
+    const lexiconTotal = WordRamData.getLexiconSize(currentLang);
+    if (shareStatWordsEl) shareStatWordsEl.textContent = `${wordsCount} / ${lexiconTotal}`;
     if (shareStatLevelEl) shareStatLevelEl.textContent = curLvl;
     if (shareStatStarsEl) shareStatStarsEl.textContent = `${totalStars} ⭐`;
 
@@ -1265,7 +1716,8 @@ function renderVocabScreen() {
     const curLvl = storage.getCurrentLevel(currentLang);
     const langName = currentLang === "chechen" ? "чеченском" : "английском";
 
-    return `🏆 Мой титул в WordRam: «${mastery.title}» (${mastery.desc})! Выучено слов: ${wordsCount}/1500 на ${langName} языке (Уровень ${curLvl}). Сыграй со мной: https://granonim.github.io/WordRam/`;
+    const lexiconTotal = WordRamData.getLexiconSize(currentLang);
+    return `🏆 Мой титул в WordRam: «${mastery.title}» (${mastery.desc})! Выучено слов: ${wordsCount}/${lexiconTotal} на ${langName} языке (Уровень ${curLvl}). Сыграй со мной: https://granonim.github.io/WordRam/`;
   }
 
   function onShareActionExecuted() {
@@ -1275,8 +1727,19 @@ function renderVocabScreen() {
       game.vibrate([20, 40, 20]);
       game.updateCoinsDisplay();
       updateProfileUI();
+      refreshShareBonusChips();
       game.showFloatingMessage("🎉 Спасибо, что делитесь! Награда: +30 🪙 монет и +30 XP получена!", "bonus");
+    } else {
+      refreshShareBonusChips();
     }
+  }
+
+  function refreshShareBonusChips() {
+    const can = storage.canClaimShareReward();
+    document.querySelectorAll(".btn-bonus-chip").forEach((el) => {
+      el.style.opacity = can ? "1" : "0.35";
+      el.innerHTML = can ? '+30 <span class="coin-icon"></span>' : "сегодня получено";
+    });
   }
 
   if (btnCloseShareProgress) {
@@ -1342,6 +1805,10 @@ function renderVocabScreen() {
   const btnGameShareWa = document.getElementById("btn-game-share-wa");
   const btnGameShareCopy = document.getElementById("btn-game-share-copy");
   const btnGameShareNative = document.getElementById("btn-game-share-native");
+
+  function getGameInviteText() {
+    return "Играю в WordRam — находи слова, учи язык, копи звания. Присоединяйся: https://granonim.github.io/WordRam/";
+  }
 
   function openShareGameModal() {
     showModal(modalShareGame);
@@ -1424,14 +1891,53 @@ function renderVocabScreen() {
     });
   }
 
+  const btnAchievementsMore = document.getElementById("btn-achievements-more");
+  if (btnAchievementsMore && achievementsListEl) {
+    btnAchievementsMore.addEventListener("click", () => {
+      const expanded = achievementsListEl.classList.toggle("is-expanded");
+      achievementsListEl.classList.toggle("is-collapsed", !expanded);
+      btnAchievementsMore.textContent = expanded ? "Свернуть" : "Ещё";
+      btnAchievementsMore.setAttribute("aria-expanded", expanded ? "true" : "false");
+    });
+  }
+
+  const btnExportBackup = document.getElementById("btn-export-backup");
+  const btnImportBackup = document.getElementById("btn-import-backup");
+  if (btnExportBackup) {
+    btnExportBackup.addEventListener("click", async () => {
+      const code = storage.exportCode();
+      try {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          await navigator.clipboard.writeText(code);
+          game.showFloatingMessage("Код прогресса скопирован. Сохраните его.", "success");
+          return;
+        }
+      } catch (e) { /* clipboard blocked */ }
+      window.prompt("Скопируйте код прогресса и сохраните его:", code);
+    });
+  }
+  if (btnImportBackup) {
+    btnImportBackup.addEventListener("click", () => {
+      const raw = window.prompt("Вставьте код прогресса");
+      if (!raw || !raw.trim()) return;
+      try {
+        storage.importCode(raw);
+        game.showFloatingMessage("Прогресс восстановлен", "success");
+        window.location.reload();
+      } catch (e) {
+        game.showFloatingMessage("Этот код не подошёл", "info");
+      }
+    });
+  }
+
   if (btnResetData) {
     btnResetData.addEventListener("click", () => {
       if (confirm("Сбросить весь прогресс, словарь и монеты?")) {
         storage.resetAll();
         hideAllModals();
         renderSettingsScreen();
-        game.startLevel(1, false);
         switchTab("game");
+        showModal(welcomeLangModal);
       }
     });
   }
@@ -1440,20 +1946,65 @@ function renderVocabScreen() {
   // Запуск при старте
   // ----------------------------------------------------
   updateProfileUI();
+  refreshShareBonusChips();
+  storage.ensureLeagueWeek();
 
-  const saved = storage.getActiveSavedGame();
-  if (saved && saved.levelData && saved.foundWords && saved.foundWords.length < saved.levelData.words.length) {
-    game.restoreGameState(saved);
-  } else {
-    storage.clearActiveSavedGame();
-    const cur = storage.getSetting("currentLevel") || 1;
-    game.startLevel(cur, false);
+  const welcomeLangModal = document.getElementById("modal-welcome-lang");
+  const btnWelcomeLangEn = document.getElementById("btn-welcome-lang-en");
+  const btnWelcomeLangCe = document.getElementById("btn-welcome-lang-ce");
+
+  function maybeOpenPlacementAfterWelcome() {
+    const lang = storage.getLanguage();
+    const needsPlacement = lang === "chechen"
+      ? !storage.getSetting("hasCompletedChechenPlacementTest")
+      : !storage.getSetting("hasCompletedPlacementTest");
+    if (needsPlacement) {
+      setTimeout(() => openPlacementTest(), 400);
+    }
   }
 
-  if (!storage.getSetting("hasCompletedPlacementTest")) {
-    setTimeout(() => {
-      openPlacementTest();
-    }, 600);
+  function applyWelcomeLanguage(lang) {
+    storage.setLanguage(lang);
+    storage.state.hasChosenLanguage = true;
+    storage.save();
+    hideAllModals();
+    game.startLevel(1, false);
+    updateProfileUI();
+    renderSettingsScreen();
+    switchTab("game");
+    game.showFloatingMessage(
+      lang === "chechen" ? "Выбран чеченский язык слов" : "Выбран английский язык слов",
+      "success"
+    );
+    maybeOpenPlacementAfterWelcome();
+  }
+
+  if (btnWelcomeLangEn) {
+    btnWelcomeLangEn.addEventListener("click", () => applyWelcomeLanguage("english"));
+  }
+  if (btnWelcomeLangCe) {
+    btnWelcomeLangCe.addEventListener("click", () => applyWelcomeLanguage("chechen"));
+  }
+
+  if (!storage.state.hasChosenLanguage) {
+    showModal(welcomeLangModal);
+  } else {
+    const saved = storage.getActiveSavedGame();
+    if (saved && saved.levelData && saved.foundWords && saved.foundWords.length < saved.levelData.words.length) {
+      game.restoreGameState(saved);
+    } else {
+      storage.clearActiveSavedGame();
+      const cur = storage.getSetting("currentLevel") || 1;
+      game.startLevel(cur, false);
+    }
+
+    const lang = storage.getLanguage();
+    const needsPlacement = lang === "chechen"
+      ? !storage.getSetting("hasCompletedChechenPlacementTest")
+      : !storage.getSetting("hasCompletedPlacementTest");
+    if (needsPlacement) {
+      setTimeout(() => openPlacementTest(), 600);
+    }
   }
 
   if ("serviceWorker" in navigator) {

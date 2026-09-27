@@ -293,6 +293,10 @@ class WordRamGenerator {
         if (lang === "chechen") {
           word = this.data.getWordForCefrAndLength(userCefr, len, usedWords, config.themeKey, "chechen");
           tiles = tokenizer ? tokenizer.tokenize(word, "chechen") : word.split("");
+          if (!tiles || tiles.length !== len) {
+            word = "ДАХАР";
+            tiles = tokenizer ? tokenizer.tokenize(word, "chechen") : word.split("");
+          }
         } else {
           word = (word || "WORD").padEnd(len, "S").slice(0, len);
           tiles = word.split("");
