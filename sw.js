@@ -1,22 +1,22 @@
-const CACHE_NAME = "wordram-v132";
+const CACHE_NAME = "wordram-v135";
 const ASSETS_TO_CACHE = [
   "./",
-  "./index.html?v=132",
-  "./styles.css?v=132",
-  "./data-ce.js?v=132",
-  "./data-en.js?v=132",
-  "./data.js?v=132",
-  "./storage.js?v=132",
-  "./generator.js?v=132",
-  "./game.js?v=132",
-  "./main.js?v=132",
+  "./index.html?v=135",
+  "./styles.css?v=135",
+  "./data-ce.js?v=135",
+  "./data-en.js?v=135",
+  "./data.js?v=135",
+  "./storage.js?v=135",
+  "./generator.js?v=135",
+  "./game.js?v=135",
+  "./main.js?v=135",
   "./chechen.json",
-  "./manifest.webmanifest?v=132",
-  "./favicon.svg?v=132",
-  "./icon-192.png?v=132",
-  "./icon-512.png?v=132",
+  "./manifest.webmanifest?v=135",
+  "./favicon.svg?v=135",
+  "./icon-192.png?v=135",
+  "./icon-512.png?v=135",
   "./logo.svg",
-  "./og-image.png"
+  "./og-image.jpg"
 ];
 
 self.addEventListener("install", (e) => {

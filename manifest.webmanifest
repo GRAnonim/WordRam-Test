@@ -1,8 +1,8 @@
 {
-  "name": "WordRam — Английские филворды",
+  "name": "WordRam — английский и чеченский",
   "short_name": "WordRam",
   "lang": "ru",
-  "description": "Увлекательные филворды для изучения 1500 английских слов (A1-C1) с живой озвучкой, темами и словарем.",
+  "description": "Игра в слова на английском и чеченском: находи слова, учи перевод и проходи уровни.",
   "start_url": "./index.html",
   "display": "standalone",
   "orientation": "portrait",

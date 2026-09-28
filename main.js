@@ -5,6 +5,7 @@
  */
 
 document.addEventListener("DOMContentLoaded", () => {
+  const WORD_RAM_URL = "https://granonim.github.io/WordRam-Test/";
   const storage = new WordRamStorage();
   if (typeof window !== "undefined") { window.storage = storage; }
   const generator = new WordRamGenerator(WordRamData);
@@ -278,17 +279,20 @@ document.addEventListener("DOMContentLoaded", () => {
   if (btnOkDefinition) btnOkDefinition.addEventListener("click", () => hideAllModals());
   if (btnCloseModal) btnCloseModal.addEventListener("click", () => hideAllModals());
 
-  function getVictoryShareText(summary) {
+  function victoryShareBody(summary) {
     const s = summary || lastVictorySummary;
-    if (!s) {
-      return "🏆 Я прохожу WordRam — игру в слова! Сыграй со мной: https://granonim.github.io/WordRam-Test/";
-    }
+    if (!s) return "Поиграй со мной в WordRam.";
     const starsCount = Math.max(1, Math.min(3, s.stars || 3));
     const starsStr = "★".repeat(starsCount) + "☆".repeat(3 - starsCount);
     const levelPart = s.isDaily ? "ежедневный вызов" : `уровень ${s.level}`;
     const wordsPreview = (s.words || []).slice(0, 5).join(", ");
     const more = (s.words || []).length > 5 ? "…" : "";
-    return `🏆 Я прошёл ${levelPart} в WordRam! ${starsStr}\nСлова: ${wordsPreview}${more}\nСыграй со мной: https://granonim.github.io/WordRam-Test/`;
+    const wordsLine = wordsPreview ? `\nСлова: ${wordsPreview}${more}` : "";
+    return `Я прошёл ${levelPart} в WordRam ${starsStr}${wordsLine}`;
+  }
+
+  function getVictoryShareText(summary) {
+    return `${victoryShareBody(summary)}\n${WORD_RAM_URL}`;
   }
 
   function claimVictoryShareReward() {
@@ -322,9 +326,9 @@ document.addEventListener("DOMContentLoaded", () => {
     try {
       if (navigator.share) {
         await navigator.share({
-          title: "WordRam",
-          text: text,
-          url: "https://granonim.github.io/WordRam-Test/"
+          title: "WordRam — игра в слова",
+          text: victoryShareBody(lastVictorySummary),
+          url: WORD_RAM_URL
         });
         claimVictoryShareReward();
         return;
@@ -336,7 +340,7 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
       window.open(
-        `https://t.me/share/url?url=https://granonim.github.io/WordRam-Test/&text=${encodeURIComponent(text)}`,
+        `https://t.me/share/url?url=${encodeURIComponent(WORD_RAM_URL)}&text=${encodeURIComponent(victoryShareBody(lastVictorySummary))}`,
         "_blank"
       );
       claimVictoryShareReward();
@@ -1737,9 +1741,7 @@ function renderVocabScreen() {
     const mastery = WordRamData.getWordMastery(wordsCount, currentLang);
     const curLvl = storage.getCurrentLevel(currentLang);
     const langName = currentLang === "chechen" ? "чеченском" : "английском";
-
-    const lexiconTotal = WordRamData.getLexiconSize(currentLang);
-    return `🏆 Мой титул в WordRam: «${mastery.title}» (${mastery.desc})! Выучено слов: ${wordsCount}/${lexiconTotal} на ${langName} языке (Уровень ${curLvl}). Сыграй со мной: https://granonim.github.io/WordRam-Test/`;
+    return `Мой титул в WordRam: «${mastery.title}»\nУровень ${curLvl} · ${wordsCount} слов на ${langName}\n${WORD_RAM_URL}`;
   }
 
   function onShareActionExecuted() {
@@ -1770,8 +1772,8 @@ function renderVocabScreen() {
 
   if (btnShareTg) {
     btnShareTg.addEventListener("click", () => {
-      const textPayload = encodeURIComponent(getShareTextPayload());
-      window.open(`https://t.me/share/url?url=https://granonim.github.io/WordRam-Test/&text=${textPayload}`, "_blank");
+      const textPayload = encodeURIComponent(getShareTextPayload().replace(`\n${WORD_RAM_URL}`, ""));
+      window.open(`https://t.me/share/url?url=${encodeURIComponent(WORD_RAM_URL)}&text=${textPayload}`, "_blank");
       onShareActionExecuted();
     });
   }
@@ -1801,9 +1803,9 @@ function renderVocabScreen() {
       try {
         if (navigator.share) {
           await navigator.share({
-            title: "WordRam",
-            text: getShareTextPayload(),
-            url: "https://granonim.github.io/WordRam-Test/"
+            title: "WordRam — игра в слова",
+            text: getShareTextPayload().replace(`\n${WORD_RAM_URL}`, ""),
+            url: WORD_RAM_URL
           });
           onShareActionExecuted();
         } else if (navigator.clipboard) {
@@ -1828,8 +1830,12 @@ function renderVocabScreen() {
   const btnGameShareCopy = document.getElementById("btn-game-share-copy");
   const btnGameShareNative = document.getElementById("btn-game-share-native");
 
+  function gameInviteBody() {
+    return "Поиграй со мной в WordRam.";
+  }
+
   function getGameInviteText() {
-    return "Играю в WordRam — находи слова, учи язык, копи звания. Присоединяйся: https://granonim.github.io/WordRam-Test/";
+    return `${gameInviteBody()}\n${WORD_RAM_URL}`;
   }
 
   function openShareGameModal() {
@@ -1842,8 +1848,8 @@ function renderVocabScreen() {
 
   if (btnGameShareTg) {
     btnGameShareTg.addEventListener("click", () => {
-      const textPayload = encodeURIComponent(getGameInviteText());
-      window.open(`https://t.me/share/url?url=https://granonim.github.io/WordRam-Test/&text=${textPayload}`, "_blank");
+      const textPayload = encodeURIComponent(gameInviteBody());
+      window.open(`https://t.me/share/url?url=${encodeURIComponent(WORD_RAM_URL)}&text=${textPayload}`, "_blank");
       onShareActionExecuted();
     });
   }
@@ -1873,9 +1879,9 @@ function renderVocabScreen() {
       try {
         if (navigator.share) {
           await navigator.share({
-            title: "WordRam",
-            text: getGameInviteText(),
-            url: "https://granonim.github.io/WordRam-Test/"
+            title: "WordRam — игра в слова",
+            text: gameInviteBody(),
+            url: WORD_RAM_URL
           });
           onShareActionExecuted();
         } else if (navigator.clipboard) {
