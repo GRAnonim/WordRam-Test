@@ -10,6 +10,52 @@ document.addEventListener("DOMContentLoaded", () => {
   if (typeof window !== "undefined") { window.storage = storage; }
   const generator = new WordRamGenerator(WordRamData);
 
+  const METRIKA_ID = 111905696;
+  let visibleSince = document.visibilityState === "visible" ? Date.now() : 0;
+  let visibleMs = 0;
+
+  function metrika(method, arg, extra) {
+    if (typeof ym !== "function") return;
+    try {
+      if (extra !== undefined) ym(METRIKA_ID, method, arg, extra);
+      else if (arg !== undefined) ym(METRIKA_ID, method, arg);
+      else ym(METRIKA_ID, method);
+    } catch (e) {}
+  }
+
+  function noteLanguage(lang) {
+    if (!lang) return;
+    metrika("params", { language: lang });
+    metrika("userParams", { language: lang });
+  }
+
+  function playSeconds() {
+    if (visibleSince) {
+      visibleMs += Date.now() - visibleSince;
+      visibleSince = document.visibilityState === "visible" ? Date.now() : 0;
+    }
+    return Math.round(visibleMs / 1000);
+  }
+
+  function sendPlayTime() {
+    const seconds = playSeconds();
+    if (seconds < 5) return;
+    metrika("params", {
+      language: storage.getLanguage() || "unknown",
+      play_seconds: seconds
+    });
+  }
+
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "visible") {
+      if (!visibleSince) visibleSince = Date.now();
+    } else if (visibleSince) {
+      visibleMs += Date.now() - visibleSince;
+      visibleSince = 0;
+    }
+  });
+  window.addEventListener("pagehide", sendPlayTime);
+
   // Модальные окна
   const winModal = document.getElementById("modal-victory");
   const winWordsList = document.getElementById("win-words-list");
@@ -516,10 +562,49 @@ document.addEventListener("DOMContentLoaded", () => {
   const game = new WordRamGame({
     storage: storage,
     generator: generator,
-    onLevelCompleted: (summary) => showVictoryModal(summary),
+    onLevelCompleted: (summary) => {
+      const lang = (summary && summary.language) || storage.getLanguage() || "english";
+      noteLanguage(lang);
+      metrika("hit", location.origin + "/level-done", {
+        title: "Уровень пройден",
+        params: {
+          language: lang,
+          level: summary && summary.level != null ? String(summary.level) : "",
+          play_seconds: playSeconds()
+        }
+      });
+      showVictoryModal(summary);
+    },
     onWordDetailsRequested: (details) => showWordDefinitionModal(details),
     onXpUpdated: () => updateProfileUI()
   });
+
+  function reportPlay(levelNumber, mode) {
+    const lang = storage.getLanguage() || "english";
+    noteLanguage(lang);
+    metrika("hit", location.origin + "/play", {
+      title: "Игра",
+      params: {
+        language: lang,
+        level: levelNumber != null ? String(levelNumber) : "",
+        mode: mode || "level"
+      }
+    });
+  }
+
+  const startLevelRaw = game.startLevel.bind(game);
+  game.startLevel = function (levelNumber, isDaily) {
+    const result = startLevelRaw(levelNumber, isDaily);
+    reportPlay(levelNumber, isDaily ? "daily" : "level");
+    return result;
+  };
+
+  const restoreRaw = game.restoreGameState.bind(game);
+  game.restoreGameState = function () {
+    const ok = restoreRaw();
+    if (ok) reportPlay(game.currentLevel, "resume");
+    return ok;
+  };
 
   // ----------------------------------------------------
   
@@ -1563,6 +1648,7 @@ function renderVocabScreen() {
   function switchGameLanguage(lang) {
     if (storage.getLanguage() === lang) return;
     storage.setLanguage(lang);
+    noteLanguage(lang);
     renderSettingsScreen();
     updateDailyWordCard();
     game.startLevel(storage.getCurrentLevel(lang), false);
@@ -2019,6 +2105,7 @@ function renderVocabScreen() {
 
   function applyWelcomeLanguage(lang) {
     storage.setLanguage(lang);
+    noteLanguage(lang);
     storage.state.hasChosenLanguage = true;
     storage.save();
     hideAllModals();
@@ -2085,6 +2172,197 @@ function renderVocabScreen() {
     showModal(welcomeLangModal);
   } else {
     showHowTo(beginSavedSession);
+  }
+
+  if (storage.getLanguage()) noteLanguage(storage.getLanguage());
+
+  const ACCOUNT_TOKEN_KEY = "wordram_account_token";
+  const CEFR_RANK = ["A1", "A2", "B1", "B2", "C1", "C2"];
+  let accountSyncTimer = null;
+  let applyingAccountSave = false;
+
+  function accountToken() {
+    try { return localStorage.getItem(ACCOUNT_TOKEN_KEY) || ""; }
+    catch (e) { return ""; }
+  }
+
+  function setAccountToken(token) {
+    if (token) localStorage.setItem(ACCOUNT_TOKEN_KEY, token);
+    else localStorage.removeItem(ACCOUNT_TOKEN_KEY);
+  }
+
+  function higherCefr(a, b) {
+    return CEFR_RANK.indexOf(b) > CEFR_RANK.indexOf(a) ? b : (a || b || "A1");
+  }
+
+  function maxNum(a, b) {
+    return Math.max(Number(a) || 0, Number(b) || 0);
+  }
+
+  function mergeMaps(a, b, pick) {
+    const out = Object.assign({}, a || {});
+    Object.keys(b || {}).forEach((key) => {
+      out[key] = pick(out[key], b[key]);
+    });
+    return out;
+  }
+
+  function mergeLangProgress(a, b) {
+    const left = a || {};
+    const right = b || {};
+    return {
+      currentLevel: maxNum(left.currentLevel, right.currentLevel) || 1,
+      unlockedLevel: maxNum(left.unlockedLevel, right.unlockedLevel) || 1,
+      languageLevel: higherCefr(left.languageLevel, right.languageLevel),
+      xp: maxNum(left.xp, right.xp),
+      levelStars: mergeMaps(left.levelStars, right.levelStars, maxNum),
+      levelHighScores: mergeMaps(left.levelHighScores, right.levelHighScores, maxNum),
+      collectedWords: Object.assign({}, left.collectedWords || {}, right.collectedWords || {})
+    };
+  }
+
+  function mergeAccountState(local, remote) {
+    const left = local || storage.getDefaultState();
+    const right = remote || {};
+    const merged = Object.assign({}, left, right);
+    merged.progress = {
+      english: mergeLangProgress(left.progress && left.progress.english, right.progress && right.progress.english),
+      chechen: mergeLangProgress(left.progress && left.progress.chechen, right.progress && right.progress.chechen)
+    };
+    merged.coins = maxNum(left.coins, right.coins);
+    merged.xp = maxNum(left.xp, right.xp);
+    merged.weeklyXp = maxNum(left.weeklyXp, right.weeklyXp);
+    merged.hintsRemaining = maxNum(left.hintsRemaining, right.hintsRemaining);
+    merged.streakFreezes = maxNum(left.streakFreezes, right.streakFreezes);
+    merged.hasChosenLanguage = !!(left.hasChosenLanguage || right.hasChosenLanguage);
+    merged.hasSeenHowTo = !!(left.hasSeenHowTo || right.hasSeenHowTo);
+    merged.hasCompletedPlacementTest = !!(left.hasCompletedPlacementTest || right.hasCompletedPlacementTest);
+    merged.hasCompletedChechenPlacementTest = !!(left.hasCompletedChechenPlacementTest || right.hasCompletedChechenPlacementTest);
+    merged.language = left.language || right.language || "english";
+    const stats = Object.assign({}, left.stats || {}, right.stats || {});
+    Object.keys(stats).forEach((key) => {
+      stats[key] = maxNum(left.stats && left.stats[key], right.stats && right.stats[key]);
+    });
+    merged.stats = stats;
+    if (left.daily || right.daily) {
+      merged.daily = Object.assign({}, left.daily || {}, right.daily || {});
+      merged.daily.streak = maxNum(left.daily && left.daily.streak, right.daily && right.daily.streak);
+    }
+    merged.activeSavedGame = left.activeSavedGame || right.activeSavedGame || null;
+    return merged;
+  }
+
+  async function accountRequest(action, body) {
+    const headers = { "Content-Type": "application/json" };
+    const token = accountToken();
+    if (token) headers.Authorization = "Bearer " + token;
+    const response = await fetch("api/index.php?action=" + action, {
+      method: body ? "POST" : "GET",
+      headers: headers,
+      body: body ? JSON.stringify(body) : undefined
+    });
+    const data = await response.json().catch(() => ({ ok: false, error: "Сервер не ответил" }));
+    if (!response.ok || !data.ok) {
+      const error = new Error(data.error || "Не получилось");
+      error.status = response.status;
+      throw error;
+    }
+    return data;
+  }
+
+  function renderAccountCard(email) {
+    const form = document.getElementById("account-form");
+    const logout = document.getElementById("account-logout");
+    const status = document.getElementById("account-status");
+    const lead = document.getElementById("account-lead");
+    if (!form || !logout) return;
+    const signedIn = !!email;
+    form.hidden = signedIn;
+    logout.hidden = !signedIn;
+    if (lead) {
+      lead.textContent = signedIn
+        ? "Вход выполнен: " + email + ". Прогресс копируется на сайт."
+        : "Войдите по почте, чтобы уровень и слова остались на другом телефоне. Почта хранится на хостинге и нужна только для этого.";
+    }
+    if (status && signedIn) status.textContent = "";
+  }
+
+  function applyMergedSave(remoteState) {
+    applyingAccountSave = true;
+    storage.state = mergeAccountState(storage.state, remoteState);
+    storage.save();
+    applyingAccountSave = false;
+    updateProfileUI();
+    if (typeof renderSettingsScreen === "function") renderSettingsScreen();
+  }
+
+  function scheduleAccountSync() {
+    if (applyingAccountSave || !accountToken()) return;
+    clearTimeout(accountSyncTimer);
+    accountSyncTimer = setTimeout(() => {
+      accountRequest("save", { state: storage.state }).catch(() => {});
+    }, 1200);
+  }
+
+  async function pullAccountSave() {
+    const data = await accountRequest("save");
+    if (data.state) applyMergedSave(data.state);
+    await accountRequest("save", { state: storage.state });
+  }
+
+  async function submitAccount(register) {
+    const email = document.getElementById("account-email").value.trim();
+    const password = document.getElementById("account-password").value;
+    const status = document.getElementById("account-status");
+    if (status) status.textContent = "Сохраняем…";
+    try {
+      const data = await accountRequest(register ? "register" : "login", { email: email, password: password });
+      setAccountToken(data.token);
+      await pullAccountSave();
+      renderAccountCard(data.email);
+      const lang = storage.getLanguage();
+      if (game && typeof game.startLevel === "function") {
+        game.startLevel(storage.getCurrentLevel(lang), false);
+      }
+    } catch (error) {
+      if (status) status.textContent = error.message || "Не получилось";
+    }
+  }
+
+  const accountForm = document.getElementById("account-form");
+  const accountRegister = document.getElementById("account-register");
+  const accountLogout = document.getElementById("account-logout");
+  if (accountForm) {
+    accountForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+      submitAccount(false);
+    });
+  }
+  if (accountRegister) {
+    accountRegister.addEventListener("click", () => submitAccount(true));
+  }
+  if (accountLogout) {
+    accountLogout.addEventListener("click", () => {
+      setAccountToken("");
+      renderAccountCard("");
+    });
+  }
+
+  const saveRaw = storage.save.bind(storage);
+  storage.save = function () {
+    const result = saveRaw();
+    scheduleAccountSync();
+    return result;
+  };
+
+  if (accountToken()) {
+    accountRequest("me").then((data) => {
+      renderAccountCard(data.email);
+      return pullAccountSave();
+    }).catch((error) => {
+      if (error.status === 401) setAccountToken("");
+      renderAccountCard("");
+    });
   }
 
   if ("serviceWorker" in navigator) {

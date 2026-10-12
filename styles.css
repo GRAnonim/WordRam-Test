@@ -6505,3 +6505,19 @@ html, body {
   box-sizing: border-box;
   padding-bottom: 6px !important;
 }
+
+.account-form { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
+.account-input {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid var(--surface-border);
+  background: rgba(0, 0, 0, 0.25);
+  color: var(--text-main);
+  border-radius: 12px;
+  padding: 12px 14px;
+  font: inherit;
+}
+.account-actions { display: flex; gap: 8px; }
+.account-actions .primary-btn,
+.account-actions .secondary-btn { flex: 1; }
+#account-status:empty { display: none; }
