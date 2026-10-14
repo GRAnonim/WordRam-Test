@@ -2281,8 +2281,8 @@ function renderVocabScreen() {
     logout.hidden = !signedIn;
     if (lead) {
       lead.textContent = signedIn
-        ? "Вход выполнен: " + email + ". Прогресс копируется на сайт."
-        : "Войдите по почте, чтобы уровень и слова остались на другом телефоне. Почта хранится на хостинге и нужна только для этого.";
+        ? "Вход выполнен: " + email
+        : "Войдите, чтобы уровень и слова остались на другом телефоне.";
     }
     if (status && signedIn) status.textContent = "";
   }
@@ -2346,6 +2346,18 @@ function renderVocabScreen() {
       setAccountToken("");
       renderAccountCard("");
     });
+  }
+
+  const accountHash = new URLSearchParams(location.hash.replace(/^#/, ""));
+  const yandexToken = accountHash.get("account_token");
+  const yandexError = accountHash.get("account_error");
+  if (yandexToken || yandexError) {
+    history.replaceState(null, "", location.pathname + location.search);
+  }
+  if (yandexToken) setAccountToken(yandexToken);
+  if (yandexError) {
+    const status = document.getElementById("account-status");
+    if (status) status.textContent = yandexError;
   }
 
   const saveRaw = storage.save.bind(storage);

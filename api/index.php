@@ -4,6 +4,8 @@ declare(strict_types=1);
 header("Content-Type: application/json; charset=utf-8");
 header("Cache-Control: no-store");
 
+require __DIR__ . "/store.php";
+
 $dataDir = __DIR__ . "/data";
 if (!is_dir($dataDir)) {
     mkdir($dataDir, 0700, true);
@@ -85,10 +87,10 @@ function handleLogin(string $dataDir): void
     $password = (string) ($body["password"] ?? "");
     $users = loadUsers($dataDir);
     foreach ($users as $index => $user) {
-        if ($user["email"] !== $email) {
+        if (($user["email"] ?? "") !== $email) {
             continue;
         }
-        if (!password_verify($password, $user["password_hash"])) {
+        if (!password_verify($password, (string) ($user["password_hash"] ?? ""))) {
             fail(401, "Неверная почта или пароль");
         }
         $token = bin2hex(random_bytes(32));
@@ -98,99 +100,4 @@ function handleLogin(string $dataDir): void
         exit;
     }
     fail(401, "Неверная почта или пароль");
-}
-
-function authHeader(): string
-{
-    if (!empty($_SERVER["HTTP_AUTHORIZATION"])) {
-        return (string) $_SERVER["HTTP_AUTHORIZATION"];
-    }
-    if (!empty($_SERVER["REDIRECT_HTTP_AUTHORIZATION"])) {
-        return (string) $_SERVER["REDIRECT_HTTP_AUTHORIZATION"];
-    }
-    if (function_exists("apache_request_headers")) {
-        $headers = apache_request_headers();
-        foreach ($headers as $key => $value) {
-            if (strcasecmp((string) $key, "Authorization") === 0) {
-                return (string) $value;
-            }
-        }
-    }
-    return "";
-}
-
-function requireUser(string $dataDir): array
-{
-    $header = authHeader();
-    if (!preg_match("/^Bearer\s+([a-f0-9]{64})$/i", $header, $match)) {
-        fail(401, "Нужно войти");
-    }
-    $hash = hash("sha256", $match[1]);
-    foreach (loadUsers($dataDir) as $user) {
-        if (hash_equals($user["token_hash"], $hash)) {
-            return $user;
-        }
-    }
-    fail(401, "Нужно войти снова");
-}
-
-function normalizeEmail($value): string
-{
-    $email = strtolower(trim((string) $value));
-    return filter_var($email, FILTER_VALIDATE_EMAIL) ? $email : "";
-}
-
-function readJsonBody(): array
-{
-    $raw = file_get_contents("php://input");
-    $data = json_decode($raw === false ? "" : $raw, true);
-    return is_array($data) ? $data : [];
-}
-
-function usersPath(string $dataDir): string
-{
-    return $dataDir . "/users.json";
-}
-
-function savePath(string $dataDir, string $id): string
-{
-    return $dataDir . "/save-" . $id . ".json";
-}
-
-function loadUsers(string $dataDir): array
-{
-    $path = usersPath($dataDir);
-    $fp = fopen($path, "c+");
-    if ($fp === false) {
-        fail(500, "Хранилище недоступно");
-    }
-    flock($fp, LOCK_SH);
-    $raw = stream_get_contents($fp);
-    flock($fp, LOCK_UN);
-    fclose($fp);
-    $data = json_decode($raw === false ? "" : $raw, true);
-    return is_array($data) ? $data : [];
-}
-
-function saveUsers(string $dataDir, array $users): void
-{
-    $path = usersPath($dataDir);
-    $fp = fopen($path, "c+");
-    if ($fp === false) {
-        fail(500, "Хранилище недоступно");
-    }
-    flock($fp, LOCK_EX);
-    ftruncate($fp, 0);
-    rewind($fp);
-    fwrite($fp, json_encode(array_values($users), JSON_UNESCAPED_UNICODE));
-    fflush($fp);
-    flock($fp, LOCK_UN);
-    fclose($fp);
-}
-
-function fail(int $code, string $message): void
-{
-    http_response_code($code);
-    echo json_encode(["ok" => false, "error" => $message], JSON_UNESCAPED_UNICODE);
-    exit;
 }

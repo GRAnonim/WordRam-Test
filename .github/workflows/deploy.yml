@@ -29,3 +29,4 @@ jobs:
             **/test*/**
             **/test*.mjs
             **/README.md
+            **/yandex-config.php

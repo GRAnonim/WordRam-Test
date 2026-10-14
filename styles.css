@@ -6520,4 +6520,5 @@ html, body {
 .account-actions { display: flex; gap: 8px; }
 .account-actions .primary-btn,
 .account-actions .secondary-btn { flex: 1; }
+.account-yandex { display: block; text-align: center; text-decoration: none; }
 #account-status:empty { display: none; }

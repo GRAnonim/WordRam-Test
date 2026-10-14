@@ -1,2 +1,3 @@
 .vscode/sftp.json
 api/data/*.json
+api/yandex-config.php
