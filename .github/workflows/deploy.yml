@@ -13,6 +13,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Write Yandex config
+        env:
+          YANDEX_CLIENT_ID: ${{ secrets.YANDEX_CLIENT_ID }}
+          YANDEX_CLIENT_SECRET: ${{ secrets.YANDEX_CLIENT_SECRET }}
+        run: python3 -c 'import os; from pathlib import Path; Path("api/yandex-config.php").write_text("<?php\nreturn [\n    \"client_id\" => " + repr(os.environ.get("YANDEX_CLIENT_ID", "")) + ",\n    \"client_secret\" => " + repr(os.environ.get("YANDEX_CLIENT_SECRET", "")) + ",\n    \"redirect_uri\" => \"https://wordram.ru/api/yandex-callback.php\",\n];\n")'
+
       - name: Sync files to TimeWeb
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
@@ -29,4 +35,3 @@ jobs:
             **/test*/**
             **/test*.mjs
             **/README.md
-            **/yandex-config.php
